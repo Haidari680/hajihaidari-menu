@@ -670,6 +670,17 @@ footer{
 </label>
 
 <br><br>
+    <br><br>
+
+<label>
+وضعیت غذا:
+<select id="itemStockStatus">
+    <option value="available">🟢 موجود</option>
+    <option value="low">🟠 موجودی کم</option>
+    <option value="soldout">🔴 فعلاً موجود نیست</option>
+    <option value="soon">🔵 به‌زودی</option>
+</select>
+</label>
 
 <button class="save" onclick="addItem()">+ افزودن غذا</button>
 </div>
@@ -884,15 +895,14 @@ function renderMenu(){
 
     items.forEach(item=>{
 
-        /* امتیاز */
         let stars="";
+
         const rating=Math.round(item.rating || 0);
 
         for(let i=1;i<=5;i++){
             stars+=i<=rating?"★":"☆";
         }
 
-        /* قیمت */
         let price=`${item.price} افغانی`;
 
         if(item.oldPrice){
@@ -902,31 +912,125 @@ function renderMenu(){
         }
 
         /* وضعیت غذا */
+
         const status=item.stockStatus || "available";
 
-        let statusText="موجود";
-        let statusColor="#198754";
-        let statusBg="#e8f7ee";
-        let canOrder=true;
+        let statusBadge="";
+        let orderButton="";
 
-        if(status==="low"){
-            statusText="موجودی کم";
-            statusColor="#d97706";
-            statusBg="#fff4df";
-        }
+        if(status==="available"){
 
-        if(status==="soldout"){
-            statusText="فعلاً موجود نیست";
-            statusColor="#dc2626";
-            statusBg="#feecec";
-            canOrder=false;
-        }
+            statusBadge=`
+                <span style="
+                    position:absolute;
+                    top:10px;
+                    right:10px;
+                    background:#16a34a;
+                    color:white;
+                    padding:6px 12px;
+                    border-radius:20px;
+                    font-size:13px;
+                    font-weight:bold;
+                    box-shadow:0 3px 10px rgba(0,0,0,.2);
+                ">
+                🟢 موجود
+                </span>
+            `;
 
-        if(status==="soon"){
-            statusText="به‌زودی";
-            statusColor="#2563eb";
-            statusBg="#eaf2ff";
-            canOrder=false;
+            orderButton=`
+                <button class="add-btn"
+                onclick="addToCart(${item.id})">
+                افزودن به ${escapeHTML(data.settings.cartName)}
+                </button>
+            `;
+
+        }else if(status==="low"){
+
+            statusBadge=`
+                <span style="
+                    position:absolute;
+                    top:10px;
+                    right:10px;
+                    background:#f59e0b;
+                    color:white;
+                    padding:6px 12px;
+                    border-radius:20px;
+                    font-size:13px;
+                    font-weight:bold;
+                    box-shadow:0 3px 10px rgba(0,0,0,.2);
+                ">
+                🟠 موجودی کم
+                </span>
+            `;
+
+            orderButton=`
+                <button class="add-btn"
+                onclick="addToCart(${item.id})">
+                سفارش
+                </button>
+            `;
+
+        }else if(status==="soldout"){
+
+            statusBadge=`
+                <span style="
+                    position:absolute;
+                    top:10px;
+                    right:10px;
+                    background:#dc2626;
+                    color:white;
+                    padding:6px 12px;
+                    border-radius:20px;
+                    font-size:13px;
+                    font-weight:bold;
+                    box-shadow:0 3px 10px rgba(0,0,0,.2);
+                ">
+                🔴 فعلاً موجود نیست
+                </span>
+            `;
+
+            orderButton=`
+                <button class="add-btn"
+                disabled
+                style="
+                    opacity:.55;
+                    cursor:not-allowed;
+                    background:#777;
+                ">
+                فعلاً موجود نیست
+                </button>
+            `;
+
+        }else if(status==="soon"){
+
+            statusBadge=`
+                <span style="
+                    position:absolute;
+                    top:10px;
+                    right:10px;
+                    background:#2563eb;
+                    color:white;
+                    padding:6px 12px;
+                    border-radius:20px;
+                    font-size:13px;
+                    font-weight:bold;
+                    box-shadow:0 3px 10px rgba(0,0,0,.2);
+                ">
+                🔵 به‌زودی
+                </span>
+            `;
+
+            orderButton=`
+                <button class="add-btn"
+                disabled
+                style="
+                    opacity:.55;
+                    cursor:not-allowed;
+                    background:#777;
+                ">
+                به‌زودی
+                </button>
+            `;
         }
 
         box.innerHTML+=`
@@ -936,29 +1040,20 @@ function renderMenu(){
             <div style="
                 position:relative;
                 overflow:hidden;
-                border-radius:18px;
+                border-radius:16px;
             ">
 
                 <img
                     src="${item.image}"
                     alt="${escapeHTML(item.name)}"
-                    style="width:100%;display:block;"
+                    style="
+                        width:100%;
+                        display:block;
+                        ${status==="soldout" ? "filter:grayscale(60%);opacity:.65;" : ""}
+                    "
                 >
 
-                <div style="
-                    position:absolute;
-                    top:12px;
-                    right:12px;
-                    padding:7px 13px;
-                    border-radius:20px;
-                    background:${statusBg};
-                    color:${statusColor};
-                    font-size:13px;
-                    font-weight:bold;
-                    box-shadow:0 3px 10px rgba(0,0,0,.12);
-                ">
-                    ${statusText}
-                </div>
+                ${statusBadge}
 
             </div>
 
@@ -981,32 +1076,15 @@ function renderMenu(){
 
                 <div class="card-actions">
 
-                    ${
-                        canOrder
-                        ?
-                        `<button class="add-btn"
-                         onclick="addToCart(${item.id})">
-                         افزودن به ${escapeHTML(data.settings.cartName)}
-                         </button>`
-                        :
-                        `<button class="add-btn"
-                         disabled
-                         style="
-                            opacity:.6;
-                            cursor:not-allowed;
-                            background:#9ca3af;
-                         ">
-                         ${status==="soon" ? "به‌زودی قابل سفارش" : "فعلاً قابل سفارش نیست"}
-                         </button>`
-                    }
+                    ${orderButton}
 
                     ${
                         data.settings.contact
                         ?
                         `<button class="contact-btn"
-                         onclick="quickContact('${escapeHTML(item.name)}')">
-                         تماس
-                         </button>`
+                        onclick="quickContact('${escapeHTML(item.name)}')">
+                        تماس
+                        </button>`
                         :""
                     }
 
@@ -1015,12 +1093,10 @@ function renderMenu(){
             </div>
 
         </div>`;
-
     });
 
     renderDaily();
 }
-
 
 /* =========================
    DAILY FOOD
