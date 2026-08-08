@@ -870,21 +870,6 @@ function renderCategories(){
         </button>`;
 
     });
-}
-
-function selectCategory(id){
-
-    activeCategory=id;
-
-    renderCategories();
-    renderMenu();
-}
-
-
-/* =========================
-   MENU
-========================= */
-
 function renderMenu(){
 
     const box=document.getElementById("menu");
@@ -899,14 +884,15 @@ function renderMenu(){
 
     items.forEach(item=>{
 
+        /* امتیاز */
         let stars="";
-
         const rating=Math.round(item.rating || 0);
 
         for(let i=1;i<=5;i++){
             stars+=i<=rating?"★":"☆";
         }
 
+        /* قیمت */
         let price=`${item.price} افغانی`;
 
         if(item.oldPrice){
@@ -915,11 +901,66 @@ function renderMenu(){
              ${item.price} افغانی`;
         }
 
+        /* وضعیت غذا */
+        const status=item.stockStatus || "available";
+
+        let statusText="موجود";
+        let statusColor="#198754";
+        let statusBg="#e8f7ee";
+        let canOrder=true;
+
+        if(status==="low"){
+            statusText="موجودی کم";
+            statusColor="#d97706";
+            statusBg="#fff4df";
+        }
+
+        if(status==="soldout"){
+            statusText="فعلاً موجود نیست";
+            statusColor="#dc2626";
+            statusBg="#feecec";
+            canOrder=false;
+        }
+
+        if(status==="soon"){
+            statusText="به‌زودی";
+            statusColor="#2563eb";
+            statusBg="#eaf2ff";
+            canOrder=false;
+        }
+
         box.innerHTML+=`
 
         <div class="card">
 
-            <img src="${item.image}" alt="${escapeHTML(item.name)}">
+            <div style="
+                position:relative;
+                overflow:hidden;
+                border-radius:18px;
+            ">
+
+                <img
+                    src="${item.image}"
+                    alt="${escapeHTML(item.name)}"
+                    style="width:100%;display:block;"
+                >
+
+                <div style="
+                    position:absolute;
+                    top:12px;
+                    right:12px;
+                    padding:7px 13px;
+                    border-radius:20px;
+                    background:${statusBg};
+                    color:${statusColor};
+                    font-size:13px;
+                    font-weight:bold;
+                    box-shadow:0 3px 10px rgba(0,0,0,.12);
+                ">
+                    ${statusText}
+                </div>
+
+            </div>
 
             <div class="card-body">
 
@@ -940,25 +981,41 @@ function renderMenu(){
 
                 <div class="card-actions">
 
-                    <button class="add-btn"
-                    onclick="addToCart(${item.id})">
-                    افزودن به ${escapeHTML(data.settings.cartName)}
-                    </button>
+                    ${
+                        canOrder
+                        ?
+                        `<button class="add-btn"
+                         onclick="addToCart(${item.id})">
+                         افزودن به ${escapeHTML(data.settings.cartName)}
+                         </button>`
+                        :
+                        `<button class="add-btn"
+                         disabled
+                         style="
+                            opacity:.6;
+                            cursor:not-allowed;
+                            background:#9ca3af;
+                         ">
+                         ${status==="soon" ? "به‌زودی قابل سفارش" : "فعلاً قابل سفارش نیست"}
+                         </button>`
+                    }
 
                     ${
                         data.settings.contact
                         ?
                         `<button class="contact-btn"
-                        onclick="quickContact('${escapeHTML(item.name)}')">
-                        تماس
-                        </button>`
+                         onclick="quickContact('${escapeHTML(item.name)}')">
+                         تماس
+                         </button>`
                         :""
                     }
 
                 </div>
 
             </div>
+
         </div>`;
+
     });
 
     renderDaily();
