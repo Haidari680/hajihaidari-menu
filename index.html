@@ -468,27 +468,6 @@ footer{
     display:none!important;
 }
 
-/* ===== FINAL PRO STOCK UI ===== */
-.category{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:105px;padding:8px 10px;border:1px solid #e2a52b;background:#fff;border-radius:18px;color:#10264a;font-weight:bold;transition:.2s;box-shadow:0 3px 12px #00000010}
-.category img{width:70px;height:70px;border-radius:50%;object-fit:cover;border:2px solid #e2a52b}
-.category.active{background:#10264a;color:#fff;transform:translateY(-2px);box-shadow:0 8px 18px #00000020}
-.category.active img{border-color:#fff}
-.category-sidebar{background:linear-gradient(180deg,#061b43,#082a5f);color:#fff;border-radius:20px;padding:18px;position:sticky;top:85px;height:max-content;box-shadow:0 10px 30px #00000018}
-.category-sidebar h3{text-align:center;margin:0 0 12px;color:#fff}
-.category-sidebar .side-cat{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;color:#fff;padding:10px;border-radius:12px;cursor:pointer;font-weight:bold;text-align:right}
-.category-sidebar .side-cat:hover,.category-sidebar .side-cat.active{background:#d99b21;color:#fff}
-.category-sidebar .side-cat img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid #fff}
-.menu-layout{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:18px;max-width:1200px;margin:15px auto;padding:0 8px}
-.menu-layout .menu{max-width:none;margin:0;padding:0}
-.stock-badge{z-index:2;display:inline-flex;align-items:center;gap:4px}
-.stock-overlay{position:absolute;inset:0;background:rgba(255,255,255,.38);display:flex;align-items:center;justify-content:center;z-index:1;pointer-events:none}
-.stock-overlay span{background:#b91c1c;color:#fff;padding:10px 16px;border-radius:999px;font-weight:900;box-shadow:0 6px 20px #0004}
-.card.is-soldout img{filter:grayscale(.35);opacity:.78}
-.order-btn-disabled{background:#a7adb5!important;cursor:not-allowed!important}
-.stock-select{min-width:150px;padding:8px;border:1px solid #ccd7e2;border-radius:9px;background:#fff}
-.admin-thumb{width:52px;height:52px;border-radius:10px;object-fit:cover;border:1px solid #ddd}
-@media(max-width:850px){.menu-layout{grid-template-columns:1fr}.category-sidebar{position:static;order:-1}.category-sidebar:not(.mobile-open){display:none}.category-sidebar.mobile-open{display:block}}
-
 @media(max-width:600px){
     .brand h1{font-size:17px}
     .brand p{font-size:10px}
@@ -915,7 +894,6 @@ footer nav a{color:#fff;text-decoration:none}
 
 <div class="form-grid">
 <input id="newCategory" placeholder="نام دسته جدید">
-<input id="newCategoryImage" placeholder="آدرس عکس دسته (اختیاری)">
 <button class="save" onclick="addCategory()">+ افزودن دسته</button>
 </div>
 
@@ -1009,13 +987,10 @@ const defaultData = {
     },
 
     categories:[
-        {id:1,name:"کباب",image:"https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=300&q=80"},
-        {id:2,name:"پیتزا",image:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=300&q=80"},
-        {id:3,name:"غذاهای ایرانی",image:"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=300&q=80"},
-        {id:4,name:"فست فود",image:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=300&q=80"},
-        {id:5,name:"آبمیوه",image:"https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=300&q=80"},
-        {id:6,name:"نوشیدنی",image:"https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=300&q=80"},
-        {id:7,name:"دسر",image:"https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=300&q=80"}
+        {id:1,name:"کباب"},
+        {id:2,name:"پیتزا"},
+        {id:3,name:"غذا"},
+        {id:4,name:"آبمیوه"}
     ],
 
     items:[
@@ -1079,17 +1054,8 @@ const defaultData = {
     reviews:[]
 };
 
-let data = JSON.parse(localStorage.getItem("hajihaidariMenu")) || structuredClone(defaultData);
-function normalizeData(){
-    if(!data.settings)data.settings=structuredClone(defaultData.settings);
-    if(!Array.isArray(data.categories))data.categories=[];
-    if(!Array.isArray(data.items))data.items=[];
-    if(!Array.isArray(data.reviews))data.reviews=[];
-    structuredClone(defaultData.categories).forEach(dc=>{const existing=data.categories.find(c=>Number(c.id)===Number(dc.id)); if(!existing)data.categories.push(dc); else if(!existing.image)existing.image=dc.image;});
-    data.items.forEach(item=>{if(!item.stockStatus)item.stockStatus="available"; if(item.rating===undefined)item.rating=0;});
-    saveData();
-}
-normalizeData();
+let data = JSON.parse(localStorage.getItem("hajihaidariMenu")) || defaultData;
+
 let activeCategory = "all";
 let cart = [];
 let selectedRating = 5;
@@ -1163,16 +1129,28 @@ function renderHeader(){
 ========================= */
 
 function renderCategories(){
-    const box=document.getElementById("categories"); if(!box)return;
-    const cats=[{id:"all",name:"همه",image:"https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=300&q=80"},...data.categories];
-    box.innerHTML=cats.map(cat=>`<button class="category ${activeCategory==cat.id?"active":""}" onclick="selectCategory(${cat.id==="all"?"'all'":cat.id})"><img src="${escapeHTML(cat.image||"")}" alt="${escapeHTML(cat.name)}"><span>${escapeHTML(cat.name)}</span></button>`).join("");
+
+    const box=document.getElementById("categories");
+    const side=document.getElementById("categorySidebar");
+
+    const cats=[{id:"all",name:"همه"}, ...data.categories];
+
+    box.innerHTML=cats.map(cat=>`
+        <button class="category ${activeCategory==cat.id?"active":""}"
+        onclick="selectCategory(${cat.id==="all" ? "'all'" : cat.id})">
+            ${escapeHTML(cat.name)}
+        </button>
+    `).join("");
+
+    if(side){
+        side.innerHTML=cats.map(cat=>`
+            <button class="${activeCategory==cat.id?"active":""}"
+            onclick="selectCategory(${cat.id==="all" ? "'all'" : cat.id})">
+                ${escapeHTML(cat.name)}
+            </button>
+        `).join("");
+    }
 }
-function renderCategorySidebar(){
-    const box=document.getElementById("categorySidebar"); if(!box)return;
-    box.innerHTML=`<button class="side-cat ${activeCategory==="all"?"active":""}" onclick="selectCategory('all')"><img src="https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=200&q=80"><span>همه منو</span></button>`;
-    data.categories.forEach(cat=>{box.innerHTML+=`<button class="side-cat ${activeCategory==cat.id?"active":""}" onclick="selectCategory(${cat.id})"><img src="${escapeHTML(cat.image||"")}" alt=""><span>${escapeHTML(cat.name)}</span></button>`;});
-}
-function selectCategory(id){activeCategory=id; renderCategories(); renderCategorySidebar(); renderMenu();}
 
 function renderMenu(){
 
@@ -1358,8 +1336,6 @@ function renderMenu(){
                         ${status==="soldout" ? "filter:grayscale(60%);opacity:.65;" : ""}
                     "
                 >
-
-                ${status==="soldout" ? `<div class="stock-overlay"><span>🔴 این غذا تمام شده است</span></div>` : ""}
 
                 ${statusBadge}
 
@@ -1685,13 +1661,28 @@ function saveSettings(){
 ========================= */
 
 function addCategory(){
+
     const input=document.getElementById("newCategory");
-    const imageInput=document.getElementById("newCategoryImage");
+
     const name=input.value.trim();
-    if(!name){alert("نام دسته را وارد کنید.");return;}
-    data.categories.push({id:Date.now(),name:name,image:imageInput.value.trim()||"https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=300&q=80"});
-    input.value=""; if(imageInput) imageInput.value="";
-    saveData(); renderAll(); loadAdmin();
+
+    if(!name){
+        alert("نام دسته را وارد کنید.");
+        return;
+    }
+
+    data.categories.push({
+        id:Date.now(),
+        name:name
+    });
+
+    input.value="";
+
+    saveData();
+
+    renderAll();
+
+    loadAdmin();
 }
 
 function deleteCategory(id){
@@ -1734,20 +1725,36 @@ function renameCategory(id){
 }
 
 function renderCategoryAdmin(){
+
     const box=document.getElementById("categoryAdminList");
+
     box.innerHTML="";
+
     data.categories.forEach(cat=>{
-        box.innerHTML+=`<div class="admin-row" style="align-items:center">
-            <span style="display:flex;align-items:center;gap:10px;flex:1"><img class="admin-thumb" src="${escapeHTML(cat.image||"")}" alt=""><b>${escapeHTML(cat.name)}</b></span>
-            <div><button class="edit" onclick="renameCategory(${cat.id})">تغییر نام</button><button class="edit" onclick="changeCategoryImage(${cat.id})">عکس</button><button class="danger" onclick="deleteCategory(${cat.id})">حذف</button></div>
+
+        box.innerHTML+=`
+        <div class="admin-row">
+
+            <span>${escapeHTML(cat.name)}</span>
+
+            <div>
+
+                <button class="edit"
+                onclick="renameCategory(${cat.id})">
+                تغییر نام
+                </button>
+
+                <button class="danger"
+                onclick="deleteCategory(${cat.id})">
+                حذف
+                </button>
+
+            </div>
+
         </div>`;
     });
 }
-function changeCategoryImage(id){
-    const cat=data.categories.find(x=>x.id===id); if(!cat)return;
-    const image=prompt("آدرس عکس دسته:",cat.image||""); if(image===null)return;
-    cat.image=image.trim(); saveData(); renderAll(); loadAdmin();
-}
+
 
 /* =========================
    ITEM ADMIN
@@ -1770,14 +1777,59 @@ function renderCategorySelect(){
 }
 
 function addItem(){
+
     const name=document.getElementById("itemName").value.trim();
+
     const price=Number(document.getElementById("itemPrice").value);
+
     const category=Number(document.getElementById("itemCategory").value);
-    if(!name||!price||!category){alert("نام، قیمت و دسته‌بندی را وارد کنید.");return;}
-    data.items.push({id:Date.now(),name:name,price:price,oldPrice:Number(document.getElementById("itemOldPrice").value)||0,image:document.getElementById("itemImage").value||"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",description:document.getElementById("itemDescription").value,category:category,daily:document.getElementById("itemDaily").checked,stockStatus:document.getElementById("itemStockStatus").value||"available",rating:0});
-    ["itemName","itemPrice","itemOldPrice","itemImage","itemDescription"].forEach(id=>document.getElementById(id).value="");
-    document.getElementById("itemDaily").checked=false; document.getElementById("itemStockStatus").value="available";
-    saveData(); renderAll(); loadAdmin(); alert("غذا با موفقیت اضافه شد.");
+
+    if(!name || !price || !category){
+
+        alert("نام، قیمت و دسته‌بندی را وارد کنید.");
+
+        return;
+    }
+
+    data.items.push({
+
+        id:Date.now(),
+
+        name:name,
+
+        price:price,
+
+        oldPrice:Number(document.getElementById("itemOldPrice").value) || 0,
+
+        image:
+        document.getElementById("itemImage").value ||
+        "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+
+        description:
+        document.getElementById("itemDescription").value,
+
+        category:category,
+
+        daily:document.getElementById("itemDaily").checked,
+        stockStatus:"available",
+        rating:0
+
+    });
+
+    document.getElementById("itemName").value="";
+    document.getElementById("itemPrice").value="";
+    document.getElementById("itemOldPrice").value="";
+    document.getElementById("itemImage").value="";
+    document.getElementById("itemDescription").value="";
+    document.getElementById("itemDaily").checked=false;
+
+    saveData();
+
+    renderAll();
+
+    loadAdmin();
+
+    alert("غذا اضافه شد.");
 }
 
 function deleteItem(id){
@@ -1798,32 +1850,72 @@ function deleteItem(id){
 }
 
 function editItem(id){
-    const item=data.items.find(x=>x.id===id); if(!item)return;
-    const name=prompt("نام غذا:",item.name); if(name===null)return;
-    const price=prompt("قیمت:",item.price); if(price===null)return;
-    const description=prompt("توضیحات:",item.description||""); if(description===null)return;
-    const status=prompt("وضعیت: available=موجود | low=موجودی کم | soldout=تمام شده | soon=به‌زودی",item.stockStatus||"available"); if(status===null)return;
-    if(name.trim())item.name=name.trim(); if(Number(price)>0)item.price=Number(price); item.description=description;
-    if(["available","low","soldout","soon"].includes(status))item.stockStatus=status;
-    saveData(); renderAll(); loadAdmin();
+
+    const item=data.items.find(x=>x.id===id);
+
+    if(!item)return;
+
+    const name=prompt("نام غذا:",item.name);
+
+    if(name===null)return;
+
+    const price=prompt("قیمت:",item.price);
+
+    if(price===null)return;
+
+    const description=prompt("توضیحات:",item.description);
+
+    if(name.trim())item.name=name.trim();
+
+    if(Number(price)>0)item.price=Number(price);
+
+    if(description!==null)item.description=description;
+
+    saveData();
+
+    renderAll();
+
+    loadAdmin();
 }
 
 function renderItemAdmin(){
+
     const box=document.getElementById("itemAdminList");
+
     box.innerHTML="";
+
     data.items.forEach(item=>{
+
         const cat=data.categories.find(x=>x.id===item.category);
-        const status=item.stockStatus||"available";
-        box.innerHTML+=`<div class="admin-row" style="align-items:center">
-            <span style="flex:1"><b>${escapeHTML(item.name)}</b><small style="display:block">— ${item.price} افغانی — ${cat?escapeHTML(cat.name):""}</small></span>
-            <select class="stock-select" onchange="updateStockStatus(${item.id},this.value)">
-                <option value="available" ${status==="available"?"selected":""}>🟢 موجود</option>
-                <option value="low" ${status==="low"?"selected":""}>🟠 موجودی کم</option>
-                <option value="soldout" ${status==="soldout"?"selected":""}>🔴 تمام شده</option>
-                <option value="soon" ${status==="soon"?"selected":""}>🔵 به‌زودی</option>
-            </select>
-            <div><button class="edit" onclick="editItem(${item.id})">ویرایش</button><button class="danger" onclick="deleteItem(${item.id})">حذف</button></div>
+
+        box.innerHTML+=`
+
+        <div class="admin-row">
+
+            <span>
+            ${escapeHTML(item.name)}
+            <small>
+            — ${item.price} افغانی
+            — ${cat ? escapeHTML(cat.name):""}
+            </small>
+            </span>
+
+            <div>
+
+                <button class="edit"
+                onclick="editItem(${item.id})">
+                ویرایش
+                </button>
+
+                <button class="danger"
+                onclick="deleteItem(${item.id})">
+                حذف
+                </button>
+
+            </div>
+
         </div>`;
+
     });
 }
 
@@ -1947,7 +2039,6 @@ function renderAll(){
     renderHeader();
 
     renderCategories();
-    renderCategorySidebar();
 
     renderMenu();
 
@@ -1990,8 +2081,8 @@ function saveMenuSettings(){
 
 function applyMenuSettings(){
 
-  const waiter = document.querySelector("#waiterBtn, .waiter");
-  const cartBtn = document.querySelector(".cart");
+  const waiter = document.querySelector(".float-waiter");
+  const cartBtn = document.querySelector(".float-cart");
 
   /* فراخوان گارسون */
   if(waiter){
@@ -2811,6 +2902,413 @@ if(typeof openAdmin === "function"){
 
 }
 
+</script>
+
+
+<style id="pro-final-design">
+:root{
+  --pro-navy:#061d49;
+  --pro-blue:#0a3977;
+  --pro-blue2:#1257a6;
+  --pro-gold:#e7b23c;
+  --pro-gold2:#f7d477;
+  --pro-bg:#f6f8fc;
+}
+html{scroll-behavior:smooth}
+body{
+  background:linear-gradient(180deg,#f7f9fd 0%,#eef3f9 100%);
+  overflow-x:hidden;
+}
+header{
+  min-height:72px!important;
+  background:rgba(4,22,55,.96)!important;
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(231,178,60,.45)!important;
+}
+.header-inner{position:relative;height:52px!important}
+.brand{
+  position:absolute!important;
+  left:50%!important;
+  transform:translateX(-50%)!important;
+  flex-direction:column!important;
+  gap:3px!important;
+  text-align:center;
+  z-index:3;
+}
+.brand img{
+  width:38px!important;height:38px!important;
+  border:2px solid var(--pro-gold)!important;
+  box-shadow:0 4px 18px rgba(231,178,60,.25);
+}
+.brand h1{font-size:15px!important;line-height:1.1}
+.brand p{display:none}
+.header-actions{position:absolute;right:0;top:2px;z-index:4}
+.hamburger{position:absolute;left:0;top:2px;z-index:4}
+
+.hero{
+  max-width:none!important;
+  width:100%;
+  min-height:390px!important;
+  margin:0!important;
+  border-radius:0 0 50% 50% / 0 0 9% 9%!important;
+  background-color:#071d46;
+  transition:background-image .8s ease,opacity .35s ease;
+  box-shadow:0 18px 45px rgba(3,25,65,.18);
+}
+.hero:before{
+  background:
+    linear-gradient(90deg,rgba(2,12,34,.72),rgba(2,12,34,.22),rgba(2,12,34,.68))!important;
+}
+.hero-content h2{
+  font-size:42px!important;
+  letter-spacing:.2px;
+  animation:heroRise .8s ease both;
+}
+.hero-content p{animation:heroRise 1s .08s ease both}
+@keyframes heroRise{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:none}
+}
+.hero-slide-dots{
+  position:absolute;bottom:42px;left:50%;transform:translateX(-50%);
+  display:flex;gap:7px;z-index:4;
+}
+.hero-slide-dots span{
+  width:7px;height:7px;border-radius:50%;
+  background:rgba(255,255,255,.45);transition:.3s;
+}
+.hero-slide-dots span.active{width:22px;border-radius:9px;background:var(--pro-gold)}
+
+.categories{
+  justify-content:center!important;
+  gap:16px!important;
+  padding:18px 12px!important;
+}
+.category{
+  position:relative;
+  min-width:96px!important;height:96px!important;
+  padding:0!important;
+  display:flex!important;align-items:flex-end;justify-content:center;
+  overflow:hidden;
+  border:2px solid rgba(231,178,60,.7)!important;
+  background:#092b60!important;color:#fff!important;
+  box-shadow:0 8px 22px rgba(4,27,69,.15);
+}
+.category img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  opacity:.78;transition:.45s;
+}
+.category:after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(transparent 25%,rgba(2,13,35,.82));
+}
+.category span{
+  position:relative;z-index:2;padding-bottom:13px;font-size:13px;
+  text-shadow:0 2px 6px #000;
+}
+.category.active{transform:translateY(-4px)!important;box-shadow:0 12px 26px rgba(4,27,69,.24)}
+.category.active img,.category:hover img{transform:scale(1.08);opacity:.95}
+
+.menu-tools{
+  padding:0 12px;
+}
+.search-box,.menu-tools select{
+  box-shadow:0 7px 20px rgba(4,27,69,.07);
+}
+.card{
+  animation:cardIn .5s ease both;
+}
+@keyframes cardIn{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:none}
+}
+.card:hover{transform:translateY(-6px)!important}
+.card>div:first-child{position:relative}
+.card>div:first-child img{transition:transform .6s ease}
+.card:hover>div:first-child img{transform:scale(1.045)}
+.card .add-btn{box-shadow:0 7px 16px rgba(6,29,73,.18)}
+.card .add-btn:active{transform:scale(.98)}
+.stock-badge-pro{
+  position:absolute;top:12px;right:12px;z-index:5;
+  padding:7px 11px;border-radius:999px;font-size:12px;font-weight:900;
+  backdrop-filter:blur(8px);box-shadow:0 5px 14px #0003;
+}
+.stock-available{background:#168c55;color:#fff}
+.stock-soldout{background:#b92c35;color:#fff}
+.soldout-card{filter:saturate(.82)}
+.info-card,.reviews,.map-box{
+  box-shadow:0 10px 28px rgba(4,27,69,.07)!important;
+}
+.cart,.waiter{
+  box-shadow:0 10px 26px rgba(4,27,69,.22)!important;
+  transition:.25s!important;
+}
+.cart:hover,.waiter:hover{transform:translateY(-3px)}
+#proMediaPreview{
+  margin-top:10px;border-radius:14px;overflow:hidden;
+  min-height:90px;background:#071d46;display:none;
+}
+#proMediaPreview video{width:100%;max-height:220px;object-fit:cover}
+.pro-settings{
+  background:linear-gradient(135deg,#061d49,#0a3977);
+  color:#fff;border-radius:18px;padding:18px;margin:15px 0;
+  box-shadow:0 12px 30px rgba(4,27,69,.18);
+}
+.pro-settings h3{margin:0 0 12px;color:var(--pro-gold2)}
+.pro-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.pro-grid label{display:block;font-size:12px;color:#dce7f7}
+.pro-grid input,.pro-grid select{
+  width:100%;margin-top:5px;padding:10px;border:1px solid #496b9d;
+  border-radius:10px;background:#fff;color:#102443;
+}
+.pro-settings .pro-save{
+  width:100%;margin-top:12px;border:0;border-radius:11px;padding:12px;
+  background:var(--pro-gold);color:#081c3f;font-weight:900;
+}
+.category-admin-img{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid var(--pro-gold)}
+@media(max-width:900px){
+  .hero{min-height:320px!important}
+  .hero-content h2{font-size:30px!important}
+  .categories{justify-content:flex-start!important}
+}
+@media(max-width:600px){
+  header{min-height:64px!important}
+  .brand img{width:34px!important;height:34px!important}
+  .brand h1{font-size:13px!important}
+  .header-actions{right:0}
+  .admin-btn{padding:7px 9px!important;font-size:11px!important}
+  .hero{min-height:270px!important;border-radius:0 0 35% 35% / 0 0 8% 8%!important}
+  .hero-content h2{font-size:25px!important}
+  .hero-slide-dots{bottom:27px}
+  .category{min-width:78px!important;height:78px!important}
+  .category span{font-size:11px;padding-bottom:10px}
+  .pro-grid{grid-template-columns:1fr}
+}
+</style>
+<script id="pro-final-script">
+(function(){
+  const PRO_KEY="hajihaidari_pro_final_v1";
+  const catImages={
+    "کباب":"https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=300&q=80",
+    "پیتزا":"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=300&q=80",
+    "غذا":"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=300&q=80",
+    "غذاهای ایرانی":"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=300&q=80",
+    "فست فود":"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=300&q=80",
+    "آبمیوه":"https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=300&q=80",
+    "نوشیدنی":"https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=300&q=80",
+    "دسر":"https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=300&q=80"
+  };
+  const saved=JSON.parse(localStorage.getItem(PRO_KEY)||"null")||{};
+  const pro={
+    backgrounds:saved.backgrounds||[],
+    interval:Number(saved.interval)||6000,
+    video:saved.video||"",
+    videoEnabled:!!saved.videoEnabled
+  };
+
+  function normalize(){
+    data.settings=data.settings||{};
+    if(!Array.isArray(data.settings.backgrounds)) data.settings.backgrounds=[];
+    if(!Array.isArray(pro.backgrounds)) pro.backgrounds=[];
+    data.categories.forEach(c=>{
+      if(!c.image) c.image=catImages[c.name]||"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=300&q=80";
+    });
+    data.items.forEach(i=>{
+      if(i.stockStatus!=="soldout") i.stockStatus="available";
+    });
+  }
+  normalize();
+
+  function savePro(){
+    localStorage.setItem(PRO_KEY,JSON.stringify(pro));
+  }
+
+  let slideIndex=0, slideTimer=null;
+  function setupHero(){
+    const hero=document.getElementById("hero");
+    if(!hero)return;
+    let imgs=pro.backgrounds.filter(Boolean);
+    if(!imgs.length && data.settings.background) imgs=[data.settings.background];
+    if(!imgs.length) imgs=["https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1600&q=85"];
+    let dots=hero.querySelector(".hero-slide-dots");
+    if(!dots){
+      dots=document.createElement("div");
+      dots.className="hero-slide-dots";
+      hero.appendChild(dots);
+    }
+    dots.innerHTML=imgs.map((_,i)=>`<span class="${i===slideIndex%imgs.length?"active":""}"></span>`).join("");
+    const show=()=>{
+      slideIndex=(slideIndex+imgs.length)%imgs.length;
+      hero.style.backgroundImage=`url("${imgs[slideIndex]}")`;
+      dots.querySelectorAll("span").forEach((x,i)=>x.classList.toggle("active",i===slideIndex));
+    };
+    hero.style.backgroundImage=`url("${imgs[slideIndex%imgs.length]}")`;
+    clearInterval(slideTimer);
+    if(imgs.length>1) slideTimer=setInterval(show,Math.max(3000,pro.interval));
+  }
+
+  const oldRenderHeader=renderHeader;
+  renderHeader=function(){
+    oldRenderHeader();
+    setupHero();
+  };
+
+  const oldRenderCategories=renderCategories;
+  renderCategories=function(){
+    const box=document.getElementById("categories");
+    const side=document.getElementById("categorySidebar");
+    const cats=[{id:"all",name:"همه",image:"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=300&q=80"},...data.categories];
+    box.innerHTML=cats.map(cat=>`
+      <button class="category ${activeCategory==cat.id?"active":""}" onclick="selectCategory(${cat.id==="all"?"'all'":cat.id})">
+        <img src="${cat.image||catImages[cat.name]||catImages["غذا"]}" alt="">
+        <span>${escapeHTML(cat.name)}</span>
+      </button>`).join("");
+    if(side){
+      side.innerHTML=cats.map(cat=>`
+        <button class="${activeCategory==cat.id?"active":""}" onclick="selectCategory(${cat.id==="all"?"'all'":cat.id})">${escapeHTML(cat.name)}</button>
+      `).join("");
+    }
+  };
+
+  const oldAddItem=addItem;
+  addItem=function(){
+    const statusEl=document.getElementById("itemStockStatus");
+    if(statusEl){
+      const status=statusEl.value==="soldout"?"soldout":"available";
+      const name=document.getElementById("itemName").value.trim();
+      const price=Number(document.getElementById("itemPrice").value);
+      const category=Number(document.getElementById("itemCategory").value);
+      if(!name||!price||!category){alert("نام، قیمت و دسته‌بندی را وارد کنید.");return;}
+      data.items.push({
+        id:Date.now(),name,price,
+        oldPrice:Number(document.getElementById("itemOldPrice").value)||0,
+        image:document.getElementById("itemImage").value||catImages["غذا"],
+        description:document.getElementById("itemDescription").value,
+        category,daily:document.getElementById("itemDaily").checked,
+        stockStatus:status,rating:0
+      });
+      ["itemName","itemPrice","itemOldPrice","itemImage","itemDescription"].forEach(id=>{const e=document.getElementById(id);if(e)e.value=""});
+      document.getElementById("itemDaily").checked=false;
+      saveData();renderAll();loadAdmin();alert("غذا با موفقیت اضافه شد.");
+    }else oldAddItem();
+  };
+
+  function buildProSettings(){
+    if(document.getElementById("proSettingsPanel")) return;
+    const box=document.querySelector("#adminModal .modal-box");
+    if(!box)return;
+    const panel=document.createElement("div");
+    panel.id="proSettingsPanel";
+    panel.className="pro-settings";
+    panel.innerHTML=`
+      <h3>✨ استودیو ظاهر حرفه‌ای</h3>
+      <p style="margin:0 0 12px;color:#dce7f7;font-size:13px">پس‌زمینه هدر، ویدیو و زمان تعویض را خودت هر وقت خواستی تغییر بده.</p>
+      <div class="pro-grid">
+        ${[0,1,2,3].map(i=>`<label>عکس پس‌زمینه ${i+1}<input id="pro_bg_${i}" placeholder="لینک عکس"></label>`).join("")}
+        <label>زمان تغییر
+          <select id="pro_interval">
+            <option value="4000">۴ ثانیه</option>
+            <option value="5000">۵ ثانیه</option>
+            <option value="6000">۶ ثانیه</option>
+            <option value="7000">۷ ثانیه</option>
+            <option value="10000">۱۰ ثانیه</option>
+          </select>
+        </label>
+        <label>ویدیوی پس‌زمینه
+          <input id="pro_video" placeholder="لینک فایل ویدیو">
+        </label>
+      </div>
+      <label style="display:flex;gap:8px;align-items:center;margin-top:12px">
+        <input type="checkbox" id="pro_video_enabled"> استفاده از ویدیو در هدر
+      </label>
+      <button class="pro-save" id="pro_save">💾 ذخیره ظاهر</button>
+      <div id="proMediaPreview"></div>
+    `;
+    box.appendChild(panel);
+    for(let i=0;i<4;i++) document.getElementById("pro_bg_"+i).value=pro.backgrounds[i]||"";
+    document.getElementById("pro_interval").value=String(pro.interval);
+    document.getElementById("pro_video").value=pro.video;
+    document.getElementById("pro_video_enabled").checked=pro.videoEnabled;
+    document.getElementById("pro_save").onclick=function(){
+      pro.backgrounds=[0,1,2,3].map(i=>document.getElementById("pro_bg_"+i).value.trim()).filter(Boolean);
+      pro.interval=Number(document.getElementById("pro_interval").value)||6000;
+      pro.video=document.getElementById("pro_video").value.trim();
+      pro.videoEnabled=document.getElementById("pro_video_enabled").checked;
+      savePro();slideIndex=0;setupHero();
+      alert("ظاهر حرفه‌ای با موفقیت ذخیره شد.");
+    };
+  }
+
+  const prevOpenAdmin=openAdmin;
+  openAdmin=function(){
+    prevOpenAdmin();
+    setTimeout(buildProSettings,80);
+  };
+
+  function refreshStockSelect(){
+    const s=document.getElementById("itemStockStatus");
+    if(!s)return;
+    s.innerHTML=`<option value="available">🟢 موجود</option><option value="soldout">🔴 فعلاً موجود نیست</option>`;
+  }
+
+  const prevRenderItemAdmin=renderItemAdmin;
+  renderItemAdmin=function(){
+    prevRenderItemAdmin();
+    refreshStockSelect();
+    data.items.forEach(item=>{
+      const status=item.stockStatus||"available";
+      item.stockStatus=status==="soldout"?"soldout":"available";
+    });
+  };
+
+  const oldRenderMenu=renderMenu;
+  renderMenu=function(){
+    oldRenderMenu();
+    document.querySelectorAll(".card").forEach(card=>{
+      const buttons=card.querySelectorAll("button");
+      const sold=Array.from(buttons).some(b=>b.disabled&&/موجود نیست/.test(b.textContent||""));
+      const image=card.querySelector("img");
+      const wrap=image?.parentElement;
+      if(!wrap||!image)return;
+      let badge=wrap.querySelector(".stock-badge-pro");
+      if(!badge){
+        badge=document.createElement("span");badge.className="stock-badge-pro";
+        wrap.appendChild(badge);
+      }
+      badge.textContent=sold?"🔴 فعلاً موجود نیست":"🟢 موجود";
+      badge.classList.toggle("stock-soldout",sold);
+      badge.classList.toggle("stock-available",!sold);
+      if(sold)card.classList.add("soldout-card");
+    });
+  };
+
+  // اجازه نمی‌دهد غذای تمام‌شده وارد سبد شود.
+  const oldAddToCart=addToCart;
+  addToCart=function(id){
+    const item=data.items.find(x=>x.id===id);
+    if(item?.stockStatus==="soldout"){
+      alert("این غذا فعلاً موجود نیست و به سبد خرید اضافه نمی‌شود.");
+      return;
+    }
+    oldAddToCart(id);
+  };
+
+  // ذخیره تصویر دسته جدید با یک تصویر پیش‌فرض زیبا.
+  const oldAddCategory=addCategory;
+  addCategory=function(){
+    const input=document.getElementById("newCategory");
+    if(!input?.value.trim()) return oldAddCategory();
+    const name=input.value.trim();
+    data.categories.push({id:Date.now(),name,image:catImages[name]||catImages["غذا"]});
+    input.value="";saveData();renderAll();loadAdmin();
+  };
+
+  // تبدیل وضعیت‌های قدیمی چهارحالته به دو حالت نهایی.
+  data.items.forEach(i=>{if(i.stockStatus!=="soldout")i.stockStatus="available"});
+  saveData();
+  savePro();
+  setTimeout(()=>{refreshStockSelect();renderAll();},60);
+})();
 </script>
 
 </body>
