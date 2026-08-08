@@ -1807,8 +1807,678 @@ renderAll = function(){
 renderAll();
 
 setRating(5);
+    /* =========================================================
+   تنظیمات کامل سایت - نسخه مدیریت
+   ========================================================= */
+
+const MASTER_SETTINGS_KEY = "hajihai_dari_master_settings";
+
+let masterSettings = {
+    waiterEnabled: true,
+    cartEnabled: true,
+    quickContactEnabled: true,
+    ratingEnabled: true,
+    reviewEnabled: true,
+    dailyFoodEnabled: true,
+    birthdayDiscountEnabled: true,
+    videoEnabled: true,
+
+    cartName: "سبد خرید",
+    waiterName: "فراخوان گارسون"
+};
+
+function loadMasterSettings(){
+
+    try{
+
+        const saved =
+            localStorage.getItem(MASTER_SETTINGS_KEY);
+
+        if(saved){
+
+            masterSettings = {
+                ...masterSettings,
+                ...JSON.parse(saved)
+            };
+
+        }
+
+    }catch(error){
+
+        console.log("خطا در خواندن تنظیمات",error);
+
+    }
+
+}
+
+function saveMasterSettings(){
+
+    localStorage.setItem(
+        MASTER_SETTINGS_KEY,
+        JSON.stringify(masterSettings)
+    );
+
+    applyMasterSettings();
+
+}
+
+
+/* =========================================================
+   پیدا کردن عناصر بر اساس متن
+   ========================================================= */
+
+function findElementsByText(words){
+
+    const elements = document.querySelectorAll(
+        "button,a,span,div"
+    );
+
+    return Array.from(elements).filter(el => {
+
+        const text =
+            (el.innerText || el.textContent || "")
+            .trim();
+
+        return words.some(word =>
+            text.includes(word)
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   تغییر نام دکمه‌ها
+   ========================================================= */
+
+function renameElements(words,newName){
+
+    const elements =
+        findElementsByText(words);
+
+    elements.forEach(el => {
+
+        if(!el.dataset.originalText){
+
+            el.dataset.originalText =
+                el.innerText;
+
+        }
+
+        el.innerText = newName;
+
+    });
+
+}
+
+
+/* =========================================================
+   نمایش / مخفی کردن قابلیت
+   ========================================================= */
+
+function setFeatureVisibility(words,enabled){
+
+    const elements =
+        findElementsByText(words);
+
+    elements.forEach(el => {
+
+        if(
+            el.closest("button") ||
+            el.tagName.toLowerCase() === "button" ||
+            el.tagName.toLowerCase() === "a"
+        ){
+
+            el.style.display =
+                enabled ? "" : "none";
+
+        }
+
+    });
+
+}
+
+
+/* =========================================================
+   اعمال تمام تنظیمات
+   ========================================================= */
+
+function applyMasterSettings(){
+
+    /* فراخوان گارسون */
+    setFeatureVisibility(
+        [
+            "فراخوان گارسون",
+            "گارسون"
+        ],
+        masterSettings.waiterEnabled
+    );
+
+    /* سبد خرید */
+    setFeatureVisibility(
+        [
+            "سبد خرید",
+            "بکس خرید"
+        ],
+        masterSettings.cartEnabled
+    );
+
+    /* تماس فوری */
+    setFeatureVisibility(
+        [
+            "تماس فوری",
+            "تماس"
+        ],
+        masterSettings.quickContactEnabled
+    );
+
+    /* امتیاز */
+    setFeatureVisibility(
+        [
+            "امتیاز",
+            "امتیازدهی",
+            "ستاره"
+        ],
+        masterSettings.ratingEnabled
+    );
+
+    /* نظر و انتقاد */
+    setFeatureVisibility(
+        [
+            "نظر",
+            "انتقاد",
+            "نظرات"
+        ],
+        masterSettings.reviewEnabled
+    );
+
+    /* غذای روز */
+    setFeatureVisibility(
+        [
+            "غذای روز",
+            "غذا روز",
+            "پیشنهاد امروز"
+        ],
+        masterSettings.dailyFoodEnabled
+    );
+
+    /* تخفیف تولد */
+    setFeatureVisibility(
+        [
+            "تخفیف تولد",
+            "تولد"
+        ],
+        masterSettings.birthdayDiscountEnabled
+    );
+
+    /* ویدیو */
+    setFeatureVisibility(
+        [
+            "ویدیو",
+            "ویدئو"
+        ],
+        masterSettings.videoEnabled
+    );
+
+    /* تغییر نام */
+    renameElements(
+        [
+            "سبد خرید",
+            "بکس خرید"
+        ],
+        masterSettings.cartName
+    );
+
+    renameElements(
+        [
+            "فراخوان گارسون",
+            "گارسون"
+        ],
+        masterSettings.waiterName
+    );
+
+}
+
+
+/* =========================================================
+   ساخت پنل تنظیمات
+   ========================================================= */
+
+function createMasterSettings(){
+
+    if(document.getElementById("masterSettingsPanel")){
+
+        document.getElementById(
+            "masterSettingsPanel"
+        ).remove();
+
+    }
+
+    const panel =
+        document.createElement("div");
+
+    panel.id =
+        "masterSettingsPanel";
+
+    panel.innerHTML = `
+
+        <div class="master-settings-box">
+
+            <div class="master-settings-header">
+
+                <strong>
+                    ⚙️ تنظیمات کامل سایت
+                </strong>
+
+                <button
+                    onclick="
+                    document
+                    .getElementById('masterSettingsPanel')
+                    .remove()
+                    "
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="master-settings-content">
+
+                <h3>
+                    کنترل قابلیت‌ها
+                </h3>
+
+
+                <label>
+                    <input
+                        type="checkbox"
+                        id="ms_waiter"
+                    >
+                    فراخوان گارسون
+                </label>
+
+
+                <label>
+                    <input
+                        type="checkbox"
+                        id="ms_cart"
+                    >
+                    سبد خرید
+                </label>
+
+
+                <label>
+                    <input
+                        type="checkbox"
+                        id="ms_contact"
+                    >
+                    تماس فوری
+                </label>
+
+
+                <label>
+                    <input
+                        type="checkbox"
+                        id="ms_rating"
+                    >
+                    امتیازدهی غذا
+                </label>
+
+
+                <label>
+                    <input
+                        type="checkbox"
+                        id="ms_review"
+                    >
+                    نظر و انتقاد مشتری
+                </label>
+
+
+                <label>
+                    <input
+                        type="checkbox"
+                        id="ms_daily"
+                    >
+                    غذای روز
+                </label>
+
+
+                <label>
+                    <input
+                        type="checkbox"
+                        id="ms_birthday"
+                    >
+                    تخفیف تولد
+                </label>
+
+
+                <label>
+                    <input
+                        type="checkbox"
+                        id="ms_video"
+                    >
+                    ویدیوی کوچک
+                </label>
+
+
+                <hr>
+
+
+                <h3>
+                    تغییر نام دکمه‌ها
+                </h3>
+
+
+                <label>
+                    نام سبد خرید
+                    <input
+                        type="text"
+                        id="ms_cart_name"
+                    >
+                </label>
+
+
+                <label>
+                    نام فراخوان گارسون
+                    <input
+                        type="text"
+                        id="ms_waiter_name"
+                    >
+                </label>
+
+
+                <button
+                    class="master-save-btn"
+                    id="ms_save"
+                >
+                    💾 ذخیره تنظیمات
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(panel);
+
+
+    document.getElementById("ms_waiter").checked =
+        masterSettings.waiterEnabled;
+
+    document.getElementById("ms_cart").checked =
+        masterSettings.cartEnabled;
+
+    document.getElementById("ms_contact").checked =
+        masterSettings.quickContactEnabled;
+
+    document.getElementById("ms_rating").checked =
+        masterSettings.ratingEnabled;
+
+    document.getElementById("ms_review").checked =
+        masterSettings.reviewEnabled;
+
+    document.getElementById("ms_daily").checked =
+        masterSettings.dailyFoodEnabled;
+
+    document.getElementById("ms_birthday").checked =
+        masterSettings.birthdayDiscountEnabled;
+
+    document.getElementById("ms_video").checked =
+        masterSettings.videoEnabled;
+
+    document.getElementById("ms_cart_name").value =
+        masterSettings.cartName;
+
+    document.getElementById("ms_waiter_name").value =
+        masterSettings.waiterName;
+
+
+    document.getElementById("ms_save")
+    .onclick = function(){
+
+        masterSettings.waiterEnabled =
+            document.getElementById("ms_waiter").checked;
+
+        masterSettings.cartEnabled =
+            document.getElementById("ms_cart").checked;
+
+        masterSettings.quickContactEnabled =
+            document.getElementById("ms_contact").checked;
+
+        masterSettings.ratingEnabled =
+            document.getElementById("ms_rating").checked;
+
+        masterSettings.reviewEnabled =
+            document.getElementById("ms_review").checked;
+
+        masterSettings.dailyFoodEnabled =
+            document.getElementById("ms_daily").checked;
+
+        masterSettings.birthdayDiscountEnabled =
+            document.getElementById("ms_birthday").checked;
+
+        masterSettings.videoEnabled =
+            document.getElementById("ms_video").checked;
+
+        masterSettings.cartName =
+            document.getElementById("ms_cart_name").value
+            .trim() || "سبد خرید";
+
+        masterSettings.waiterName =
+            document.getElementById("ms_waiter_name").value
+            .trim() || "فراخوان گارسون";
+
+
+        saveMasterSettings();
+
+
+        alert(
+            "تنظیمات با موفقیت ذخیره شد."
+        );
+
+    };
+
+}
+
+
+/* =========================================================
+   استایل پنل
+   ========================================================= */
+
+const masterSettingsStyle =
+document.createElement("style");
+
+masterSettingsStyle.innerHTML = `
+
+#masterSettingsPanel{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.55);
+
+    z-index:999999;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+
+    direction:rtl;
+
+}
+
+
+.master-settings-box{
+
+    width:min(520px,100%);
+
+    max-height:90vh;
+
+    overflow:auto;
+
+    background:#fff;
+
+    border-radius:18px;
+
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+
+}
+
+
+.master-settings-header{
+
+    background:#0879d1;
+
+    color:#fff;
+
+    padding:16px 20px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    font-size:18px;
+
+}
+
+
+.master-settings-header button{
+
+    background:transparent;
+
+    border:0;
+
+    color:#fff;
+
+    font-size:28px;
+
+}
+
+
+.master-settings-content{
+
+    padding:20px;
+
+}
+
+
+.master-settings-content label{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:10px 0;
+
+    font-size:16px;
+
+}
+
+
+.master-settings-content input[type="text"]{
+
+    width:100%;
+
+    padding:10px;
+
+    border:1px solid #ddd;
+
+    border-radius:8px;
+
+    margin-top:5px;
+
+}
+
+
+.master-settings-content label:has(input[type="text"]){
+
+    display:block;
+
+}
+
+
+.master-save-btn{
+
+    width:100%;
+
+    margin-top:18px;
+
+    padding:13px;
+
+    border:0;
+
+    border-radius:10px;
+
+    background:#0879d1;
+
+    color:white;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+}
+
+`;
+
+
+document.head.appendChild(
+    masterSettingsStyle
+);
+
+
+/* =========================================================
+   شروع تنظیمات
+   ========================================================= */
+
+loadMasterSettings();
+
+
+/* بعد از بارگذاری صفحه اعمال شود */
+
+setTimeout(
+    applyMasterSettings,
+    500
+);
+
+
+/* =========================================================
+   اضافه کردن تنظیمات به مدیریت منو
+   ========================================================= */
+
+if(typeof openAdmin === "function"){
+
+    const previousOpenAdmin =
+        openAdmin;
+
+    openAdmin = function(){
+
+        previousOpenAdmin();
+
+        setTimeout(
+            createMasterSettings,
+            300
+        );
+
+    };
+
+}
 
 </script>
 
 </body>
 </html>
+
