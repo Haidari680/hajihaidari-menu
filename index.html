@@ -468,6 +468,65 @@ footer{
     display:none!important;
 }
 
+
+
+/* =========================
+   ENHANCED CATEGORY DESIGN
+========================= */
+.category{
+    min-width:92px;
+    padding:8px 12px 10px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    border-radius:18px;
+    transition:.2s ease;
+}
+.category img{
+    width:54px;
+    height:54px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid #f0bd22;
+    box-shadow:0 3px 10px #0002;
+}
+.category.active{
+    transform:translateY(-2px);
+    box-shadow:0 5px 14px #0879d133;
+}
+.category.active img{
+    border-color:#fff;
+}
+.stock-badge{
+    position:absolute;
+    top:10px;
+    right:10px;
+    z-index:2;
+    padding:7px 11px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+    box-shadow:0 3px 10px #0003;
+    backdrop-filter:blur(5px);
+}
+.food-image-wrap{position:relative;overflow:hidden}
+.food-image-wrap img{display:block}
+.card.soldout{opacity:.86}
+.birthday-box{
+    max-width:1200px;
+    margin:12px auto;
+    padding:14px 18px;
+    border-radius:18px;
+    background:linear-gradient(135deg,#fff0f5,#fff8e8);
+    border:1px solid #f2c5d5;
+    display:none;
+    text-align:center;
+}
+.status-select{min-width:145px;padding:8px;border:1px solid #ccd7e2;border-radius:9px}
+.category-admin-image{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid #f0bd22}
+
 @media(max-width:600px){
     .brand h1{font-size:17px}
     .brand p{font-size:10px}
@@ -506,6 +565,7 @@ footer{
 </div>
 
 <div class="daily" id="dailyBox"></div>
+<div class="birthday-box" id="birthdayBox"></div>
 
 <div class="categories" id="categories"></div>
 
@@ -592,6 +652,7 @@ footer{
 <input id="setSideImage" placeholder="آدرس عکس کوچک کنار منو">
 
 <input id="setVideo" placeholder="آدرس ویدئوی کوچک">
+<input id="setBirthdayText" placeholder="متن تخفیف تولد">
 
 </div>
 
@@ -624,6 +685,12 @@ footer{
 </label>
 
 <br><br>
+<label>
+<input type="checkbox" id="setBirthdayEnabled">
+ نمایش پیشنهاد تولد
+</label>
+
+<br><br>
 
 <button class="save" onclick="saveSettings()">💾 ذخیره تنظیمات</button>
 </div>
@@ -634,6 +701,7 @@ footer{
 
 <div class="form-grid">
 <input id="newCategory" placeholder="نام دسته جدید">
+<input id="newCategoryImage" placeholder="آدرس عکس دسته (اختیاری)">
 <button class="save" onclick="addCategory()">+ افزودن دسته</button>
 </div>
 
@@ -660,6 +728,13 @@ footer{
 
 <select id="itemCategory"></select>
 
+<select id="itemStockStatus">
+<option value="available">🟢 موجود</option>
+<option value="low">🟠 موجودی کم</option>
+<option value="soldout">🔴 فعلاً موجود نیست</option>
+<option value="soon">🔵 به‌زودی</option>
+</select>
+
 </div>
 
 <br>
@@ -670,17 +745,6 @@ footer{
 </label>
 
 <br><br>
-    <br><br>
-
-<label>
-وضعیت غذا:
-<select id="itemStockStatus">
-    <option value="available">🟢 موجود</option>
-    <option value="low">🟠 موجودی کم</option>
-    <option value="soldout">🔴 فعلاً موجود نیست</option>
-    <option value="soon">🔵 به‌زودی</option>
-</select>
-</label>
 
 <button class="save" onclick="addItem()">+ افزودن غذا</button>
 </div>
@@ -723,14 +787,16 @@ const defaultData = {
         waiter:true,
         contact:true,
         daily:true,
-        videoEnabled:false
+        videoEnabled:false,
+        birthdayEnabled:false,
+        birthdayText:"🎂 تولدت مبارک! برای مهمانان تولدی پیشنهاد ویژه داریم."
     },
 
     categories:[
-        {id:1,name:"کباب"},
-        {id:2,name:"پیتزا"},
-        {id:3,name:"غذا"},
-        {id:4,name:"آبمیوه"}
+        {id:1,name:"کباب",image:"https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=200&q=80"},
+        {id:2,name:"پیتزا",image:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=200&q=80"},
+        {id:3,name:"غذا",image:"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=200&q=80"},
+        {id:4,name:"آبمیوه",image:"https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=200&q=80"}
     ],
 
     items:[
@@ -743,6 +809,7 @@ const defaultData = {
             image:"https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80",
             description:"کباب تازه و خوش‌طعم با مخلفات",
             daily:true,
+            stockStatus:"available",
             rating:4.8
         },
         {
@@ -754,6 +821,7 @@ const defaultData = {
             image:"https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=900&q=80",
             description:"کباب با کیفیت و تازه",
             daily:false,
+            stockStatus:"available",
             rating:4.7
         },
         {
@@ -765,6 +833,7 @@ const defaultData = {
             image:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=900&q=80",
             description:"پیتزای تازه با مواد باکیفیت",
             daily:false,
+            stockStatus:"available",
             rating:4.6
         },
         {
@@ -776,6 +845,7 @@ const defaultData = {
             image:"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
             description:"غذای تازه و خوشمزه",
             daily:false,
+            stockStatus:"available",
             rating:4.5
         },
         {
@@ -787,6 +857,7 @@ const defaultData = {
             image:"https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=900&q=80",
             description:"آبمیوه تازه و طبیعی",
             daily:false,
+            stockStatus:"available",
             rating:4.9
         }
     ],
@@ -795,6 +866,19 @@ const defaultData = {
 };
 
 let data = JSON.parse(localStorage.getItem("hajihaidariMenu")) || defaultData;
+
+/* مهاجرت خودکار نسخه‌های قبلی */
+data.settings = {...defaultData.settings, ...(data.settings || {})};
+data.categories = (data.categories || []).map((cat,index)=>({
+    ...cat,
+    image:cat.image || defaultData.categories[index % defaultData.categories.length].image
+}));
+data.items = (data.items || []).map(item=>({
+    ...item,
+    stockStatus:item.stockStatus || "available"
+}));
+data.reviews = data.reviews || [];
+saveData();
 
 let activeCategory = "all";
 let cart = [];
@@ -855,6 +939,12 @@ function renderHeader(){
     document.getElementById("videoBox").style.display=
         data.settings.videoEnabled && data.settings.video ? "block" : "none";
 
+    const birthdayBox=document.getElementById("birthdayBox");
+    if(birthdayBox){
+        birthdayBox.style.display=data.settings.birthdayEnabled ? "block" : "none";
+        birthdayBox.innerHTML=`<strong>🎂 پیشنهاد تولد</strong><br>${escapeHTML(data.settings.birthdayText || "تخفیف ویژه تولد")}`;
+    }
+
     document.getElementById("smallVideo").src=
         data.settings.video || "";
 }
@@ -868,25 +958,36 @@ function renderCategories(){
 
     const box=document.getElementById("categories");
 
-    box.innerHTML=
-        `<button class="category ${activeCategory==="all"?"active":""}"
-        onclick="selectCategory('all')">همه</button>`;
+    box.innerHTML=`<button class="category ${activeCategory==="all"?"active":""}" onclick="selectCategory('all')">
+        <img src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=200&q=80" alt="همه">
+        <span>همه</span>
+    </button>`;
 
     data.categories.forEach(cat=>{
-
         box.innerHTML+=`
         <button class="category ${activeCategory==cat.id?"active":""}"
         onclick="selectCategory(${cat.id})">
-        ${escapeHTML(cat.name)}
+            <img src="${escapeHTML(cat.image || "")}" alt="${escapeHTML(cat.name)}">
+            <span>${escapeHTML(cat.name)}</span>
         </button>`;
-
     });
 }
+function selectCategory(id){
+
+    activeCategory=id;
+
+    renderCategories();
+    renderMenu();
+}
+
+
+/* =========================
+   MENU
+========================= */
 
 function renderMenu(){
 
     const box=document.getElementById("menu");
-
     let items=data.items;
 
     if(activeCategory!=="all"){
@@ -898,202 +999,45 @@ function renderMenu(){
     items.forEach(item=>{
 
         let stars="";
-
         const rating=Math.round(item.rating || 0);
-
-        for(let i=1;i<=5;i++){
-            stars+=i<=rating?"★":"☆";
-        }
+        for(let i=1;i<=5;i++) stars+=i<=rating?"★":"☆";
 
         let price=`${item.price} افغانی`;
-
         if(item.oldPrice){
-            price=
-            `<span class="old-price">${item.oldPrice} افغانی</span>
-             ${item.price} افغانی`;
+            price=`<span class="old-price">${item.oldPrice} افغانی</span> ${item.price} افغانی`;
         }
-
-        /* وضعیت غذا */
 
         const status=item.stockStatus || "available";
-
-        let statusBadge="";
-        let orderButton="";
-
-        if(status==="available"){
-
-            statusBadge=`
-                <span style="
-                    position:absolute;
-                    top:10px;
-                    right:10px;
-                    background:#16a34a;
-                    color:white;
-                    padding:6px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:bold;
-                    box-shadow:0 3px 10px rgba(0,0,0,.2);
-                ">
-                🟢 موجود
-                </span>
-            `;
-
-            orderButton=`
-                <button class="add-btn"
-                onclick="addToCart(${item.id})">
-                افزودن به ${escapeHTML(data.settings.cartName)}
-                </button>
-            `;
-
-        }else if(status==="low"){
-
-            statusBadge=`
-                <span style="
-                    position:absolute;
-                    top:10px;
-                    right:10px;
-                    background:#f59e0b;
-                    color:white;
-                    padding:6px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:bold;
-                    box-shadow:0 3px 10px rgba(0,0,0,.2);
-                ">
-                🟠 موجودی کم
-                </span>
-            `;
-
-            orderButton=`
-                <button class="add-btn"
-                onclick="addToCart(${item.id})">
-                سفارش
-                </button>
-            `;
-
-        }else if(status==="soldout"){
-
-            statusBadge=`
-                <span style="
-                    position:absolute;
-                    top:10px;
-                    right:10px;
-                    background:#dc2626;
-                    color:white;
-                    padding:6px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:bold;
-                    box-shadow:0 3px 10px rgba(0,0,0,.2);
-                ">
-                🔴 فعلاً موجود نیست
-                </span>
-            `;
-
-            orderButton=`
-                <button class="add-btn"
-                disabled
-                style="
-                    opacity:.55;
-                    cursor:not-allowed;
-                    background:#777;
-                ">
-                فعلاً موجود نیست
-                </button>
-            `;
-
-        }else if(status==="soon"){
-
-            statusBadge=`
-                <span style="
-                    position:absolute;
-                    top:10px;
-                    right:10px;
-                    background:#2563eb;
-                    color:white;
-                    padding:6px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:bold;
-                    box-shadow:0 3px 10px rgba(0,0,0,.2);
-                ">
-                🔵 به‌زودی
-                </span>
-            `;
-
-            orderButton=`
-                <button class="add-btn"
-                disabled
-                style="
-                    opacity:.55;
-                    cursor:not-allowed;
-                    background:#777;
-                ">
-                به‌زودی
-                </button>
-            `;
-        }
+        const statusMap={
+            available:{text:"🟢 موجود",color:"#137333",bg:"#e9f7ee",order:true},
+            low:{text:"🟠 موجودی کم",color:"#a15c00",bg:"#fff3df",order:true},
+            soldout:{text:"🔴 فعلاً موجود نیست",color:"#b42318",bg:"#feeceb",order:false},
+            soon:{text:"🔵 به‌زودی",color:"#175cd3",bg:"#eaf2ff",order:false}
+        };
+        const st=statusMap[status] || statusMap.available;
 
         box.innerHTML+=`
-
-        <div class="card">
-
-            <div style="
-                position:relative;
-                overflow:hidden;
-                border-radius:16px;
-            ">
-
-                <img
-                    src="${item.image}"
-                    alt="${escapeHTML(item.name)}"
-                    style="
-                        width:100%;
-                        display:block;
-                        ${status==="soldout" ? "filter:grayscale(60%);opacity:.65;" : ""}
-                    "
-                >
-
-                ${statusBadge}
-
+        <div class="card ${status==='soldout'?'soldout':''}">
+            <div class="food-image-wrap">
+                <img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.name)}">
+                <div class="stock-badge" style="background:${st.bg};color:${st.color}">${st.text}</div>
             </div>
-
             <div class="card-body">
-
                 <h3>${escapeHTML(item.name)}</h3>
-
-                <div class="description">
-                    ${escapeHTML(item.description || "")}
-                </div>
-
-                <div class="rating">
-                    ${stars}
-                    <small>${item.rating || 0}</small>
-                </div>
-
-                <div class="price">
-                    ${price}
-                </div>
-
+                <div class="description">${escapeHTML(item.description || "")}</div>
+                <div class="rating">${stars} <small>${item.rating || 0}</small></div>
+                <div class="price">${price}</div>
                 <div class="card-actions">
-
-                    ${orderButton}
-
-                    ${
-                        data.settings.contact
-                        ?
-                        `<button class="contact-btn"
-                        onclick="quickContact('${escapeHTML(item.name)}')">
-                        تماس
-                        </button>`
-                        :""
+                    ${st.order
+                        ? `<button class="add-btn" onclick="addToCart(${item.id})">افزودن به ${escapeHTML(data.settings.cartName)}</button>`
+                        : `<button class="add-btn" disabled style="opacity:.55;cursor:not-allowed;background:#8a8f98">${status==='soon'?'به‌زودی قابل سفارش':'فعلاً قابل سفارش نیست'}</button>`
                     }
-
+                    ${data.settings.contact && status!=='soon'
+                        ? `<button class="contact-btn" onclick="quickContact('${escapeHTML(item.name)}')">تماس</button>`
+                        : ""
+                    }
                 </div>
-
             </div>
-
         </div>`;
     });
 
@@ -1134,6 +1078,10 @@ function addToCart(id){
     const item=data.items.find(x=>x.id===id);
 
     if(!item)return;
+    if(["soldout","soon"].includes(item.stockStatus)){
+        alert(item.stockStatus==="soon" ? "این غذا به‌زودی قابل سفارش خواهد بود." : "این غذا فعلاً موجود نیست.");
+        return;
+    }
 
     cart.push(item);
 
@@ -1312,6 +1260,8 @@ function loadAdmin(){
     document.getElementById("setSideImage").value=s.sideImage;
 
     document.getElementById("setVideo").value=s.video;
+    document.getElementById("setBirthdayText").value=s.birthdayText || "";
+    document.getElementById("setBirthdayEnabled").checked=!!s.birthdayEnabled;
 
     document.getElementById("setWaiter").checked=s.waiter;
 
@@ -1356,6 +1306,8 @@ function saveSettings(){
     s.sideImage=document.getElementById("setSideImage").value;
 
     s.video=document.getElementById("setVideo").value;
+    s.birthdayText=document.getElementById("setBirthdayText").value;
+    s.birthdayEnabled=document.getElementById("setBirthdayEnabled").checked;
 
     s.waiter=document.getElementById("setWaiter").checked;
 
@@ -1391,10 +1343,13 @@ function addCategory(){
 
     data.categories.push({
         id:Date.now(),
-        name:name
+        name:name,
+        image:document.getElementById("newCategoryImage").value.trim() ||
+        "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=200&q=80"
     });
 
     input.value="";
+    document.getElementById("newCategoryImage").value="";
 
     saveData();
 
@@ -1442,37 +1397,35 @@ function renameCategory(id){
     }
 }
 
+function setCategoryImage(id){
+    const cat=data.categories.find(x=>x.id===id);
+    if(!cat)return;
+    const image=prompt("آدرس عکس دسته:",cat.image || "");
+    if(image===null)return;
+    cat.image=image.trim();
+    saveData();
+    renderAll();
+    loadAdmin();
+}
+
 function renderCategoryAdmin(){
-
     const box=document.getElementById("categoryAdminList");
-
     box.innerHTML="";
-
     data.categories.forEach(cat=>{
-
         box.innerHTML+=`
         <div class="admin-row">
-
-            <span>${escapeHTML(cat.name)}</span>
-
-            <div>
-
-                <button class="edit"
-                onclick="renameCategory(${cat.id})">
-                تغییر نام
-                </button>
-
-                <button class="danger"
-                onclick="deleteCategory(${cat.id})">
-                حذف
-                </button>
-
+            <div style="display:flex;align-items:center;gap:10px">
+                <img class="category-admin-image" src="${escapeHTML(cat.image || "")}" alt="">
+                <span>${escapeHTML(cat.name)}</span>
             </div>
-
+            <div>
+                <button class="edit" onclick="setCategoryImage(${cat.id})">عکس</button>
+                <button class="edit" onclick="renameCategory(${cat.id})">تغییر نام</button>
+                <button class="danger" onclick="deleteCategory(${cat.id})">حذف</button>
+            </div>
         </div>`;
     });
 }
-
 
 /* =========================
    ITEM ADMIN
@@ -1529,7 +1482,8 @@ function addItem(){
         category:category,
 
         daily:document.getElementById("itemDaily").checked,
-        stockStatus:"available",
+        stockStatus:document.getElementById("itemStockStatus").value || "available",
+
         rating:0
 
     });
@@ -1540,6 +1494,7 @@ function addItem(){
     document.getElementById("itemImage").value="";
     document.getElementById("itemDescription").value="";
     document.getElementById("itemDaily").checked=false;
+    document.getElementById("itemStockStatus").value="available";
 
     saveData();
 
@@ -1596,47 +1551,48 @@ function editItem(id){
     loadAdmin();
 }
 
-function renderItemAdmin(){
-
-    const box=document.getElementById("itemAdminList");
-
-    box.innerHTML="";
-
-    data.items.forEach(item=>{
-
-        const cat=data.categories.find(x=>x.id===item.category);
-
-        box.innerHTML+=`
-
-        <div class="admin-row">
-
-            <span>
-            ${escapeHTML(item.name)}
-            <small>
-            — ${item.price} افغانی
-            — ${cat ? escapeHTML(cat.name):""}
-            </small>
-            </span>
-
-            <div>
-
-                <button class="edit"
-                onclick="editItem(${item.id})">
-                ویرایش
-                </button>
-
-                <button class="danger"
-                onclick="deleteItem(${item.id})">
-                حذف
-                </button>
-
-            </div>
-
-        </div>`;
-
-    });
+function setItemStockStatus(id,status){
+    const item=data.items.find(x=>x.id===id);
+    if(!item)return;
+    item.stockStatus=status;
+    saveData();
+    renderMenu();
+    renderItemAdmin();
 }
 
+function renderItemAdmin(){
+    const box=document.getElementById("itemAdminList");
+    box.innerHTML="";
+
+    const labels={
+        available:"🟢 موجود",
+        low:"🟠 موجودی کم",
+        soldout:"🔴 فعلاً موجود نیست",
+        soon:"🔵 به‌زودی"
+    };
+
+    data.items.forEach(item=>{
+        const cat=data.categories.find(x=>x.id===item.category);
+        const status=item.stockStatus || "available";
+        box.innerHTML+=`
+        <div class="admin-row" style="flex-wrap:wrap">
+            <span>
+                <strong>${escapeHTML(item.name)}</strong>
+                <small> — ${item.price} افغانی — ${cat ? escapeHTML(cat.name):""}</small>
+            </span>
+            <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
+                <select class="status-select" onchange="setItemStockStatus(${item.id},this.value)">
+                    <option value="available" ${status==='available'?'selected':''}>${labels.available}</option>
+                    <option value="low" ${status==='low'?'selected':''}>${labels.low}</option>
+                    <option value="soldout" ${status==='soldout'?'selected':''}>${labels.soldout}</option>
+                    <option value="soon" ${status==='soon'?'selected':''}>${labels.soon}</option>
+                </select>
+                <button class="edit" onclick="editItem(${item.id})">ویرایش</button>
+                <button class="danger" onclick="deleteItem(${item.id})">حذف</button>
+            </div>
+        </div>`;
+    });
+}
 
 /* =========================
    REVIEW ADMIN
@@ -1791,8 +1747,8 @@ function saveMenuSettings(){
 
 function applyMenuSettings(){
 
-  const waiter = document.querySelector(".float-waiter");
-  const cartBtn = document.querySelector(".float-cart");
+  const waiter = document.getElementById("waiterBtn");
+  const cartBtn = document.querySelector(".cart");
 
   /* فراخوان گارسون */
   if(waiter){
@@ -1942,6 +1898,7 @@ renderAll = function(){
 renderAll();
 
 setRating(5);
+renderHeader();
     /* =========================================================
    تنظیمات کامل سایت - نسخه مدیریت
    ========================================================= */
@@ -2053,33 +2010,28 @@ function renameElements(words,newName){
    ========================================================= */
 
 function setFeatureVisibility(words,enabled){
-
-    const elements =
-        findElementsByText(words);
-
-    elements.forEach(el => {
-
-        if(
-            el.closest("button") ||
-            el.tagName.toLowerCase() === "button" ||
-            el.tagName.toLowerCase() === "a"
-        ){
-
-            el.style.display =
-                enabled ? "" : "none";
-
-        }
-
+    const elements=findElementsByText(words);
+    elements.forEach(el=>{
+        const target=el.closest("button,a") || el;
+        target.style.display=enabled ? "" : "none";
     });
-
 }
-
 
 /* =========================================================
    اعمال تمام تنظیمات
    ========================================================= */
 
 function applyMasterSettings(){
+    const waiterBtn=document.getElementById("waiterBtn");
+    const cartBtn=document.querySelector(".cart");
+    if(waiterBtn) waiterBtn.style.display=masterSettings.waiterEnabled ? "block" : "none";
+    if(cartBtn) cartBtn.style.display=masterSettings.cartEnabled ? "block" : "none";
+    data.settings.contact=masterSettings.quickContactEnabled;
+    data.settings.daily=masterSettings.dailyFoodEnabled;
+    data.settings.videoEnabled=masterSettings.videoEnabled;
+    renderMenu();
+    renderDaily();
+
 
     /* فراخوان گارسون */
     setFeatureVisibility(
@@ -2157,13 +2109,8 @@ function applyMasterSettings(){
     );
 
     /* تغییر نام */
-    renameElements(
-        [
-            "سبد خرید",
-            "بکس خرید"
-        ],
-        masterSettings.cartName
-    );
+    const cartNameEl=document.getElementById("cartName");
+    if(cartNameEl) cartNameEl.textContent=masterSettings.cartName;
 
     renameElements(
         [
