@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
@@ -6,699 +6,1899 @@
 <title>مجموعه حاجی حیدری</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
-    margin:0;
-    font-family:Tahoma,Arial,sans-serif;
-    background:#f4f8ff;
-    color:#222;
+  margin:0;
+  font-family:Tahoma,Arial,sans-serif;
+  background:#f4f8fc;
+  color:#17324d;
 }
 
-header{
-    background:#0879d1;
-    color:white;
-    padding:18px;
-    text-align:center;
-}
-
-header h1{
-    margin:0;
-    font-size:28px;
-}
-
-nav{
-    position:sticky;
-    top:0;
-    z-index:100;
-    background:white;
-    padding:10px 20px;
-    display:flex;
-    justify-content:flex-start;
-    gap:10px;
-    box-shadow:0 2px 8px #0002;
-}
-
-nav button{
-    border:0;
-    border-radius:20px;
-    padding:10px 20px;
-    background:#e8f3ff;
-    color:#0879d1;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-nav button.active,
-nav button:hover{
-    background:#0879d1;
-    color:white;
-}
-
-.container{
-    max-width:900px;
-    margin:25px auto;
-    padding:0 15px;
-}
-
-.card{
-    background:white;
-    border-radius:18px;
-    padding:22px;
-    margin-bottom:20px;
-    box-shadow:0 3px 15px #0001;
-}
-
-h2{
-    color:#0879d1;
-    margin-top:0;
-}
-
-input,textarea,select{
-    width:100%;
-    padding:12px;
-    margin:7px 0;
-    border:1px solid #ccd6e5;
-    border-radius:10px;
-    font-family:inherit;
-}
-
-textarea{
-    min-height:90px;
-    resize:vertical;
+button,input,textarea,select{
+  font-family:inherit;
 }
 
 button{
-    font-family:inherit;
+  cursor:pointer;
 }
 
-.btn{
-    border:0;
-    background:#0879d1;
-    color:white;
-    padding:11px 18px;
-    border-radius:10px;
-    cursor:pointer;
-    margin:5px;
+/* ================= HEADER ================= */
+
+header{
+  background:#0879d1;
+  color:white;
+  padding:12px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  position:sticky;
+  top:0;
+  z-index:1000;
+  box-shadow:0 3px 12px #0002;
 }
 
-.btn:hover{
-    opacity:.9;
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:12px;
 }
 
-.btn-danger{
-    background:#e53935;
+.logo-small{
+  width:58px;
+  height:58px;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid white;
+  background:white;
 }
 
-.btn-secondary{
-    background:#666;
+header h1{
+  margin:0;
+  font-size:23px;
 }
 
-.category-list{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-top:15px;
+header p{
+  margin:4px 0 0;
+  font-size:12px;
+  opacity:.9;
 }
 
-.category{
-    background:#eef6ff;
-    border:1px solid #bcdcff;
-    padding:10px 14px;
-    border-radius:12px;
-    display:flex;
-    align-items:center;
-    gap:7px;
+.admin-btn{
+  border:0;
+  background:white;
+  color:#0879d1;
+  padding:10px 15px;
+  border-radius:12px;
+  font-weight:bold;
 }
 
-.food{
-    display:grid;
-    grid-template-columns:120px 1fr;
-    gap:18px;
-    padding:15px 0;
-    border-bottom:1px solid #eee;
+/* ================= HERO ================= */
+
+.hero{
+  width:calc(100% - 28px);
+  max-width:1200px;
+  margin:15px auto;
+  height:210px;
+  border-radius:25px;
+  overflow:hidden;
+  background-size:cover;
+  background-position:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  position:relative;
 }
 
-.food img{
-    width:120px;
-    height:100px;
-    object-fit:cover;
-    border-radius:12px;
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,#0879d199,#00000055);
 }
 
-.food h3{
-    margin:0 0 8px;
+.hero-content{
+  position:relative;
+  color:white;
+  padding:20px;
+}
+
+.hero-content h2{
+  font-size:30px;
+  margin:0 0 8px;
+}
+
+.hero-content p{
+  margin:0;
+}
+
+/* ================= NOTICE ================= */
+
+.notice{
+  max-width:1200px;
+  margin:10px auto;
+  padding:13px;
+  background:white;
+  border:1px solid #dceaf5;
+  border-radius:16px;
+  text-align:center;
+  color:#21618c;
+}
+
+/* ================= CATEGORIES ================= */
+
+.categories{
+  max-width:1200px;
+  margin:12px auto;
+  padding:8px;
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+}
+
+.category-btn{
+  border:1px solid #b9d8ef;
+  background:white;
+  color:#0879d1;
+  padding:10px 20px;
+  border-radius:30px;
+  white-space:nowrap;
+  font-weight:bold;
+}
+
+.category-btn.active{
+  background:#0879d1;
+  color:white;
+}
+
+/* ================= MENU ================= */
+
+.menu{
+  max-width:1200px;
+  margin:auto;
+  padding:10px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:18px;
+}
+
+.card{
+  background:white;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 5px 18px #1233;
+  border:1px solid #e3edf5;
+}
+
+.card img{
+  width:100%;
+  height:190px;
+  object-fit:cover;
+}
+
+.card-body{
+  padding:14px;
+}
+
+.card h3{
+  margin:0 0 7px;
+  color:#075b9e;
+}
+
+.description{
+  font-size:13px;
+  color:#607d94;
+  min-height:35px;
 }
 
 .price{
-    color:#0879d1;
-    font-size:20px;
-    font-weight:bold;
+  color:#0879d1;
+  font-size:20px;
+  font-weight:bold;
+  margin:10px 0;
 }
 
-.small{
-    color:#777;
-    font-size:13px;
+.add-btn{
+  width:100%;
+  border:0;
+  background:#0879d1;
+  color:white;
+  padding:11px;
+  border-radius:12px;
+  font-weight:bold;
 }
 
-.admin{
-    display:none;
+.add-btn:hover{
+  background:#075fa5;
 }
 
-.preview{
-    display:block;
+/* ================= SIDE IMAGE ================= */
+
+.side-image{
+  position:fixed;
+  left:15px;
+  bottom:75px;
+  width:65px;
+  height:65px;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid white;
+  box-shadow:0 4px 15px #0005;
+  z-index:900;
 }
 
-.message{
-    padding:12px;
-    background:#e8f7ed;
-    color:#18733a;
-    border-radius:10px;
-    margin:10px 0;
-    display:none;
+/* ================= WAITER ================= */
+
+.waiter-btn{
+  position:fixed;
+  left:15px;
+  bottom:15px;
+  border:0;
+  background:#0879d1;
+  color:white;
+  padding:13px 18px;
+  border-radius:30px;
+  box-shadow:0 4px 15px #0005;
+  font-weight:bold;
+  z-index:1000;
 }
+
+/* ================= CART ================= */
+
+.cart-btn{
+  position:fixed;
+  right:15px;
+  bottom:15px;
+  background:#fff;
+  color:#0879d1;
+  border:2px solid #0879d1;
+  padding:12px 18px;
+  border-radius:30px;
+  font-weight:bold;
+  z-index:1000;
+}
+
+.cart-count{
+  background:#0879d1;
+  color:white;
+  border-radius:50%;
+  padding:2px 7px;
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#0008;
+  z-index:2000;
+  padding:20px;
+  overflow:auto;
+}
+
+.modal-box{
+  max-width:700px;
+  margin:30px auto;
+  background:white;
+  border-radius:20px;
+  padding:20px;
+}
+
+.modal-box h2{
+  color:#0879d1;
+}
+
+.close{
+  float:left;
+  border:0;
+  background:#eee;
+  padding:8px 12px;
+  border-radius:8px;
+}
+
+/* ================= ADMIN ================= */
+
+.admin-section{
+  border:1px solid #d9e8f4;
+  border-radius:15px;
+  padding:15px;
+  margin:15px 0;
+}
+
+.admin-section h3{
+  color:#0879d1;
+}
+
+.field{
+  margin:10px 0;
+}
+
+.field label{
+  display:block;
+  margin-bottom:5px;
+  font-weight:bold;
+}
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  padding:10px;
+  border:1px solid #cbddea;
+  border-radius:10px;
+}
+
+.primary{
+  background:#0879d1;
+  color:white;
+  border:0;
+  padding:10px 16px;
+  border-radius:10px;
+}
+
+.danger{
+  background:#e53935;
+  color:white;
+  border:0;
+  padding:8px 12px;
+  border-radius:8px;
+}
+
+.edit{
+  background:#f1f7fc;
+  color:#0879d1;
+  border:1px solid #b9d8ef;
+  padding:8px 12px;
+  border-radius:8px;
+}
+
+.admin-item{
+  background:#f7fbff;
+  border:1px solid #dceaf5;
+  padding:10px;
+  border-radius:12px;
+  margin:8px 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.admin-item img{
+  width:55px;
+  height:55px;
+  border-radius:10px;
+  object-fit:cover;
+}
+
+.admin-item-info{
+  flex:1;
+}
+
+.admin-actions{
+  display:flex;
+  gap:5px;
+}
+
+/* ================= FOOTER ================= */
 
 footer{
-    background:#0879d1;
-    color:white;
-    text-align:center;
-    padding:30px;
-    margin-top:30px;
+  background:#075b9e;
+  color:white;
+  text-align:center;
+  padding:25px;
+  margin-top:40px;
 }
 
+.map-btn{
+  display:inline-block;
+  margin-top:10px;
+  background:white;
+  color:#0879d1;
+  padding:10px 16px;
+  border-radius:10px;
+  text-decoration:none;
+}
+
+/* ================= MOBILE ================= */
+
 @media(max-width:600px){
-    nav{
-        overflow-x:auto;
-        justify-content:flex-start;
-    }
 
-    .food{
-        grid-template-columns:90px 1fr;
-    }
+  header h1{
+    font-size:18px;
+  }
 
-    .food img{
-        width:90px;
-        height:80px;
-    }
+  .logo-small{
+    width:48px;
+    height:48px;
+  }
+
+  .hero{
+    height:180px;
+  }
+
+  .hero-content h2{
+    font-size:23px;
+  }
+
+  .menu{
+    grid-template-columns:1fr;
+  }
+
+  .side-image{
+    width:55px;
+    height:55px;
+  }
+
+  .waiter-btn{
+    font-size:12px;
+  }
 }
 </style>
 </head>
 
 <body>
 
+<!-- ================= HEADER ================= -->
+
 <header>
-    <h1 id="groupTitle">مجموعه حاجی حیدری</h1>
-    <p>منوی آنلاین</p>
+
+  <div class="header-right">
+
+    <img id="logoSmall"
+         class="logo-small"
+         src=""
+         alt="لوگو">
+
+    <div>
+      <h1 id="restaurantName">مجموعه حاجی حیدری</h1>
+      <p id="restaurantSubtitle">
+        منوی دیجیتال رستورانت، کباب، پیتزا، غذا و آبمیوه
+      </p>
+    </div>
+
+  </div>
+
+  <button class="admin-btn" onclick="openAdmin()">
+    ⚙ مدیریت منو
+  </button>
+
 </header>
 
-<!-- دکمه‌های بالا سمت راست -->
-<nav>
-    <button class="active" onclick="showSection('home',this)">کباب</button>
-    <button onclick="showSection('food',this)">غذا</button>
-    <button onclick="showSection('pizza',this)">پیتزا</button>
-    <button onclick="showSection('drinks',this)">آبمیوه</button>
-    <button onclick="showSection('admin',this)">مدیریت</button>
-</nav>
 
-<div class="container">
+<!-- ================= HERO ================= -->
 
-<section id="home" class="preview">
-    <div class="card">
-        <h2>🍽️ منوی ویژه</h2>
-        <div id="homeFoods"></div>
-    </div>
+<section id="hero" class="hero">
+
+  <div class="hero-content">
+
+    <h2 id="heroTitle">
+      مجموعه حاجی حیدری
+    </h2>
+
+    <p id="heroText">
+      به منوی دیجیتال ما خوش آمدید
+    </p>
+
+  </div>
+
 </section>
 
-<section id="food" class="preview" style="display:none">
-    <div class="card">
-        <h2>🍛 غذا</h2>
-        <div id="foodList"></div>
+
+<!-- ================= NOTICE ================= -->
+
+<div class="notice">
+  برای سفارش، محصول را انتخاب کنید یا از دکمه «فراخوان گارسون» استفاده نمایید.
+</div>
+
+
+<!-- ================= CATEGORIES ================= -->
+
+<div id="categories" class="categories"></div>
+
+
+<!-- ================= MENU ================= -->
+
+<div id="menu" class="menu"></div>
+
+
+<!-- ================= SIDE IMAGE ================= -->
+
+<img id="sideImage"
+     class="side-image"
+     src=""
+     alt="تصویر منو">
+
+
+<!-- ================= WAITER ================= -->
+
+<button class="waiter-btn" onclick="callWaiter()">
+  🔔 فراخوان گارسون
+</button>
+
+
+<!-- ================= CART ================= -->
+
+<button class="cart-btn" onclick="openCart()">
+  🛒 سبد سفارش
+  <span id="cartCount" class="cart-count">0</span>
+</button>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+  <div id="addressText">
+    آدرس رستورانت
+  </div>
+
+  <a id="mapLink"
+     class="map-btn"
+     href="#"
+     target="_blank">
+    📍 مشاهده روی نقشه
+  </a>
+
+  <p>
+    © مجموعه حاجی حیدری
+  </p>
+
+</footer>
+
+
+<!-- ================================================= -->
+<!-- ADMIN MODAL -->
+<!-- ================================================= -->
+
+<div id="adminModal" class="modal">
+
+  <div class="modal-box">
+
+    <button class="close" onclick="closeAdmin()">✕</button>
+
+    <h2>⚙ مدیریت منو</h2>
+
+    <div class="admin-section">
+
+      <h3>اطلاعات اصلی</h3>
+
+      <div class="field">
+        <label>نام مجموعه</label>
+        <input id="setName">
+      </div>
+
+      <div class="field">
+        <label>متن زیر نام</label>
+        <input id="setSubtitle">
+      </div>
+
+      <div class="field">
+        <label>متن روی تصویر اصلی</label>
+        <input id="setHeroText">
+      </div>
+
+      <div class="field">
+        <label>آدرس</label>
+        <textarea id="setAddress"></textarea>
+      </div>
+
+      <div class="field">
+        <label>لینک نقشه Google Maps</label>
+        <input id="setMap">
+      </div>
+
+      <button class="primary" onclick="saveSettings()">
+        💾 ذخیره اطلاعات
+      </button>
+
     </div>
-</section>
 
-<section id="pizza" class="preview" style="display:none">
-    <div class="card">
-        <h2>🍕 پیتزا</h2>
-        <div id="pizzaList"></div>
+
+    <!-- LOGO -->
+
+    <div class="admin-section">
+
+      <h3>🖼 تغییر لوگو</h3>
+
+      <input type="file"
+             accept="image/*"
+             onchange="changeImage(event,'logo')">
+
+      <p>
+        عکس جدید را انتخاب کنید.
+      </p>
+
     </div>
-</section>
 
-<section id="drinks" class="preview" style="display:none">
-    <div class="card">
-        <h2>🥤 آبمیوه</h2>
-        <div id="drinkList"></div>
+
+    <!-- BACKGROUND -->
+
+    <div class="admin-section">
+
+      <h3>🌄 تغییر عکس پس‌زمینه</h3>
+
+      <input type="file"
+             accept="image/*"
+             onchange="changeImage(event,'background')">
+
     </div>
-</section>
 
-<section id="admin" class="admin">
-    <div class="card">
-        <h2>⚙️ مدیریت منو</h2>
 
-        <h3>اطلاعات مجموعه</h3>
+    <!-- SIDE IMAGE -->
 
-        <input id="nameInput" placeholder="نام مجموعه">
+    <div class="admin-section">
 
-        <label>تغییر لوگو:</label>
-        <input type="file" id="logoInput" accept="image/*">
+      <h3>📱 تغییر عکس کوچک کنار منو</h3>
 
-        <label>تغییر عکس پس‌زمینه:</label>
-        <input type="file" id="bgInput" accept="image/*">
+      <input type="file"
+             accept="image/*"
+             onchange="changeImage(event,'side')">
 
-        <button class="btn" onclick="saveInfo()">ذخیره اطلاعات</button>
+    </div>
 
-        <hr>
 
-        <h3>➕ افزودن دسته‌بندی</h3>
+    <!-- CATEGORY -->
 
-        <input id="categoryInput"
-               placeholder="مثلاً کباب، پیتزا، غذا، آبمیوه">
+    <div class="admin-section">
 
-        <button class="btn" onclick="addCategory()">
-            افزودن دسته
-        </button>
+      <h3>📂 مدیریت دسته‌ها</h3>
 
-        <div id="categories" class="category-list"></div>
+      <div class="field">
 
-        <hr>
+        <label>نام دسته جدید</label>
 
-        <h3>🍽️ افزودن غذا</h3>
+        <input id="newCategory"
+               placeholder="مثلاً نوشیدنی">
 
-        <input id="foodName" placeholder="نام غذا">
+      </div>
 
-        <input id="foodPrice"
+      <button class="primary"
+              onclick="addCategory()">
+        ➕ اضافه کردن دسته
+      </button>
+
+      <div id="categoryAdminList"></div>
+
+    </div>
+
+
+    <!-- PRODUCT -->
+
+    <div class="admin-section">
+
+      <h3>🍽 مدیریت غذاها</h3>
+
+      <input type="hidden" id="editItemId">
+
+      <div class="field">
+
+        <label>نام غذا</label>
+
+        <input id="itemName"
+               placeholder="مثلاً کباب حاجی">
+
+      </div>
+
+      <div class="field">
+
+        <label>دسته</label>
+
+        <select id="itemCategory"></select>
+
+      </div>
+
+      <div class="field">
+
+        <label>توضیحات</label>
+
+        <textarea id="itemDescription"></textarea>
+
+      </div>
+
+      <div class="field">
+
+        <label>قیمت</label>
+
+        <input id="itemPrice"
                type="number"
-               placeholder="قیمت">
+               placeholder="250">
 
-        <textarea id="foodDesc"
-                  placeholder="توضیحات غذا"></textarea>
+      </div>
 
-        <select id="foodCategory">
-    <option value="">انتخاب دسته</option>
-    <option value="غذا">غذا</option>
-    <option value="سینی‌ها">سینی‌ها</option>
-    <option value="کباب‌ها">کباب‌ها</option>
-    <option value="پیتزا">پیتزا</option>
-    <option value="آبمیوه">آبمیوه</option>
-    <option value="نوشیدنی سرد">نوشیدنی سرد</option>
-    <option value="مخصوص‌ها">مخصوص‌ها</option>
-    <option value="ساده‌ها">ساده‌ها</option>
-</select>
+      <div class="field">
 
-        <input type="file"
-               id="foodImage"
+        <label>عکس غذا</label>
+
+        <input id="itemImage"
+               type="file"
                accept="image/*">
 
-        <button class="btn" onclick="addFood()">
-            افزودن غذا
-        </button>
+      </div>
 
-        <div id="message" class="message"></div>
+      <button class="primary"
+              onclick="saveItem()">
 
-        <hr>
+        💾 ذخیره غذا
 
-        <h3>📍 آدرس و نقشه</h3>
+      </button>
 
-        <input id="address"
-               placeholder="آدرس مجموعه">
+      <button class="edit"
+              onclick="clearItemForm()">
 
-        <input id="mapLink"
-               placeholder="لینک Google Maps">
+        پاک کردن فرم
 
-        <button class="btn" onclick="saveAddress()">
-            ذخیره آدرس
-        </button>
+      </button>
 
-        <hr>
-
-        <h3>🗑️ مدیریت غذاها</h3>
-
-        <div id="adminFoods"></div>
+      <div id="itemsAdminList"></div>
 
     </div>
-</section>
+
+  </div>
 
 </div>
 
-<footer>
-    <p>🔔 خوش آمدید</p>
-    <p id="footerName">مجموعه حاجی حیدری</p>
-</footer>
+
+<!-- ================================================= -->
+<!-- CART MODAL -->
+<!-- ================================================= -->
+
+<div id="cartModal" class="modal">
+
+  <div class="modal-box">
+
+    <button class="close"
+            onclick="closeCart()">
+      ✕
+    </button>
+
+    <h2>🛒 سبد سفارش</h2>
+
+    <div id="cartList"></div>
+
+    <hr>
+
+    <h3>
+      مجموع:
+      <span id="cartTotal">0</span>
+      افغانی
+    </h3>
+
+    <button class="primary"
+            onclick="sendOrder()">
+      📲 ارسال سفارش
+    </button>
+
+  </div>
+
+</div>
+
 
 <script>
 
-let data={
+/* ================================================= */
+/* DEFAULT DATA */
+/* ================================================= */
+
+const defaultData = {
+
+  settings:{
+
     name:"مجموعه حاجی حیدری",
-    categories:["کباب","غذا","پیتزا","آبمیوه"],
-    foods:[
-        {
-            name:"کباب ویژه",
-            price:250,
-            desc:"کباب تازه و خوشمزه",
-            category:"کباب",
-            image:""
-        }
-    ],
-    address:"",
-    mapLink:"",
-    logo:"",
-    background:""
+
+    subtitle:
+      "منوی دیجیتال رستورانت، کباب، پیتزا، غذا و آبمیوه",
+
+    heroText:
+      "به منوی دیجیتال ما خوش آمدید",
+
+    address:
+      "آدرس رستورانت را از قسمت مدیریت وارد کنید",
+
+    map:
+      "https://www.google.com/maps"
+
+  },
+
+  logo:
+    "https://images.unsplash.com/photo-1547592180-85f173990554?w=300",
+
+  background:
+    "https://images.unsplash.com/photo-1547592180-85f173990554?w=1200",
+
+  side:
+    "https://images.unsplash.com/photo-1547592180-85f173990554?w=300",
+
+  categories:[
+    "کباب",
+    "پیتزا",
+    "غذا",
+    "آبمیوه"
+  ],
+
+  items:[
+
+    {
+      id:1,
+      name:"کباب مخصوص حاجی حیدری",
+      category:"کباب",
+      description:"کباب تازه و خوش‌طعم با مخلفات",
+      price:350,
+      image:
+        "https://images.unsplash.com/photo-1544025162-d76694265947?w=800"
+    },
+
+    {
+      id:2,
+      name:"کباب چوبی",
+      category:"کباب",
+      description:"کباب با کیفیت و تازه",
+      price:280,
+      image:
+        "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800"
+    },
+
+    {
+      id:3,
+      name:"پیتزا مخصوص",
+      category:"پیتزا",
+      description:"پیتزای تازه با پنیر و سبزیجات",
+      price:300,
+      image:
+        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800"
+    },
+
+    {
+      id:4,
+      name:"چلو مرغ",
+      category:"غذا",
+      description:"چلو مرغ خوشمزه و تازه",
+      price:250,
+      image:
+        "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800"
+    },
+
+    {
+      id:5,
+      name:"آبمیوه طبیعی",
+      category:"آبمیوه",
+      description:"آبمیوه تازه و طبیعی",
+      price:120,
+      image:
+        "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=800"
+    }
+
+  ]
+
 };
 
-function loadData(){
 
-    let saved=localStorage.getItem("hajiMenu");
+/* ================================================= */
+/* LOAD DATA */
+/* ================================================= */
 
-    if(saved){
-        try{
-            data=JSON.parse(saved);
-        }catch(e){}
-    }
+let data =
+  JSON.parse(localStorage.getItem("HajihidariMenu"))
+  || defaultData;
 
-    render();
-}
+let cart = [];
+
+let activeCategory =
+  data.categories[0] || "";
+
+
+/* ================================================= */
+/* SAVE DATA */
+/* ================================================= */
 
 function saveData(){
-    localStorage.setItem("hajiMenu",JSON.stringify(data));
+
+  localStorage.setItem(
+    "HajihidariMenu",
+    JSON.stringify(data)
+  );
+
 }
 
-function render(){
 
-    document.getElementById("groupTitle").innerText=data.name;
-    document.getElementById("footerName").innerText=data.name;
+/* ================================================= */
+/* INITIALIZE */
+/* ================================================= */
 
-    renderCategories();
-    renderFoods();
-    renderAdminFoods();
+function init(){
 
-    if(data.background){
-        document.body.style.backgroundImage=
-            "url("+data.background+")";
-        document.body.style.backgroundSize="cover";
-        document.body.style.backgroundAttachment="fixed";
-    }
+  renderHeader();
+
+  renderCategories();
+
+  renderMenu();
+
+  renderAdminCategories();
+
+  renderAdminItems();
+
+  updateCart();
+
 }
 
-function showSection(id,btn){
+init();
 
-    document.querySelectorAll(".preview,.admin")
-        .forEach(x=>x.style.display="none");
 
-    document.getElementById(id).style.display="block";
+/* ================================================= */
+/* HEADER */
+/* ================================================= */
 
-    document.querySelectorAll("nav button")
-        .forEach(x=>x.classList.remove("active"));
+function renderHeader(){
 
-    btn.classList.add("active");
+  document.getElementById("restaurantName")
+    .textContent=data.settings.name;
+
+  document.getElementById("restaurantSubtitle")
+    .textContent=data.settings.subtitle;
+
+  document.getElementById("heroTitle")
+    .textContent=data.settings.name;
+
+  document.getElementById("heroText")
+    .textContent=data.settings.heroText;
+
+  document.getElementById("addressText")
+    .textContent=data.settings.address;
+
+  document.getElementById("mapLink")
+    .href=data.settings.map;
+
+  document.getElementById("logoSmall")
+    .src=data.logo;
+
+  document.getElementById("sideImage")
+    .src=data.side;
+
+  document.getElementById("hero")
+    .style.backgroundImage=
+      `url("${data.background}")`;
+
 }
+
+
+/* ================================================= */
+/* CATEGORIES */
+/* ================================================= */
 
 function renderCategories(){
 
-    let box=document.getElementById("categories");
-    box.innerHTML="";
+  const box=
+    document.getElementById("categories");
 
-    data.categories.forEach((cat,index)=>{
+  box.innerHTML="";
 
-        let div=document.createElement("div");
-        div.className="category";
+  data.categories.forEach(category=>{
 
-        div.innerHTML=`
-            <span>${cat}</span>
+    const button=
+      document.createElement("button");
 
-            <button class="btn"
-                    onclick="moveCategory(${index},-1)">
-                ◀
-            </button>
+    button.className=
+      "category-btn";
 
-            <button class="btn"
-                    onclick="moveCategory(${index},1)">
-                ▶
-            </button>
+    if(category===activeCategory){
 
-            <button class="btn btn-danger"
-                    onclick="deleteCategory(${index})">
-                ×
-            </button>
-        `;
+      button.classList.add("active");
 
-        box.appendChild(div);
-    });
+    }
+
+    button.textContent=category;
+
+    button.onclick=()=>{
+
+      activeCategory=category;
+
+      renderCategories();
+
+      renderMenu();
+
+    };
+
+    box.appendChild(button);
+
+  });
+
 }
+
+
+/* ================================================= */
+/* MENU */
+/* ================================================= */
+
+function renderMenu(){
+
+  const menu=
+    document.getElementById("menu");
+
+  menu.innerHTML="";
+
+  const items=
+    data.items.filter(
+      item=>item.category===activeCategory
+    );
+
+  if(items.length===0){
+
+    menu.innerHTML=
+      `<div class="notice">
+        در این دسته هنوز غذایی اضافه نشده است.
+      </div>`;
+
+    return;
+
+  }
+
+  items.forEach(item=>{
+
+    const card=
+      document.createElement("div");
+
+    card.className="card";
+
+    card.innerHTML=`
+
+      <img src="${item.image}"
+           alt="${item.name}">
+
+      <div class="card-body">
+
+        <h3>${item.name}</h3>
+
+        <div class="description">
+          ${item.description || ""}
+        </div>
+
+        <div class="price">
+          ${item.price.toLocaleString()}
+          افغانی
+        </div>
+
+        <button class="add-btn"
+                onclick="addToCart(${item.id})">
+
+          ➕ افزودن به سبد خرید
+
+        </button>
+
+      </div>
+
+    `;
+
+    menu.appendChild(card);
+
+  });
+
+}
+
+
+/* ================================================= */
+/* CART */
+/* ================================================= */
+
+function addToCart(id){
+
+  const item=
+    data.items.find(x=>x.id===id);
+
+  if(!item) return;
+
+  const existing=
+    cart.find(x=>x.id===id);
+
+  if(existing){
+
+    existing.qty++;
+
+  }else{
+
+    cart.push({
+      ...item,
+      qty:1
+    });
+
+  }
+
+  updateCart();
+
+  alert(
+    "«"+item.name+"» به سبد سفارش اضافه شد."
+  );
+
+}
+
+
+function updateCart(){
+
+  const count=
+    cart.reduce(
+      (sum,item)=>sum+item.qty,
+      0
+    );
+
+  document.getElementById("cartCount")
+    .textContent=count;
+
+}
+
+
+function openCart(){
+
+  renderCart();
+
+  document.getElementById("cartModal")
+    .style.display="block";
+
+}
+
+
+function closeCart(){
+
+  document.getElementById("cartModal")
+    .style.display="none";
+
+}
+
+
+function renderCart(){
+
+  const box=
+    document.getElementById("cartList");
+
+  box.innerHTML="";
+
+  if(cart.length===0){
+
+    box.innerHTML=
+      "<p>سبد سفارش خالی است.</p>";
+
+    document.getElementById("cartTotal")
+      .textContent="0";
+
+    return;
+
+  }
+
+  let total=0;
+
+  cart.forEach(item=>{
+
+    total+=item.price*item.qty;
+
+    const row=
+      document.createElement("div");
+
+    row.className="admin-item";
+
+    row.innerHTML=`
+
+      <div class="admin-item-info">
+
+        <strong>${item.name}</strong>
+
+        <br>
+
+        ${item.qty} ×
+        ${item.price.toLocaleString()}
+        افغانی
+
+      </div>
+
+      <div class="admin-actions">
+
+        <button class="edit"
+          onclick="changeQty(${item.id},1)">
+          +
+        </button>
+
+        <button class="edit"
+          onclick="changeQty(${item.id},-1)">
+          -
+        </button>
+
+      </div>
+
+    `;
+
+    box.appendChild(row);
+
+  });
+
+  document.getElementById("cartTotal")
+    .textContent=
+      total.toLocaleString();
+
+}
+
+
+function changeQty(id,value){
+
+  const item=
+    cart.find(x=>x.id===id);
+
+  if(!item) return;
+
+  item.qty+=value;
+
+  if(item.qty<=0){
+
+    cart=
+      cart.filter(x=>x.id!==id);
+
+  }
+
+  updateCart();
+
+  renderCart();
+
+}
+
+
+/* ================================================= */
+/* SEND ORDER */
+/* ================================================= */
+
+function sendOrder(){
+
+  if(cart.length===0){
+
+    alert("سبد سفارش خالی است.");
+
+    return;
+
+  }
+
+  let text=
+    "سلام، سفارش جدید:%0A%0A";
+
+  let total=0;
+
+  cart.forEach(item=>{
+
+    text+=
+      `${item.name} - ${item.qty} عدد - ${item.price*item.qty} افغانی%0A`;
+
+    total+=item.price*item.qty;
+
+  });
+
+  text+=
+    `%0Aمجموع: ${total} افغانی`;
+
+  const phone=
+    "93700000000";
+
+  window.open(
+    `https://wa.me/${phone}?text=${text}`,
+    "_blank"
+  );
+
+}
+
+
+/* ================================================= */
+/* WAITER */
+/* ================================================= */
+
+function callWaiter(){
+
+  alert(
+    "🔔 فراخوان گارسون ارسال شد. لطفاً چند لحظه منتظر بمانید."
+  );
+
+}
+
+
+/* ================================================= */
+/* ADMIN */
+/* ================================================= */
+
+function openAdmin(){
+
+  document.getElementById("adminModal")
+    .style.display="block";
+
+  loadSettingsForm();
+
+}
+
+
+function closeAdmin(){
+
+  document.getElementById("adminModal")
+    .style.display="none";
+
+}
+
+
+/* ================================================= */
+/* SETTINGS FORM */
+/* ================================================= */
+
+function loadSettingsForm(){
+
+  document.getElementById("setName")
+    .value=data.settings.name;
+
+  document.getElementById("setSubtitle")
+    .value=data.settings.subtitle;
+
+  document.getElementById("setHeroText")
+    .value=data.settings.heroText;
+
+  document.getElementById("setAddress")
+    .value=data.settings.address;
+
+  document.getElementById("setMap")
+    .value=data.settings.map;
+
+}
+
+
+function saveSettings(){
+
+  data.settings.name=
+    document.getElementById("setName").value;
+
+  data.settings.subtitle=
+    document.getElementById("setSubtitle").value;
+
+  data.settings.heroText=
+    document.getElementById("setHeroText").value;
+
+  data.settings.address=
+    document.getElementById("setAddress").value;
+
+  data.settings.map=
+    document.getElementById("setMap").value;
+
+  saveData();
+
+  renderHeader();
+
+  alert("اطلاعات با موفقیت ذخیره شد.");
+
+}
+
+
+/* ================================================= */
+/* IMAGE CHANGE */
+/* ================================================= */
+
+function changeImage(event,type){
+
+  const file=
+    event.target.files[0];
+
+  if(!file) return;
+
+  const reader=
+    new FileReader();
+
+  reader.onload=function(){
+
+    if(type==="logo"){
+
+      data.logo=reader.result;
+
+    }
+
+    if(type==="background"){
+
+      data.background=reader.result;
+
+    }
+
+    if(type==="side"){
+
+      data.side=reader.result;
+
+    }
+
+    saveData();
+
+    renderHeader();
+
+    alert("عکس با موفقیت تغییر کرد.");
+
+  };
+
+  reader.readAsDataURL(file);
+
+}
+
+
+/* ================================================= */
+/* ADD CATEGORY */
+/* ================================================= */
 
 function addCategory(){
 
-    let input=document.getElementById("categoryInput");
-    let value=input.value.trim();
+  const input=
+    document.getElementById("newCategory");
 
-    if(!value)return;
+  const name=
+    input.value.trim();
 
-    if(!data.categories.includes(value)){
-        data.categories.push(value);
-    }
+  if(!name){
 
-    input.value="";
-    saveData();
-    render();
+    alert("نام دسته را وارد کنید.");
+
+    return;
+
+  }
+
+  if(data.categories.includes(name)){
+
+    alert("این دسته قبلاً وجود دارد.");
+
+    return;
+
+  }
+
+  data.categories.push(name);
+
+  activeCategory=name;
+
+  input.value="";
+
+  saveData();
+
+  renderCategories();
+
+  renderMenu();
+
+  renderAdminCategories();
+
+  updateCategorySelect();
+
 }
 
-function deleteCategory(index){
 
-    if(!confirm("این دسته حذف شود؟"))return;
+/* ================================================= */
+/* ADMIN CATEGORY LIST */
+/* ================================================= */
 
-    data.categories.splice(index,1);
+function renderAdminCategories(){
 
-    saveData();
-    render();
+  const box=
+    document.getElementById("categoryAdminList");
+
+  box.innerHTML="";
+
+  data.categories.forEach(category=>{
+
+    const row=
+      document.createElement("div");
+
+    row.className="admin-item";
+
+    row.innerHTML=`
+
+      <div class="admin-item-info">
+        <strong>${category}</strong>
+      </div>
+
+      <button class="danger"
+              onclick="deleteCategory('${escapeQuotes(category)}')">
+
+        حذف
+
+      </button>
+
+    `;
+
+    box.appendChild(row);
+
+  });
+
+  updateCategorySelect();
+
 }
 
-function moveCategory(index,direction){
 
-    let newIndex=index+direction;
+/* ================================================= */
+/* CATEGORY DELETE */
+/* ================================================= */
 
-    if(newIndex<0 || newIndex>=data.categories.length)
-        return;
+function deleteCategory(category){
 
-    let temp=data.categories[index];
+  if(data.categories.length<=1){
 
-    data.categories[index]=data.categories[newIndex];
-    data.categories[newIndex]=temp;
+    alert("حداقل یک دسته باید وجود داشته باشد.");
 
-    saveData();
-    render();
+    return;
+
+  }
+
+  const hasItems=
+    data.items.some(
+      item=>item.category===category
+    );
+
+  if(hasItems){
+
+    alert(
+      "ابتدا غذاهای این دسته را حذف یا به دسته دیگری منتقل کنید."
+    );
+
+    return;
+
+  }
+
+  if(!confirm(
+    "دسته «"+category+"» حذف شود؟"
+  )) return;
+
+  data.categories=
+    data.categories.filter(
+      x=>x!==category
+    );
+
+  activeCategory=
+    data.categories[0];
+
+  saveData();
+
+  renderCategories();
+
+  renderMenu();
+
+  renderAdminCategories();
+
 }
 
-function addFood(){
 
-    let name=document.getElementById("foodName").value.trim();
-    let price=document.getElementById("foodPrice").value;
-    let desc=document.getElementById("foodDesc").value.trim();
-    let category=document.getElementById("foodCategory").value;
-    let input=document.getElementById("foodImage");
+/* ================================================= */
+/* ITEM FORM */
+/* ================================================= */
 
-    if(!name){
-        alert("نام غذا را وارد کنید");
-        return;
-    }
+function updateCategorySelect(){
 
-    if(input.files[0]){
+  const select=
+    document.getElementById("itemCategory");
 
-        let reader=new FileReader();
+  select.innerHTML="";
 
-        reader.onload=function(e){
+  data.categories.forEach(category=>{
 
-            data.foods.push({
-                name:name,
-                price:price,
-                desc:desc,
-                category:category,
-                image:e.target.result
-            });
+    const option=
+      document.createElement("option");
 
-            finishFood();
-        };
+    option.value=category;
 
-        reader.readAsDataURL(input.files[0]);
+    option.textContent=category;
+
+    select.appendChild(option);
+
+  });
+
+}
+
+
+function clearItemForm(){
+
+  document.getElementById("editItemId")
+    .value="";
+
+  document.getElementById("itemName")
+    .value="";
+
+  document.getElementById("itemDescription")
+    .value="";
+
+  document.getElementById("itemPrice")
+    .value="";
+
+  document.getElementById("itemImage")
+    .value="";
+
+  updateCategorySelect();
+
+}
+
+
+/* ================================================= */
+/* SAVE ITEM */
+/* ================================================= */
+
+function saveItem(){
+
+  const id=
+    document.getElementById("editItemId").value;
+
+  const name=
+    document.getElementById("itemName").value.trim();
+
+  const category=
+    document.getElementById("itemCategory").value;
+
+  const description=
+    document.getElementById("itemDescription").value.trim();
+
+  const price=
+    Number(
+      document.getElementById("itemPrice").value
+    );
+
+  const file=
+    document.getElementById("itemImage").files[0];
+
+
+  if(!name){
+
+    alert("نام غذا را وارد کنید.");
+
+    return;
+
+  }
+
+  if(!price){
+
+    alert("قیمت را وارد کنید.");
+
+    return;
+
+  }
+
+
+  function finish(image){
+
+    if(id){
+
+      const item=
+        data.items.find(
+          x=>x.id===Number(id)
+        );
+
+      if(!item) return;
+
+      item.name=name;
+      item.category=category;
+      item.description=description;
+      item.price=price;
+
+      if(image){
+
+        item.image=image;
+
+      }
 
     }else{
 
-        data.foods.push({
-            name:name,
-            price:price,
-            desc:desc,
-            category:category,
-            image:""
-        });
+      data.items.push({
 
-        finishFood();
-    }
-}
+        id:Date.now(),
 
-function finishFood(){
+        name:name,
 
-    document.getElementById("foodName").value="";
-    document.getElementById("foodPrice").value="";
-    document.getElementById("foodDesc").value="";
-    document.getElementById("foodImage").value="";
+        category:category,
 
-    saveData();
-    render();
+        description:description,
 
-    let msg=document.getElementById("message");
-    msg.innerText="غذا با موفقیت اضافه شد";
-    msg.style.display="block";
+        price:price,
 
-    setTimeout(()=>{
-        msg.style.display="none";
-    },2500);
-}
+        image:
+          image ||
+          "https://images.unsplash.com/photo-1547592180-85f173990554?w=800"
 
-function renderFoods(){
+      });
 
-    let boxes={
-        "کباب":"homeFoods",
-        "غذا":"foodList",
-        "پیتزا":"pizzaList",
-        "آبمیوه":"drinkList"
-    };
-
-    Object.values(boxes).forEach(id=>{
-        document.getElementById(id).innerHTML="";
-    });
-
-    data.foods.forEach((food,index)=>{
-
-        let boxId=boxes[food.category];
-
-        if(!boxId)return;
-
-        let box=document.getElementById(boxId);
-
-        let div=document.createElement("div");
-        div.className="food";
-
-        div.innerHTML=`
-
-            ${
-                food.image
-                ? `<img src="${food.image}">`
-                : `<div>🍽️</div>`
-            }
-
-            <div>
-                <h3>${food.name}</h3>
-
-                <div class="price">
-                    ${food.price || 0} افغانی
-                </div>
-
-                <p>${food.desc || ""}</p>
-            </div>
-        `;
-
-        box.appendChild(div);
-    });
-}
-
-function renderAdminFoods(){
-
-    let box=document.getElementById("adminFoods");
-
-    box.innerHTML="";
-
-    data.foods.forEach((food,index)=>{
-
-        let div=document.createElement("div");
-
-        div.className="category";
-
-        div.style.marginBottom="8px";
-        div.style.width="100%";
-        div.style.justifyContent="space-between";
-
-        div.innerHTML=`
-
-            <span>
-                ${food.name}
-                -
-                ${food.price || 0} افغانی
-            </span>
-
-            <button class="btn btn-danger"
-                    onclick="deleteFood(${index})">
-                حذف
-            </button>
-        `;
-
-        box.appendChild(div);
-    });
-}
-
-function deleteFood(index){
-
-    if(!confirm("این غذا حذف شود؟"))return;
-
-    data.foods.splice(index,1);
-
-    saveData();
-    render();
-}
-
-function saveInfo(){
-
-    let name=document.getElementById("nameInput").value.trim();
-
-    if(name){
-        data.name=name;
-    }
-
-    let logo=document.getElementById("logoInput");
-
-    if(logo.files[0]){
-
-        let reader=new FileReader();
-
-        reader.onload=function(e){
-
-            data.logo=e.target.result;
-            saveData();
-            render();
-        };
-
-        reader.readAsDataURL(logo.files[0]);
-    }
-
-    let bg=document.getElementById("bgInput");
-
-    if(bg.files[0]){
-
-        let reader=new FileReader();
-
-        reader.onload=function(e){
-
-            data.background=e.target.result;
-            saveData();
-            render();
-        };
-
-        reader.readAsDataURL(bg.files[0]);
     }
 
     saveData();
-    render();
 
-    alert("اطلاعات ذخیره شد");
+    renderMenu();
+
+    renderAdminItems();
+
+    clearItemForm();
+
+    alert("غذا با موفقیت ذخیره شد.");
+
+  }
+
+
+  if(file){
+
+    const reader=
+      new FileReader();
+
+    reader.onload=
+      ()=>finish(reader.result);
+
+    reader.readAsDataURL(file);
+
+  }else{
+
+    finish(null);
+
+  }
+
 }
 
-function saveAddress(){
 
-    data.address=document.getElementById("address").value;
-    data.mapLink=document.getElementById("mapLink").value;
+/* ================================================= */
+/* ADMIN ITEMS */
+/* ================================================= */
 
-    saveData();
+function renderAdminItems(){
 
-    alert("آدرس ذخیره شد");
+  const box=
+    document.getElementById("itemsAdminList");
+
+  box.innerHTML="";
+
+  data.items.forEach(item=>{
+
+    const row=
+      document.createElement("div");
+
+    row.className="admin-item";
+
+    row.innerHTML=`
+
+      <img src="${item.image}">
+
+      <div class="admin-item-info">
+
+        <strong>
+          ${item.name}
+        </strong>
+
+        <br>
+
+        ${item.category}
+
+        <br>
+
+        ${item.price.toLocaleString()}
+        افغانی
+
+      </div>
+
+      <div class="admin-actions">
+
+        <button class="edit"
+                onclick="editItem(${item.id})">
+
+          ویرایش
+
+        </button>
+
+        <button class="danger"
+                onclick="deleteItem(${item.id})">
+
+          حذف
+
+        </button>
+
+      </div>
+
+    `;
+
+    box.appendChild(row);
+
+  });
+
 }
 
-loadData();
+
+/* ================================================= */
+/* EDIT ITEM */
+/* ================================================= */
+
+function editItem(id){
+
+  const item=
+    data.items.find(
+      x=>x.id===id
+    );
+
+  if(!item) return;
+
+  document.getElementById("editItemId")
+    .value=item.id;
+
+  document.getElementById("itemName")
+    .value=item.name;
+
+  document.getElementById("itemDescription")
+    .value=item.description;
+
+  document.getElementById("itemPrice")
+    .value=item.price;
+
+  updateCategorySelect();
+
+  document.getElementById("itemCategory")
+    .value=item.category;
+
+  window.scrollTo({
+    top:document.body.scrollHeight,
+    behavior:"smooth"
+  });
+
+}
+
+
+/* ================================================= */
+/* DELETE ITEM */
+/* ================================================= */
+
+function deleteItem(id){
+
+  const item=
+    data.items.find(
+      x=>x.id===id
+    );
+
+  if(!item) return;
+
+  if(!confirm(
+    "«"+item.name+"» حذف شود؟"
+  )) return;
+
+  data.items=
+    data.items.filter(
+      x=>x.id!==id
+    );
+
+  saveData();
+
+  renderMenu();
+
+  renderAdminItems();
+
+}
+
+
+/* ================================================= */
+/* ESCAPE */
+/* ================================================= */
+
+function escapeQuotes(text){
+
+  return text
+    .replace(/\\/g,"\\\\")
+    .replace(/'/g,"\\'");
+
+}
+
+
+/* ================================================= */
+/* CLOSE MODAL BY CLICK OUTSIDE */
+/* ================================================= */
+
+window.onclick=function(event){
+
+  const admin=
+    document.getElementById("adminModal");
+
+  const cartModal=
+    document.getElementById("cartModal");
+
+  if(event.target===admin){
+
+    closeAdmin();
+
+  }
+
+  if(event.target===cartModal){
+
+    closeCart();
+
+  }
+
+};
 
 </script>
 
