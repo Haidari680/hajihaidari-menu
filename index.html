@@ -685,35 +685,71 @@ footer nav a{color:#fff;text-decoration:none}
   footer nav{gap:16px;flex-wrap:wrap}
 }
 
+
+/* ===== FINAL PREMIUM BLUE DESIGN ===== */
+:root{--blue:#0b79d0;--blue2:#0753a0;--deep:#062b63;--ink:#0b2342;--soft:#f3f7fc;--line:#dce7f3}
+body{background:linear-gradient(180deg,#f7fbff 0,#eef4fa 100%);color:var(--ink);overflow-x:hidden}
+.topbar{background:rgba(4,32,76,.97)!important;border:0!important;padding:8px 18px!important;backdrop-filter:blur(12px);box-shadow:0 8px 26px rgba(3,28,68,.2)!important}
+.topbar .header-inner{max-width:1400px;min-height:70px;position:relative}
+.brand-centered{position:absolute;left:50%;transform:translateX(-50%);top:5px;display:flex;flex-direction:column;align-items:center;gap:3px!important;z-index:2}
+.brand-centered img{width:58px!important;height:58px!important;border:3px solid #fff!important;box-shadow:0 5px 18px rgba(0,0,0,.2)}
+.brand-name{font-size:20px;font-weight:800;line-height:1.05;color:#fff;text-shadow:0 2px 8px #0006}
+.brand-name strong{font-size:24px;color:#eaf5ff}
+.brand-subtitle{font-size:10px;color:#cfe3fa;white-space:nowrap}
+.header-actions{display:flex;gap:8px;z-index:3}.admin-btn,.qr-btn{border:1px solid rgba(255,255,255,.25)!important;background:#fff!important;color:var(--deep)!important;border-radius:11px!important;padding:9px 13px!important}
+.hamburger{z-index:3}
+.hero-premium{max-width:none!important;width:100%;margin:0!important;min-height:430px!important;border-radius:0!important;background-position:center;box-shadow:inset 0 -70px 100px rgba(3,24,55,.35)}
+.hero-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,26,62,.28),rgba(3,27,65,.78))}
+.hero-content{padding-top:70px;z-index:2}.hero-pill{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);padding:7px 14px;border-radius:999px;font-size:12px;backdrop-filter:blur(8px);margin-bottom:12px}
+.hero-content h2{font-size:42px!important;text-shadow:0 4px 20px #0008;margin-bottom:8px!important}.hero-content p{font-size:18px;color:#eaf4ff}.hero-actions{display:flex;justify-content:center;gap:10px;margin-top:20px}.hero-btn{padding:11px 20px;border-radius:13px;text-decoration:none;font-weight:800;transition:.2s}.hero-btn.primary{background:#fff;color:var(--deep)}.hero-btn.ghost{border:1px solid rgba(255,255,255,.55);color:#fff;background:rgba(255,255,255,.08)}.hero-btn:hover{transform:translateY(-2px)}
+.hero-cards{position:absolute;z-index:3;bottom:20px;right:24px;left:24px;display:flex;justify-content:space-between;gap:14px}.hero-mini{background:rgba(5,38,86,.75);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(10px);color:#fff;border-radius:16px;padding:10px 15px;display:flex;align-items:center;gap:10px;min-width:180px}.hero-mini span{font-size:24px}.hero-mini b{display:block;font-size:13px}.hero-mini small{display:block;color:#cfe3fa;font-size:10px}
+.notice,.daily{max-width:1400px!important;margin:18px auto!important}.notice{border:1px solid var(--line)!important;box-shadow:0 5px 18px rgba(6,43,99,.06)}
+.categories{max-width:1400px!important;padding:8px 16px!important;gap:14px!important;scrollbar-width:none}.category{min-width:96px!important;height:96px!important;padding:7px!important;border-radius:18px!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:#fff!important;border:1px solid var(--line)!important;color:var(--deep)!important;box-shadow:0 5px 16px rgba(6,43,99,.07);transition:.22s}.category:hover{transform:translateY(-3px)}.category.active{background:linear-gradient(145deg,var(--blue),var(--blue2))!important;color:#fff!important;border-color:transparent!important}.cat-image{width:58px;height:58px;border-radius:50%;overflow:hidden;border:3px solid #e8f2fc;box-shadow:0 3px 10px #0002;flex:none}.category.active .cat-image{border-color:#fff8}.cat-image img{width:100%;height:100%;object-fit:cover}.category span:last-child{font-size:12px;font-weight:800}
+.menu-tools{max-width:1400px!important;padding:0 16px!important;margin:12px auto!important}.search-box,.menu-tools select{box-shadow:0 4px 14px rgba(6,43,99,.05)}
+.menu-layout{max-width:1400px!important;padding:0 16px;gap:24px}.category-sidebar{background:linear-gradient(180deg,#052b63,#031a40)!important;border-radius:20px!important;top:96px!important}.category-sidebar button{display:flex;align-items:center;gap:10px;text-align:right!important}.side-cat img{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.4)}.category-sidebar button.active{background:linear-gradient(90deg,#0b79d0,#0860ae)!important;color:#fff!important}
+.menu{gap:20px!important}.card{border-radius:20px!important;box-shadow:0 8px 24px rgba(6,43,99,.08)!important}.card:hover{transform:translateY(-5px)!important}.card-image-wrap{height:220px!important;position:relative;overflow:hidden}.card-image-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .5s}.card:hover .card-image-wrap img{transform:scale(1.04)}.status-badge{position:absolute;top:12px;right:12px;padding:6px 11px;border-radius:999px;color:#fff;font-size:12px;font-weight:800;box-shadow:0 4px 12px #0003}.status-badge.available{background:#159447}.status-badge.soldout{background:#d83b3b}.is-soldout .card-image-wrap img{filter:grayscale(.35);opacity:.78}.card-topline{display:flex;justify-content:space-between;align-items:center;gap:8px}.food-category{font-size:11px;color:#6d7d90}.daily-tag{font-size:10px;background:#eaf4ff;color:var(--blue2);padding:5px 8px;border-radius:999px;font-weight:800}.card-body h3{font-size:19px!important}.rating small{color:#718096;margin-right:4px}.price-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px}.price{display:flex;flex-direction:column;gap:2px}.price strong{font-size:17px;color:var(--deep)}.add-btn{padding:10px 13px!important;white-space:nowrap}.add-btn.disabled{background:#9aa5b1!important;cursor:not-allowed}.empty-state{grid-column:1/-1;background:#fff;border-radius:18px;padding:40px;text-align:center;color:#718096}
+.info-grid{max-width:1400px!important;padding:0 16px}.info-card,.reviews,.map-box,.video-box{box-shadow:0 7px 22px rgba(6,43,99,.06)!important}.review-form{border:1px solid var(--line)}
+.cart,.waiter{bottom:20px!important;box-shadow:0 8px 22px rgba(4,27,69,.2)!important;transition:.2s}.cart:hover,.waiter:hover{transform:translateY(-3px)}
+.modal-box{box-shadow:0 20px 60px #0004}.admin-section{border:1px solid #e2eaf3}.admin-cat-name{display:flex;align-items:center;gap:10px}.admin-cat-name img{width:38px;height:38px;border-radius:50%;object-fit:cover}.stock-control select{margin-right:8px;padding:8px;border:1px solid #ccd7e2;border-radius:10px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.card,.info-card,.review{animation:fadeUp .45s ease both}
+@media(max-width:900px){.brand-centered{position:static;transform:none;margin:auto}.topbar .header-inner{min-height:74px}.hero-premium{min-height:390px!important}.hero-content h2{font-size:31px!important}.hero-cards{bottom:12px;right:12px;left:12px}.hero-mini{min-width:0;flex:1}.menu-layout{padding:0 12px}.category-sidebar{order:-1}.side-cat img{display:block}.menu{grid-template-columns:1fr!important}}
+@media(max-width:600px){.topbar{padding:7px 10px!important}.header-actions .qr-btn{display:none}.brand-centered img{width:50px!important;height:50px!important}.brand-name{font-size:17px}.brand-name strong{font-size:20px}.brand-subtitle{display:none}.hero-premium{min-height:360px!important}.hero-content{padding:65px 15px 90px}.hero-content h2{font-size:26px!important}.hero-content p{font-size:14px}.hero-mini{padding:8px 10px}.hero-mini span{font-size:18px}.hero-mini b{font-size:11px}.hero-mini small{font-size:9px}.category{min-width:88px!important;height:88px!important}.cat-image{width:54px;height:54px}.card-image-wrap{height:200px!important}.price-row{align-items:flex-end}.add-btn{font-size:12px!important}.cart,.waiter{font-size:12px!important;padding:9px 11px!important}}
+
 </style>
 </head>
 
 <body>
 
-<header>
+<header class="topbar">
 <div class="header-inner">
-    <div class="header-actions">
-        <button class="admin-btn" onclick="openAdmin()">⚙ مدیریت منو</button>
-        <button class="qr-btn" onclick="showQR()">▦ QR منو</button>
-    </div>
-
-    <div class="brand">
-        <img id="logo" src="" alt="لوگو">
-        <div>
-            <h1 id="siteName">مجموعه حاجی حیدری</h1>
-            <p id="siteSubtitle">منوی دیجیتالی رستورانت، کباب، پیتزا، غذا و آبمیوه</p>
-        </div>
-    </div>
-
-    <button class="hamburger" onclick="toggleMobileMenu()" aria-label="منو">☰</button>
+  <div class="header-actions">
+    <button class="admin-btn" onclick="openAdmin()">⚙ مدیریت</button>
+    <button class="qr-btn" onclick="showQR()">▦ QR</button>
+  </div>
+  <div class="brand brand-centered">
+    <img id="logo" src="" alt="لوگو">
+    <div class="brand-name" id="siteName">مجموعه حاجی <strong>حیدری</strong></div>
+    <div class="brand-subtitle" id="siteSubtitle">رستورانت · کباب · پیتزا · غذا و آبمیوه</div>
+  </div>
+  <button class="hamburger" onclick="toggleMobileMenu()" aria-label="منو">☰</button>
 </div>
 </header>
 
-<section class="hero" id="hero">
-    <div class="hero-content">
-        <h2 id="heroTitle">مجموعه حاجی حیدری</h2>
-        <p id="heroText">به منوی دیجیتالی ما خوش آمدید</p>
+<section class="hero hero-premium" id="hero">
+  <div class="hero-shade"></div>
+  <div class="hero-content">
+    <div class="hero-pill">منوی دیجیتالی رستورانت</div>
+    <h2 id="heroTitle">مجموعه حاجی حیدری</h2>
+    <p id="heroText">طعم خوب، انتخاب آسان</p>
+    <div class="hero-actions">
+      <a href="#menu" class="hero-btn primary">مشاهده منو</a>
+      <a href="#reviewsList" class="hero-btn ghost">نظرات مشتریان</a>
     </div>
+  </div>
+  <div class="hero-cards">
+    <div class="hero-mini"><span>🍽️</span><b>غذاهای تازه</b><small>هر روز با کیفیت</small></div>
+    <div class="hero-mini"><span>📍</span><b>آدرس رستورانت</b><small id="heroAddress">برای مشاهده نقشه</small></div>
+  </div>
 </section>
 
 <div class="notice" id="notice">
@@ -847,7 +883,9 @@ footer nav a{color:#fff;text-decoration:none}
 
 <input id="setLogo" placeholder="آدرس اینترنتی لوگو">
 
-<input id="setBackground" placeholder="آدرس عکس پس‌زمینه">
+<input id="setBackground" placeholder="عکس پس‌زمینه ۱">
+<input id="setBackground2" placeholder="عکس پس‌زمینه ۲ (اختیاری)">
+<input id="setBackground3" placeholder="عکس پس‌زمینه ۳ (اختیاری)">
 
 <input id="setSideImage" placeholder="آدرس عکس کوچک کنار منو">
 
@@ -894,6 +932,7 @@ footer nav a{color:#fff;text-decoration:none}
 
 <div class="form-grid">
 <input id="newCategory" placeholder="نام دسته جدید">
+<input id="newCategoryImage" placeholder="آدرس عکس دسته (اختیاری)">
 <button class="save" onclick="addCategory()">+ افزودن دسته</button>
 </div>
 
@@ -932,13 +971,10 @@ footer nav a{color:#fff;text-decoration:none}
 <br><br>
     <br><br>
 
-<label>
-وضعیت غذا:
+<label class="stock-control">وضعیت غذا:
 <select id="itemStockStatus">
     <option value="available">🟢 موجود</option>
-    <option value="low">🟠 موجودی کم</option>
-    <option value="soldout">🔴 فعلاً موجود نیست</option>
-    <option value="soon">🔵 به‌زودی</option>
+    <option value="soldout">🔴 تمام شده</option>
 </select>
 </label>
 
@@ -978,6 +1014,8 @@ const defaultData = {
         map:"",
         logo:"",
         background:"",
+        background2:"",
+        background3:"",
         sideImage:"",
         video:"",
         waiter:true,
@@ -987,10 +1025,10 @@ const defaultData = {
     },
 
     categories:[
-        {id:1,name:"کباب"},
-        {id:2,name:"پیتزا"},
-        {id:3,name:"غذا"},
-        {id:4,name:"آبمیوه"}
+        {id:1,name:"کباب",image:"https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=300&q=80"},
+        {id:2,name:"پیتزا",image:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=300&q=80"},
+        {id:3,name:"غذا",image:"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=300&q=80"},
+        {id:4,name:"آبمیوه",image:"https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=300&q=80"}
     ],
 
     items:[
@@ -1003,6 +1041,7 @@ const defaultData = {
             image:"https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=900&q=80",
             description:"کباب تازه و خوش‌طعم با مخلفات",
             daily:true,
+            stockStatus:"available",
             rating:4.8
         },
         {
@@ -1014,6 +1053,7 @@ const defaultData = {
             image:"https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=900&q=80",
             description:"کباب با کیفیت و تازه",
             daily:false,
+            stockStatus:"available",
             rating:4.7
         },
         {
@@ -1025,6 +1065,7 @@ const defaultData = {
             image:"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=900&q=80",
             description:"پیتزای تازه با مواد باکیفیت",
             daily:false,
+            stockStatus:"available",
             rating:4.6
         },
         {
@@ -1036,6 +1077,7 @@ const defaultData = {
             image:"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
             description:"غذای تازه و خوشمزه",
             daily:false,
+            stockStatus:"available",
             rating:4.5
         },
         {
@@ -1047,6 +1089,7 @@ const defaultData = {
             image:"https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=900&q=80",
             description:"آبمیوه تازه و طبیعی",
             daily:false,
+            stockStatus:"available",
             rating:4.9
         }
     ],
@@ -1055,6 +1098,13 @@ const defaultData = {
 };
 
 let data = JSON.parse(localStorage.getItem("hajihaidariMenu")) || defaultData;
+
+// هماهنگ‌سازی نسخه‌های قبلی
+data.settings.background2=data.settings.background2||"";
+data.settings.background3=data.settings.background3||"";
+data.categories.forEach((c,i)=>{ if(!c.image) c.image=categoryImage(c); });
+data.items.forEach(i=>{ i.stockStatus=i.stockStatus==="soldout"?"soldout":"available"; });
+
 
 let activeCategory = "all";
 let cart = [];
@@ -1078,13 +1128,14 @@ function renderHeader(){
 
     document.title=data.settings.siteName;
 
-    document.getElementById("siteName").textContent=data.settings.siteName;
+    document.getElementById("siteName").innerHTML=escapeHTML(data.settings.siteName).replace(/حیدری/g,"<strong>حیدری</strong>");
 
     document.getElementById("siteSubtitle").textContent=data.settings.subtitle;
 
     document.getElementById("heroTitle").textContent=data.settings.heroTitle;
 
     document.getElementById("heroText").textContent=data.settings.heroText;
+    const heroAddress=document.getElementById("heroAddress"); if(heroAddress) heroAddress.textContent=data.settings.address || "مشاهده روی نقشه";
 
     document.getElementById("cartName").textContent=data.settings.cartName;
 
@@ -1104,8 +1155,11 @@ function renderHeader(){
         data.settings.sideImage ||
         document.getElementById("logo").src;
 
-    document.getElementById("hero").style.backgroundImage=
-        `url("${data.settings.background || "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1400&q=80"}")`;
+    const bgList=[data.settings.background,data.settings.background2,data.settings.background3].filter(Boolean);
+    if(!bgList.length) bgList.push("https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1600&q=85","https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=1600&q=85","https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1600&q=85");
+    window.__heroBgs=bgList; window.__heroIndex=window.__heroIndex||0;
+    document.getElementById("hero").style.backgroundImage=`url("${bgList[window.__heroIndex%bgList.length]}")`;
+    if(!window.__heroTimer && bgList.length>1){ window.__heroTimer=setInterval(()=>{window.__heroIndex=(window.__heroIndex+1)%window.__heroBgs.length; document.getElementById("hero").style.backgroundImage=`url("${window.__heroBgs[window.__heroIndex]}")`;},6000); }
 
     document.getElementById("mapLink").href=
         data.settings.map || "#";
@@ -1128,258 +1182,50 @@ function renderHeader(){
    CATEGORIES
 ========================= */
 
-function renderCategories(){
+function categoryImage(cat){
+    return cat.image || {
+        "کباب":"https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=300&q=80",
+        "پیتزا":"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=300&q=80",
+        "غذا":"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=300&q=80",
+        "آبمیوه":"https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=300&q=80"
+    }[cat.name] || "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=300&q=80";
+}
 
+function renderCategories(){
     const box=document.getElementById("categories");
     const side=document.getElementById("categorySidebar");
-
-    const cats=[{id:"all",name:"همه"}, ...data.categories];
-
-    box.innerHTML=cats.map(cat=>`
-        <button class="category ${activeCategory==cat.id?"active":""}"
-        onclick="selectCategory(${cat.id==="all" ? "'all'" : cat.id})">
-            ${escapeHTML(cat.name)}
-        </button>
-    `).join("");
-
-    if(side){
-        side.innerHTML=cats.map(cat=>`
-            <button class="${activeCategory==cat.id?"active":""}"
-            onclick="selectCategory(${cat.id==="all" ? "'all'" : cat.id})">
-                ${escapeHTML(cat.name)}
-            </button>
-        `).join("");
-    }
+    const cats=[{id:"all",name:"همه",image:"https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=300&q=80"}, ...data.categories];
+    if(box) box.innerHTML=cats.map(cat=>`<button class="category ${activeCategory==cat.id?"active":""}" onclick="selectCategory(${cat.id==="all"?"'all'":cat.id})"><span class="cat-image"><img src="${escapeHTML(categoryImage(cat))}" alt=""></span><span class="admin-cat-name"><img src="${escapeHTML(categoryImage(cat))}" alt="">${escapeHTML(cat.name)}</span></button>`).join("");
+    if(side) side.innerHTML=cats.map(cat=>`<button class="side-cat ${activeCategory==cat.id?"active":""}" onclick="selectCategory(${cat.id==="all"?"'all'":cat.id})"><img src="${escapeHTML(categoryImage(cat))}" alt=""><span class="admin-cat-name"><img src="${escapeHTML(categoryImage(cat))}" alt="">${escapeHTML(cat.name)}</span></button>`).join("");
 }
 
 function renderMenu(){
-
     const box=document.getElementById("menu");
-
     let items=[...data.items];
-
-    if(activeCategory!=="all"){
-        items=items.filter(x=>x.category==activeCategory);
-    }
-
-    const q=(document.getElementById("menuSearch")?.value || "").trim().toLowerCase();
-    if(q){
-        items=items.filter(x =>
-            String(x.name||"").toLowerCase().includes(q) ||
-            String(x.description||"").toLowerCase().includes(q)
-        );
-    }
-
-    const sort=document.getElementById("menuSort")?.value || "popular";
+    if(activeCategory!=="all") items=items.filter(x=>x.category==activeCategory);
+    const q=(document.getElementById("menuSearch")?.value||"").trim().toLowerCase();
+    if(q) items=items.filter(x=>String(x.name||"").toLowerCase().includes(q)||String(x.description||"").toLowerCase().includes(q));
+    const sort=document.getElementById("menuSort")?.value||"popular";
     if(sort==="priceLow") items.sort((a,b)=>Number(a.price)-Number(b.price));
     if(sort==="priceHigh") items.sort((a,b)=>Number(b.price)-Number(a.price));
     if(sort==="popular") items.sort((a,b)=>Number(b.rating||0)-Number(a.rating||0));
-
-    box.innerHTML="";
-
-    items.forEach(item=>{
-
-        let stars="";
-
-        const rating=Math.round(item.rating || 0);
-
-        for(let i=1;i<=5;i++){
-            stars+=i<=rating?"★":"☆";
-        }
-
-        let price=`${item.price} افغانی`;
-
-        if(item.oldPrice){
-            price=
-            `<span class="old-price">${item.oldPrice} افغانی</span>
-             ${item.price} افغانی`;
-        }
-
-        /* وضعیت غذا */
-
-        const status=item.stockStatus || "available";
-
-        let statusBadge="";
-        let orderButton="";
-
-        if(status==="available"){
-
-            statusBadge=`
-                <span style="
-                    position:absolute;
-                    top:10px;
-                    right:10px;
-                    background:#16a34a;
-                    color:white;
-                    padding:6px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:bold;
-                    box-shadow:0 3px 10px rgba(0,0,0,.2);
-                ">
-                🟢 موجود
-                </span>
-            `;
-
-            orderButton=`
-                <button class="add-btn"
-                onclick="addToCart(${item.id})">
-                افزودن به ${escapeHTML(data.settings.cartName)}
-                </button>
-            `;
-
-        }else if(status==="low"){
-
-            statusBadge=`
-                <span style="
-                    position:absolute;
-                    top:10px;
-                    right:10px;
-                    background:#f59e0b;
-                    color:white;
-                    padding:6px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:bold;
-                    box-shadow:0 3px 10px rgba(0,0,0,.2);
-                ">
-                🟠 موجودی کم
-                </span>
-            `;
-
-            orderButton=`
-                <button class="add-btn"
-                onclick="addToCart(${item.id})">
-                سفارش
-                </button>
-            `;
-
-        }else if(status==="soldout"){
-
-            statusBadge=`
-                <span style="
-                    position:absolute;
-                    top:10px;
-                    right:10px;
-                    background:#dc2626;
-                    color:white;
-                    padding:6px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:bold;
-                    box-shadow:0 3px 10px rgba(0,0,0,.2);
-                ">
-                🔴 فعلاً موجود نیست
-                </span>
-            `;
-
-            orderButton=`
-                <button class="add-btn"
-                disabled
-                style="
-                    opacity:.55;
-                    cursor:not-allowed;
-                    background:#777;
-                ">
-                فعلاً موجود نیست
-                </button>
-            `;
-
-        }else if(status==="soon"){
-
-            statusBadge=`
-                <span style="
-                    position:absolute;
-                    top:10px;
-                    right:10px;
-                    background:#2563eb;
-                    color:white;
-                    padding:6px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:bold;
-                    box-shadow:0 3px 10px rgba(0,0,0,.2);
-                ">
-                🔵 به‌زودی
-                </span>
-            `;
-
-            orderButton=`
-                <button class="add-btn"
-                disabled
-                style="
-                    opacity:.55;
-                    cursor:not-allowed;
-                    background:#777;
-                ">
-                به‌زودی
-                </button>
-            `;
-        }
-
-        box.innerHTML+=`
-
-        <div class="card">
-
-            <div style="
-                position:relative;
-                overflow:hidden;
-                border-radius:16px;
-            ">
-
-                <img
-                    src="${item.image}"
-                    alt="${escapeHTML(item.name)}"
-                    style="
-                        width:100%;
-                        display:block;
-                        ${status==="soldout" ? "filter:grayscale(60%);opacity:.65;" : ""}
-                    "
-                >
-
-                ${statusBadge}
-
-            </div>
-
-            <div class="card-body">
-
-                <h3>${escapeHTML(item.name)}</h3>
-
-                <div class="description">
-                    ${escapeHTML(item.description || "")}
-                </div>
-
-                <div class="rating">
-                    ${stars}
-                    <small>${item.rating || 0}</small>
-                </div>
-
-                <div class="price">
-                    ${price}
-                </div>
-
-                <div class="card-actions">
-
-                    ${orderButton}
-
-                    ${
-                        data.settings.contact
-                        ?
-                        `<button class="contact-btn"
-                        onclick="quickContact('${escapeHTML(item.name)}')">
-                        تماس
-                        </button>`
-                        :""
-                    }
-
-                </div>
-
-            </div>
-
-        </div>`;
-    });
-
-    renderDaily();
+    if(sort==="newest") items.sort((a,b)=>Number(b.id)-Number(a.id));
+    box.innerHTML=items.map(item=>{
+        const rating=Math.round(item.rating||0);
+        const stars="★".repeat(rating)+"☆".repeat(5-rating);
+        const status=item.stockStatus==="soldout"?"soldout":"available";
+        const badge=status==="available"?'<span class="status-badge available">🟢 موجود</span>':'<span class="status-badge soldout">🔴 تمام شده</span>';
+        const button=status==="available"?`<button class="add-btn" onclick="addToCart(${item.id})">+ افزودن به سبد</button>`:`<button class="add-btn disabled" disabled>تمام شده</button>`;
+        const old=item.oldPrice?`<span class="old-price">${item.oldPrice} افغانی</span>`:"";
+        return `<article class="card ${status==='soldout'?'is-soldout':''}">
+          <div class="card-image-wrap"><img src="${escapeHTML(item.image)}" alt="${escapeHTML(item.name)}" loading="lazy">${badge}</div>
+          <div class="card-body"><div class="card-topline"><span class="food-category">${escapeHTML(data.categories.find(c=>c.id==item.category)?.name||"")}</span>${item.daily?'<span class="daily-tag">ویژه امروز</span>':''}</div>
+          <h3>${escapeHTML(item.name)}</h3><p class="description">${escapeHTML(item.description||"")}</p>
+          <div class="rating">${stars} <small>${Number(item.rating||0).toFixed(1)}</small></div>
+          <div class="price-row"><div class="price">${old}<strong>${item.price} افغانی</strong></div>${button}</div></div>
+        </article>`;
+    }).join("");
+    if(!items.length) box.innerHTML='<div class="empty-state">غذایی با این مشخصات پیدا نشد.</div>';
 }
 
 /* =========================
@@ -1590,6 +1436,8 @@ function loadAdmin(){
     document.getElementById("setLogo").value=s.logo;
 
     document.getElementById("setBackground").value=s.background;
+    document.getElementById("setBackground2").value=s.background2||"";
+    document.getElementById("setBackground3").value=s.background3||"";
 
     document.getElementById("setSideImage").value=s.sideImage;
 
@@ -1634,6 +1482,8 @@ function saveSettings(){
     s.logo=document.getElementById("setLogo").value;
 
     s.background=document.getElementById("setBackground").value;
+    s.background2=document.getElementById("setBackground2").value;
+    s.background3=document.getElementById("setBackground3").value;
 
     s.sideImage=document.getElementById("setSideImage").value;
 
@@ -1673,10 +1523,12 @@ function addCategory(){
 
     data.categories.push({
         id:Date.now(),
-        name:name
+        name:name,
+        image:document.getElementById("newCategoryImage").value.trim() || "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=300&q=80"
     });
 
     input.value="";
+    document.getElementById("newCategoryImage").value="";
 
     saveData();
 
@@ -1735,7 +1587,7 @@ function renderCategoryAdmin(){
         box.innerHTML+=`
         <div class="admin-row">
 
-            <span>${escapeHTML(cat.name)}</span>
+            <span class="admin-cat-name"><img src="${escapeHTML(categoryImage(cat))}" alt="">${escapeHTML(cat.name)}</span>
 
             <div>
 
@@ -1811,7 +1663,7 @@ function addItem(){
         category:category,
 
         daily:document.getElementById("itemDaily").checked,
-        stockStatus:"available",
+        stockStatus:document.getElementById("itemStockStatus").value==="soldout"?"soldout":"available",
         rating:0
 
     });
@@ -1822,6 +1674,7 @@ function addItem(){
     document.getElementById("itemImage").value="";
     document.getElementById("itemDescription").value="";
     document.getElementById("itemDaily").checked=false;
+    document.getElementById("itemStockStatus").value="available";
 
     saveData();
 
@@ -2902,413 +2755,6 @@ if(typeof openAdmin === "function"){
 
 }
 
-</script>
-
-
-<style id="pro-final-design">
-:root{
-  --pro-navy:#061d49;
-  --pro-blue:#0a3977;
-  --pro-blue2:#1257a6;
-  --pro-gold:#e7b23c;
-  --pro-gold2:#f7d477;
-  --pro-bg:#f6f8fc;
-}
-html{scroll-behavior:smooth}
-body{
-  background:linear-gradient(180deg,#f7f9fd 0%,#eef3f9 100%);
-  overflow-x:hidden;
-}
-header{
-  min-height:72px!important;
-  background:rgba(4,22,55,.96)!important;
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid rgba(231,178,60,.45)!important;
-}
-.header-inner{position:relative;height:52px!important}
-.brand{
-  position:absolute!important;
-  left:50%!important;
-  transform:translateX(-50%)!important;
-  flex-direction:column!important;
-  gap:3px!important;
-  text-align:center;
-  z-index:3;
-}
-.brand img{
-  width:38px!important;height:38px!important;
-  border:2px solid var(--pro-gold)!important;
-  box-shadow:0 4px 18px rgba(231,178,60,.25);
-}
-.brand h1{font-size:15px!important;line-height:1.1}
-.brand p{display:none}
-.header-actions{position:absolute;right:0;top:2px;z-index:4}
-.hamburger{position:absolute;left:0;top:2px;z-index:4}
-
-.hero{
-  max-width:none!important;
-  width:100%;
-  min-height:390px!important;
-  margin:0!important;
-  border-radius:0 0 50% 50% / 0 0 9% 9%!important;
-  background-color:#071d46;
-  transition:background-image .8s ease,opacity .35s ease;
-  box-shadow:0 18px 45px rgba(3,25,65,.18);
-}
-.hero:before{
-  background:
-    linear-gradient(90deg,rgba(2,12,34,.72),rgba(2,12,34,.22),rgba(2,12,34,.68))!important;
-}
-.hero-content h2{
-  font-size:42px!important;
-  letter-spacing:.2px;
-  animation:heroRise .8s ease both;
-}
-.hero-content p{animation:heroRise 1s .08s ease both}
-@keyframes heroRise{
-  from{opacity:0;transform:translateY(14px)}
-  to{opacity:1;transform:none}
-}
-.hero-slide-dots{
-  position:absolute;bottom:42px;left:50%;transform:translateX(-50%);
-  display:flex;gap:7px;z-index:4;
-}
-.hero-slide-dots span{
-  width:7px;height:7px;border-radius:50%;
-  background:rgba(255,255,255,.45);transition:.3s;
-}
-.hero-slide-dots span.active{width:22px;border-radius:9px;background:var(--pro-gold)}
-
-.categories{
-  justify-content:center!important;
-  gap:16px!important;
-  padding:18px 12px!important;
-}
-.category{
-  position:relative;
-  min-width:96px!important;height:96px!important;
-  padding:0!important;
-  display:flex!important;align-items:flex-end;justify-content:center;
-  overflow:hidden;
-  border:2px solid rgba(231,178,60,.7)!important;
-  background:#092b60!important;color:#fff!important;
-  box-shadow:0 8px 22px rgba(4,27,69,.15);
-}
-.category img{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  opacity:.78;transition:.45s;
-}
-.category:after{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(transparent 25%,rgba(2,13,35,.82));
-}
-.category span{
-  position:relative;z-index:2;padding-bottom:13px;font-size:13px;
-  text-shadow:0 2px 6px #000;
-}
-.category.active{transform:translateY(-4px)!important;box-shadow:0 12px 26px rgba(4,27,69,.24)}
-.category.active img,.category:hover img{transform:scale(1.08);opacity:.95}
-
-.menu-tools{
-  padding:0 12px;
-}
-.search-box,.menu-tools select{
-  box-shadow:0 7px 20px rgba(4,27,69,.07);
-}
-.card{
-  animation:cardIn .5s ease both;
-}
-@keyframes cardIn{
-  from{opacity:0;transform:translateY(12px)}
-  to{opacity:1;transform:none}
-}
-.card:hover{transform:translateY(-6px)!important}
-.card>div:first-child{position:relative}
-.card>div:first-child img{transition:transform .6s ease}
-.card:hover>div:first-child img{transform:scale(1.045)}
-.card .add-btn{box-shadow:0 7px 16px rgba(6,29,73,.18)}
-.card .add-btn:active{transform:scale(.98)}
-.stock-badge-pro{
-  position:absolute;top:12px;right:12px;z-index:5;
-  padding:7px 11px;border-radius:999px;font-size:12px;font-weight:900;
-  backdrop-filter:blur(8px);box-shadow:0 5px 14px #0003;
-}
-.stock-available{background:#168c55;color:#fff}
-.stock-soldout{background:#b92c35;color:#fff}
-.soldout-card{filter:saturate(.82)}
-.info-card,.reviews,.map-box{
-  box-shadow:0 10px 28px rgba(4,27,69,.07)!important;
-}
-.cart,.waiter{
-  box-shadow:0 10px 26px rgba(4,27,69,.22)!important;
-  transition:.25s!important;
-}
-.cart:hover,.waiter:hover{transform:translateY(-3px)}
-#proMediaPreview{
-  margin-top:10px;border-radius:14px;overflow:hidden;
-  min-height:90px;background:#071d46;display:none;
-}
-#proMediaPreview video{width:100%;max-height:220px;object-fit:cover}
-.pro-settings{
-  background:linear-gradient(135deg,#061d49,#0a3977);
-  color:#fff;border-radius:18px;padding:18px;margin:15px 0;
-  box-shadow:0 12px 30px rgba(4,27,69,.18);
-}
-.pro-settings h3{margin:0 0 12px;color:var(--pro-gold2)}
-.pro-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.pro-grid label{display:block;font-size:12px;color:#dce7f7}
-.pro-grid input,.pro-grid select{
-  width:100%;margin-top:5px;padding:10px;border:1px solid #496b9d;
-  border-radius:10px;background:#fff;color:#102443;
-}
-.pro-settings .pro-save{
-  width:100%;margin-top:12px;border:0;border-radius:11px;padding:12px;
-  background:var(--pro-gold);color:#081c3f;font-weight:900;
-}
-.category-admin-img{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid var(--pro-gold)}
-@media(max-width:900px){
-  .hero{min-height:320px!important}
-  .hero-content h2{font-size:30px!important}
-  .categories{justify-content:flex-start!important}
-}
-@media(max-width:600px){
-  header{min-height:64px!important}
-  .brand img{width:34px!important;height:34px!important}
-  .brand h1{font-size:13px!important}
-  .header-actions{right:0}
-  .admin-btn{padding:7px 9px!important;font-size:11px!important}
-  .hero{min-height:270px!important;border-radius:0 0 35% 35% / 0 0 8% 8%!important}
-  .hero-content h2{font-size:25px!important}
-  .hero-slide-dots{bottom:27px}
-  .category{min-width:78px!important;height:78px!important}
-  .category span{font-size:11px;padding-bottom:10px}
-  .pro-grid{grid-template-columns:1fr}
-}
-</style>
-<script id="pro-final-script">
-(function(){
-  const PRO_KEY="hajihaidari_pro_final_v1";
-  const catImages={
-    "کباب":"https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=300&q=80",
-    "پیتزا":"https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=300&q=80",
-    "غذا":"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=300&q=80",
-    "غذاهای ایرانی":"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=300&q=80",
-    "فست فود":"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=300&q=80",
-    "آبمیوه":"https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=300&q=80",
-    "نوشیدنی":"https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=300&q=80",
-    "دسر":"https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=300&q=80"
-  };
-  const saved=JSON.parse(localStorage.getItem(PRO_KEY)||"null")||{};
-  const pro={
-    backgrounds:saved.backgrounds||[],
-    interval:Number(saved.interval)||6000,
-    video:saved.video||"",
-    videoEnabled:!!saved.videoEnabled
-  };
-
-  function normalize(){
-    data.settings=data.settings||{};
-    if(!Array.isArray(data.settings.backgrounds)) data.settings.backgrounds=[];
-    if(!Array.isArray(pro.backgrounds)) pro.backgrounds=[];
-    data.categories.forEach(c=>{
-      if(!c.image) c.image=catImages[c.name]||"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=300&q=80";
-    });
-    data.items.forEach(i=>{
-      if(i.stockStatus!=="soldout") i.stockStatus="available";
-    });
-  }
-  normalize();
-
-  function savePro(){
-    localStorage.setItem(PRO_KEY,JSON.stringify(pro));
-  }
-
-  let slideIndex=0, slideTimer=null;
-  function setupHero(){
-    const hero=document.getElementById("hero");
-    if(!hero)return;
-    let imgs=pro.backgrounds.filter(Boolean);
-    if(!imgs.length && data.settings.background) imgs=[data.settings.background];
-    if(!imgs.length) imgs=["https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1600&q=85"];
-    let dots=hero.querySelector(".hero-slide-dots");
-    if(!dots){
-      dots=document.createElement("div");
-      dots.className="hero-slide-dots";
-      hero.appendChild(dots);
-    }
-    dots.innerHTML=imgs.map((_,i)=>`<span class="${i===slideIndex%imgs.length?"active":""}"></span>`).join("");
-    const show=()=>{
-      slideIndex=(slideIndex+imgs.length)%imgs.length;
-      hero.style.backgroundImage=`url("${imgs[slideIndex]}")`;
-      dots.querySelectorAll("span").forEach((x,i)=>x.classList.toggle("active",i===slideIndex));
-    };
-    hero.style.backgroundImage=`url("${imgs[slideIndex%imgs.length]}")`;
-    clearInterval(slideTimer);
-    if(imgs.length>1) slideTimer=setInterval(show,Math.max(3000,pro.interval));
-  }
-
-  const oldRenderHeader=renderHeader;
-  renderHeader=function(){
-    oldRenderHeader();
-    setupHero();
-  };
-
-  const oldRenderCategories=renderCategories;
-  renderCategories=function(){
-    const box=document.getElementById("categories");
-    const side=document.getElementById("categorySidebar");
-    const cats=[{id:"all",name:"همه",image:"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=300&q=80"},...data.categories];
-    box.innerHTML=cats.map(cat=>`
-      <button class="category ${activeCategory==cat.id?"active":""}" onclick="selectCategory(${cat.id==="all"?"'all'":cat.id})">
-        <img src="${cat.image||catImages[cat.name]||catImages["غذا"]}" alt="">
-        <span>${escapeHTML(cat.name)}</span>
-      </button>`).join("");
-    if(side){
-      side.innerHTML=cats.map(cat=>`
-        <button class="${activeCategory==cat.id?"active":""}" onclick="selectCategory(${cat.id==="all"?"'all'":cat.id})">${escapeHTML(cat.name)}</button>
-      `).join("");
-    }
-  };
-
-  const oldAddItem=addItem;
-  addItem=function(){
-    const statusEl=document.getElementById("itemStockStatus");
-    if(statusEl){
-      const status=statusEl.value==="soldout"?"soldout":"available";
-      const name=document.getElementById("itemName").value.trim();
-      const price=Number(document.getElementById("itemPrice").value);
-      const category=Number(document.getElementById("itemCategory").value);
-      if(!name||!price||!category){alert("نام، قیمت و دسته‌بندی را وارد کنید.");return;}
-      data.items.push({
-        id:Date.now(),name,price,
-        oldPrice:Number(document.getElementById("itemOldPrice").value)||0,
-        image:document.getElementById("itemImage").value||catImages["غذا"],
-        description:document.getElementById("itemDescription").value,
-        category,daily:document.getElementById("itemDaily").checked,
-        stockStatus:status,rating:0
-      });
-      ["itemName","itemPrice","itemOldPrice","itemImage","itemDescription"].forEach(id=>{const e=document.getElementById(id);if(e)e.value=""});
-      document.getElementById("itemDaily").checked=false;
-      saveData();renderAll();loadAdmin();alert("غذا با موفقیت اضافه شد.");
-    }else oldAddItem();
-  };
-
-  function buildProSettings(){
-    if(document.getElementById("proSettingsPanel")) return;
-    const box=document.querySelector("#adminModal .modal-box");
-    if(!box)return;
-    const panel=document.createElement("div");
-    panel.id="proSettingsPanel";
-    panel.className="pro-settings";
-    panel.innerHTML=`
-      <h3>✨ استودیو ظاهر حرفه‌ای</h3>
-      <p style="margin:0 0 12px;color:#dce7f7;font-size:13px">پس‌زمینه هدر، ویدیو و زمان تعویض را خودت هر وقت خواستی تغییر بده.</p>
-      <div class="pro-grid">
-        ${[0,1,2,3].map(i=>`<label>عکس پس‌زمینه ${i+1}<input id="pro_bg_${i}" placeholder="لینک عکس"></label>`).join("")}
-        <label>زمان تغییر
-          <select id="pro_interval">
-            <option value="4000">۴ ثانیه</option>
-            <option value="5000">۵ ثانیه</option>
-            <option value="6000">۶ ثانیه</option>
-            <option value="7000">۷ ثانیه</option>
-            <option value="10000">۱۰ ثانیه</option>
-          </select>
-        </label>
-        <label>ویدیوی پس‌زمینه
-          <input id="pro_video" placeholder="لینک فایل ویدیو">
-        </label>
-      </div>
-      <label style="display:flex;gap:8px;align-items:center;margin-top:12px">
-        <input type="checkbox" id="pro_video_enabled"> استفاده از ویدیو در هدر
-      </label>
-      <button class="pro-save" id="pro_save">💾 ذخیره ظاهر</button>
-      <div id="proMediaPreview"></div>
-    `;
-    box.appendChild(panel);
-    for(let i=0;i<4;i++) document.getElementById("pro_bg_"+i).value=pro.backgrounds[i]||"";
-    document.getElementById("pro_interval").value=String(pro.interval);
-    document.getElementById("pro_video").value=pro.video;
-    document.getElementById("pro_video_enabled").checked=pro.videoEnabled;
-    document.getElementById("pro_save").onclick=function(){
-      pro.backgrounds=[0,1,2,3].map(i=>document.getElementById("pro_bg_"+i).value.trim()).filter(Boolean);
-      pro.interval=Number(document.getElementById("pro_interval").value)||6000;
-      pro.video=document.getElementById("pro_video").value.trim();
-      pro.videoEnabled=document.getElementById("pro_video_enabled").checked;
-      savePro();slideIndex=0;setupHero();
-      alert("ظاهر حرفه‌ای با موفقیت ذخیره شد.");
-    };
-  }
-
-  const prevOpenAdmin=openAdmin;
-  openAdmin=function(){
-    prevOpenAdmin();
-    setTimeout(buildProSettings,80);
-  };
-
-  function refreshStockSelect(){
-    const s=document.getElementById("itemStockStatus");
-    if(!s)return;
-    s.innerHTML=`<option value="available">🟢 موجود</option><option value="soldout">🔴 فعلاً موجود نیست</option>`;
-  }
-
-  const prevRenderItemAdmin=renderItemAdmin;
-  renderItemAdmin=function(){
-    prevRenderItemAdmin();
-    refreshStockSelect();
-    data.items.forEach(item=>{
-      const status=item.stockStatus||"available";
-      item.stockStatus=status==="soldout"?"soldout":"available";
-    });
-  };
-
-  const oldRenderMenu=renderMenu;
-  renderMenu=function(){
-    oldRenderMenu();
-    document.querySelectorAll(".card").forEach(card=>{
-      const buttons=card.querySelectorAll("button");
-      const sold=Array.from(buttons).some(b=>b.disabled&&/موجود نیست/.test(b.textContent||""));
-      const image=card.querySelector("img");
-      const wrap=image?.parentElement;
-      if(!wrap||!image)return;
-      let badge=wrap.querySelector(".stock-badge-pro");
-      if(!badge){
-        badge=document.createElement("span");badge.className="stock-badge-pro";
-        wrap.appendChild(badge);
-      }
-      badge.textContent=sold?"🔴 فعلاً موجود نیست":"🟢 موجود";
-      badge.classList.toggle("stock-soldout",sold);
-      badge.classList.toggle("stock-available",!sold);
-      if(sold)card.classList.add("soldout-card");
-    });
-  };
-
-  // اجازه نمی‌دهد غذای تمام‌شده وارد سبد شود.
-  const oldAddToCart=addToCart;
-  addToCart=function(id){
-    const item=data.items.find(x=>x.id===id);
-    if(item?.stockStatus==="soldout"){
-      alert("این غذا فعلاً موجود نیست و به سبد خرید اضافه نمی‌شود.");
-      return;
-    }
-    oldAddToCart(id);
-  };
-
-  // ذخیره تصویر دسته جدید با یک تصویر پیش‌فرض زیبا.
-  const oldAddCategory=addCategory;
-  addCategory=function(){
-    const input=document.getElementById("newCategory");
-    if(!input?.value.trim()) return oldAddCategory();
-    const name=input.value.trim();
-    data.categories.push({id:Date.now(),name,image:catImages[name]||catImages["غذا"]});
-    input.value="";saveData();renderAll();loadAdmin();
-  };
-
-  // تبدیل وضعیت‌های قدیمی چهارحالته به دو حالت نهایی.
-  data.items.forEach(i=>{if(i.stockStatus!=="soldout")i.stockStatus="available"});
-  saveData();
-  savePro();
-  setTimeout(()=>{refreshStockSelect();renderAll();},60);
-})();
 </script>
 
 </body>
