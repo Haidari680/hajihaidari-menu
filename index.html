@@ -737,6 +737,127 @@ footer nav a{color:#fff;text-decoration:none}
 @media(max-width:520px){.hero-reference{min-height:620px}.hero-logo-wrap{width:86px;height:86px}.hero-center h2{font-size:48px}.hero-special,.hero-side-stack{top:245px;width:92%;left:4%;right:auto}.hero-side-stack{top:425px}.hero-special img{height:90px}.hero-special{padding:9px}.hero-special h3{font-size:15px}.hero-card-title{font-size:12px;padding:5px 13px}.hero-contact-card,.hero-address-card{padding:10px}.hero-circle-icon{width:38px;height:38px;flex-basis:38px;font-size:18px}.hero-contact-head strong{font-size:12px}.hero-contact-head b{font-size:14px}.hero-contact-head small{font-size:9px}.hero-address-card .hero-contact-head b{font-size:11px}.top-actions .top-action:nth-child(2){display:none}}
 
 </style>
+<style>
+/* === EXACT TOP HEADER / HERO REFERENCE OVERRIDE === */
+.top-header{
+  position:sticky!important;top:0!important;height:112px!important;padding:0!important;
+  background:linear-gradient(180deg,#020d1d 0%,#04162b 100%)!important;
+  border:0!important;box-shadow:0 4px 18px rgba(0,0,0,.32)!important;
+  overflow:visible!important;
+}
+.top-header:after{
+  content:"";position:absolute;left:0;right:0;bottom:-22px;height:56px;z-index:2;
+  background:transparent;border-top:5px solid #d99b25;
+  border-radius:0 0 50% 50%/0 0 100% 100%;
+  transform:scaleX(1.03);
+  pointer-events:none;
+}
+.top-header-inner{
+  max-width:1500px!important;height:112px!important;margin:auto!important;
+  position:relative!important;display:block!important;
+}
+.top-actions{
+  position:absolute!important;left:42px!important;top:17px!important;
+  display:flex!important;gap:18px!important;z-index:20!important;
+}
+.top-action{
+  color:#fff!important;display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;gap:2px!important;
+  min-width:78px!important;font-size:12px!important;padding:3px 5px!important;
+}
+.top-action .action-icon{font-size:28px!important;line-height:1!important;color:#fff!important}
+.top-action:hover{color:#fff!important}
+.top-nav{
+  position:absolute!important;right:55px!important;top:0!important;height:100%!important;
+  display:flex!important;align-items:center!important;gap:48px!important;margin:0!important;
+  z-index:15!important;
+}
+.top-nav a{
+  color:#fff!important;font-size:15px!important;font-weight:800!important;
+  padding:43px 2px 24px!important;border-bottom:3px solid transparent!important;
+}
+.top-nav a:first-child,.top-nav a:hover{
+  color:#f0b62f!important;border-bottom-color:#f0b62f!important;
+}
+.top-hamburger{display:none!important}
+
+/* logo sits in the header, while the hero title stays below it */
+.hero-reference{
+  margin-top:0!important;min-height:455px!important;border-radius:0 0 38px 38px!important;
+  overflow:visible!important;background-color:#06182c!important;
+}
+.hero-reference:before{
+  z-index:0!important;
+  background-image:linear-gradient(90deg,rgba(1,10,21,.82),rgba(2,18,35,.30),rgba(1,10,21,.78)),var(--hero-bg)!important;
+  background-position:center!important;background-size:cover!important;
+  filter:saturate(.9) brightness(.72)!important;
+}
+.hero-reference:after{
+  bottom:-40px!important;height:86px!important;z-index:8!important;
+  background:#071b33!important;clip-path:ellipse(61% 52% at 50% 100%)!important;
+}
+.hero-center{
+  top:72px!important;width:min(650px,48vw)!important;z-index:12!important;
+}
+.hero-logo-wrap{
+  width:108px!important;height:108px!important;margin:0 auto -4px!important;
+  position:relative!important;z-index:30!important;
+}
+.hero-title-small{font-size:24px!important;margin-top:0!important;color:#fff!important}
+.hero-center h2{
+  font-size:92px!important;line-height:.95!important;margin:0!important;
+  color:#e8ad35!important;letter-spacing:-4px!important;
+  text-shadow:0 4px 15px #000,0 0 22px rgba(229,167,44,.16)!important;
+}
+.hero-center p{font-size:21px!important;margin:12px 0 15px!important}
+.hero-divider{gap:10px!important}.hero-divider i{width:110px!important}
+
+.hero-special{
+  left:4%!important;top:42px!important;width:315px!important;padding:13px!important;
+  z-index:14!important;
+}
+.hero-side-stack{
+  right:4%!important;top:42px!important;width:315px!important;z-index:14!important;
+}
+.hero-special img{height:126px!important}
+.hero-card-title{font-size:14px!important}
+.hero-special h3{font-size:20px!important}
+.hero-side-card{border-color:rgba(229,167,44,.72)!important}
+
+/* category strip: larger circular food photos like the reference */
+.categories{
+  max-width:1450px!important;margin:-2px auto 18px!important;padding:14px 42px 16px!important;
+  gap:28px!important;background:linear-gradient(180deg,#091b30,#061426)!important;
+  border:1px solid rgba(229,167,44,.32)!important;border-radius:0 0 28px 28px!important;
+  position:relative!important;z-index:20!important;
+}
+.category{min-width:105px!important;color:#fff!important}
+.category::before{width:90px!important;height:90px!important;border-color:#e4a82f!important}
+
+@media(max-width:1000px){
+ .top-nav{right:25px!important;gap:22px!important}.top-nav a{font-size:13px!important}
+ .top-actions{left:18px!important}.hero-special,.hero-side-stack{width:260px!important}
+ .hero-center{width:43vw!important}.hero-center h2{font-size:68px!important}
+}
+@media(max-width:760px){
+ .top-header{height:78px!important}.top-header-inner{height:78px!important}
+ .top-nav{display:none!important}.top-actions{top:12px!important;left:10px!important}
+ .hero-reference{min-height:610px!important;margin-top:0!important}
+ .hero-center{top:26px!important;width:94vw!important}
+ .hero-logo-wrap{width:88px!important;height:88px!important}
+ .hero-center h2{font-size:55px!important}
+ .hero-special{top:220px!important;left:4%!important;width:44%!important}
+ .hero-side-stack{top:220px!important;right:4%!important;width:44%!important}
+ .categories{justify-content:flex-start!important;gap:18px!important;padding:12px 18px!important}
+}
+@media(max-width:520px){
+ .top-action{min-width:60px!important}.top-action .action-icon{font-size:23px!important}
+ .hero-reference{min-height:680px!important}
+ .hero-center h2{font-size:48px!important}
+ .hero-special,.hero-side-stack{width:92%!important;left:4%!important;right:auto!important}
+ .hero-special{top:215px!important}.hero-side-stack{top:410px!important}
+}
+</style>
 </head>
 
 <body>
@@ -2982,4 +3103,3 @@ if(typeof openAdmin === "function"){
 
 </body>
 </html>
-
