@@ -1,181 +1,344 @@
 (function () {
   "use strict";
 
-  const STORAGE_KEY = "hh_menu_settings";
+  const KEY = "hh_menu_data_v1";
 
-  const defaultSettings = {
-    available: true,
-    daily: false,
+  let data = JSON.parse(localStorage.getItem(KEY) || "null") || {
+    foods: [],
     cart: [],
-    waiterCalled: false
+    waiter: false
   };
 
-  let settings = JSON.parse(
-    localStorage.getItem(STORAGE_KEY) || "null"
-  ) || defaultSettings;
-
   function save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    localStorage.setItem(KEY, JSON.stringify(data));
   }
 
-  const panel = document.createElement("div");
-
-  panel.id = "hh-control-panel";
-
-  panel.innerHTML = `
-    <div class="hh-title">🍽️ مدیریت منو</div>
-
-    <div class="hh-row">
-      <span>وضعیت غذا</span>
-      <button id="hh-stock" class="hh-switch"></button>
-    </div>
-
-    <div class="hh-row">
-      <span>⭐ غذای روز</span>
-      <button id="hh-daily" class="hh-switch"></button>
-    </div>
-
-    <div class="hh-actions">
-      <button id="hh-cart">🛒 سبد خرید</button>
-      <button id="hh-waiter">🔔 فراخوان گارسون</button>
-    </div>
-  `;
-
   const style = document.createElement("style");
-
   style.textContent = `
-    #hh-control-panel{
+    #hh-admin{
       position:fixed;
       bottom:15px;
       left:50%;
       transform:translateX(-50%);
-      z-index:99999;
-      width:min(430px,calc(100% - 20px));
+      z-index:999999;
+      width:min(460px,calc(100% - 20px));
+      max-height:80vh;
+      overflow:auto;
       background:#fff;
-      padding:12px;
-      border-radius:16px;
-      box-shadow:0 5px 25px rgba(0,0,0,.20);
-      font-family:Tahoma,Arial,sans-serif;
+      color:#222;
+      padding:14px;
+      border-radius:18px;
+      box-shadow:0 8px 30px rgba(0,0,0,.25);
       direction:rtl;
+      font-family:Tahoma,Arial,sans-serif;
+    }
+
+    #hh-admin *{
       box-sizing:border-box;
     }
 
-    #hh-control-panel *{
-      box-sizing:border-box;
-    }
-
-    .hh-title{
-      text-align:center;
-      font-weight:bold;
-      font-size:15px;
-      margin-bottom:9px;
-    }
-
-    .hh-row{
+    .hh-head{
       display:flex;
-      align-items:center;
       justify-content:space-between;
-      gap:10px;
-      padding:7px 3px;
-      border-bottom:1px solid #eee;
-      font-size:13px;
+      align-items:center;
+      margin-bottom:12px;
     }
 
-    .hh-switch{
-      min-width:105px;
+    .hh-head strong{
+      font-size:16px;
+    }
+
+    .hh-close{
       border:0;
-      border-radius:20px;
-      padding:7px 12px;
-      color:#fff;
+      background:#eee;
+      border-radius:50%;
+      width:30px;
+      height:30px;
+      cursor:pointer;
+    }
+
+    .hh-form{
+      background:#f7f7f7;
+      padding:10px;
+      border-radius:12px;
+      margin-bottom:12px;
+    }
+
+    .hh-form input{
+      width:100%;
+      padding:9px;
+      margin-bottom:7px;
+      border:1px solid #ddd;
+      border-radius:9px;
+      font-family:inherit;
+    }
+
+    .hh-add{
+      width:100%;
+      border:0;
+      border-radius:9px;
+      padding:10px;
+      background:#0757a8;
+      color:white;
       cursor:pointer;
       font-family:inherit;
       font-weight:bold;
     }
 
-    .hh-actions{
-      display:flex;
-      gap:7px;
-      margin-top:9px;
+    .hh-food{
+      border:1px solid #eee;
+      border-radius:12px;
+      padding:10px;
+      margin-bottom:8px;
     }
 
-    .hh-actions button{
-      flex:1;
-      border:0;
-      border-radius:10px;
-      padding:9px 6px;
-      cursor:pointer;
-      background:#0757a8;
-      color:#fff;
-      font-family:inherit;
+    .hh-food-name{
+      font-weight:bold;
+      font-size:14px;
+    }
+
+    .hh-price{
+      color:#666;
       font-size:12px;
+      margin:4px 0 8px;
+    }
+
+    .hh-buttons{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+    }
+
+    .hh-buttons button{
+      border:0;
+      border-radius:8px;
+      padding:7px 9px;
+      cursor:pointer;
+      font-family:inherit;
+      font-size:11px;
+    }
+
+    .hh-stock-on{
+      background:#159447;
+      color:white;
+    }
+
+    .hh-stock-off{
+      background:#d62828;
+      color:white;
+    }
+
+    .hh-daily{
+      background:#0757a8;
+      color:white;
+    }
+
+    .hh-delete{
+      background:#eee;
+      color:#333;
+    }
+
+    .hh-cart,
+    .hh-waiter{
+      width:100%;
+      border:0;
+      border-radius:9px;
+      padding:10px;
+      margin-top:7px;
+      cursor:pointer;
+      font-family:inherit;
+      font-weight:bold;
+    }
+
+    .hh-cart{
+      background:#0757a8;
+      color:white;
+    }
+
+    .hh-waiter{
+      background:#159447;
+      color:white;
+    }
+
+    .hh-empty{
+      text-align:center;
+      color:#777;
+      padding:10px;
+      font-size:12px;
+    }
+
+    #hh-open{
+      position:fixed;
+      bottom:15px;
+      left:50%;
+      transform:translateX(-50%);
+      z-index:999998;
+      border:0;
+      border-radius:14px;
+      padding:11px 18px;
+      background:#0757a8;
+      color:white;
+      font-family:Tahoma,Arial,sans-serif;
+      cursor:pointer;
+      box-shadow:0 5px 18px rgba(0,0,0,.2);
+      direction:rtl;
     }
   `;
 
   document.head.appendChild(style);
-  document.body.appendChild(panel);
 
-  const stockButton = document.getElementById("hh-stock");
-  const dailyButton = document.getElementById("hh-daily");
+  const openButton = document.createElement("button");
+  openButton.id = "hh-open";
+  openButton.textContent = "⚙️ مدیریت منو";
+  document.body.appendChild(openButton);
 
-  function updateButtons() {
+  const admin = document.createElement("div");
+  admin.id = "hh-admin";
+  admin.style.display = "none";
 
-    if (settings.available) {
-      stockButton.textContent = "🟢 موجود";
-      stockButton.style.background = "#159447";
-    } else {
-      stockButton.textContent = "🔴 تمام شد";
-      stockButton.style.background = "#d62828";
+  admin.innerHTML = `
+    <div class="hh-head">
+      <strong>🍽️ مدیریت منوی حاجی حیدری</strong>
+      <button class="hh-close">✕</button>
+    </div>
+
+    <div class="hh-form">
+      <input id="hh-name" placeholder="نام غذا">
+      <input id="hh-price" placeholder="قیمت (افغانی)" inputmode="numeric">
+      <button class="hh-add">➕ افزودن غذا</button>
+    </div>
+
+    <div id="hh-foods"></div>
+
+    <button class="hh-cart">🛒 سبد خرید</button>
+    <button class="hh-waiter">🔔 فراخوان گارسون</button>
+  `;
+
+  document.body.appendChild(admin);
+
+  const foodsBox = admin.querySelector("#hh-foods");
+  const nameInput = admin.querySelector("#hh-name");
+  const priceInput = admin.querySelector("#hh-price");
+
+  function renderFoods() {
+    foodsBox.innerHTML = "";
+
+    if (!data.foods.length) {
+      foodsBox.innerHTML =
+        `<div class="hh-empty">هنوز غذایی اضافه نشده است.</div>`;
+      return;
     }
 
-    if (settings.daily) {
-      dailyButton.textContent = "⭐ فعال";
-      dailyButton.style.background = "#0757a8";
-    } else {
-      dailyButton.textContent = "غیرفعال";
-      dailyButton.style.background = "#777";
-    }
+    data.foods.forEach((food, index) => {
+      const item = document.createElement("div");
+      item.className = "hh-food";
+
+      item.innerHTML = `
+        <div class="hh-food-name">${escapeHTML(food.name)}</div>
+        <div class="hh-price">${Number(food.price || 0).toLocaleString()} افغانی</div>
+
+        <div class="hh-buttons">
+          <button class="${food.available ? "hh-stock-on" : "hh-stock-off"}"
+                  data-action="stock">
+            ${food.available ? "🟢 موجود" : "🔴 تمام شد"}
+          </button>
+
+          <button class="hh-daily" data-action="daily">
+            ${food.daily ? "⭐ غذای روز" : "☆ غذای روز"}
+          </button>
+
+          <button class="hh-delete" data-action="delete">
+            🗑️ حذف
+          </button>
+        </div>
+      `;
+
+      item.querySelector('[data-action="stock"]').onclick = function () {
+        food.available = !food.available;
+        save();
+        renderFoods();
+      };
+
+      item.querySelector('[data-action="daily"]').onclick = function () {
+        food.daily = !food.daily;
+        save();
+        renderFoods();
+      };
+
+      item.querySelector('[data-action="delete"]').onclick = function () {
+        if (confirm("این غذا حذف شود؟")) {
+          data.foods.splice(index, 1);
+          save();
+          renderFoods();
+        }
+      };
+
+      foodsBox.appendChild(item);
+    });
   }
 
-  stockButton.onclick = function () {
-    settings.available = !settings.available;
-    save();
-    updateButtons();
+  function addFood() {
+    const name = nameInput.value.trim();
+    const price = priceInput.value.trim();
 
-    alert(
-      settings.available
-        ? "🟢 غذا دوباره موجود شد."
-        : "🔴 غذا تمام شد."
-    );
+    if (!name) {
+      alert("نام غذا را وارد کنید.");
+      return;
+    }
+
+    data.foods.push({
+      id: Date.now(),
+      name: name,
+      price: price || 0,
+      available: true,
+      daily: false
+    });
+
+    save();
+
+    nameInput.value = "";
+    priceInput.value = "";
+
+    renderFoods();
+  }
+
+  function escapeHTML(text) {
+    return String(text)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  admin.querySelector(".hh-add").onclick = addFood;
+
+  admin.querySelector(".hh-close").onclick = function () {
+    admin.style.display = "none";
+    openButton.style.display = "block";
   };
 
-  dailyButton.onclick = function () {
-    settings.daily = !settings.daily;
-    save();
-    updateButtons();
-
-    alert(
-      settings.daily
-        ? "⭐ این غذا غذای روز شد."
-        : "غذای روز غیرفعال شد."
-    );
+  openButton.onclick = function () {
+    admin.style.display = "block";
+    openButton.style.display = "none";
+    renderFoods();
   };
 
-  document.getElementById("hh-cart").onclick = function () {
-    if (!settings.cart.length) {
+  admin.querySelector(".hh-cart").onclick = function () {
+    if (!data.cart.length) {
       alert("🛒 سبد خرید خالی است.");
       return;
     }
 
-    alert("🛒 تعداد کالاها: " + settings.cart.length);
+    alert("🛒 تعداد اقلام سبد خرید: " + data.cart.length);
   };
 
-  document.getElementById("hh-waiter").onclick = function () {
-    settings.waiterCalled = true;
+  admin.querySelector(".hh-waiter").onclick = function () {
+    data.waiter = true;
     save();
-
     alert("🔔 فراخوان گارسون ارسال شد.");
   };
 
-  updateButtons();
+  renderFoods();
 
 })();
