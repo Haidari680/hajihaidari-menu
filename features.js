@@ -1,197 +1,239 @@
 (function () {
   "use strict";
 
+  // ===== Firebase Online Connection =====
+  const firebaseConfig = {
+    apiKey: "AIzaSyCnlFBwHhnb3VHo4-VY0SFQE3MZtNkAyfw",
+    authDomain: "haji-haidari-menu.firebaseapp.com",
+    projectId: "haji-haidari-menu",
+    storageBucket: "haji-haidari-menu.firebasestorage.app",
+    messagingSenderId: "120704162175",
+    appId: "1:120704162175:web:f3350069a69c2d9b6fa24a"
+  };
+
+  let hhFirebase = null;
+  let hhFirestore = null;
+
+  async function initFirebase() {
+    try {
+      const appModule = await import(
+        "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"
+      );
+
+      const firestoreModule = await import(
+        "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"
+      );
+
+      hhFirebase = appModule.initializeApp(firebaseConfig);
+      hhFirestore = firestoreModule.getFirestore(hhFirebase);
+
+      console.log("Firebase connected");
+      return true;
+    } catch (error) {
+      console.error("Firebase connection error:", error);
+      return false;
+    }
+  }
+
+  initFirebase();
+
+  // ===== Local Menu Data =====
   const KEY = "hh_menu_data_v1";
 
-  let data = JSON.parse(localStorage.getItem(KEY) || "null") || {
-    foods: [],
-    cart: [],
-    waiter: false
-  };
+  let data =
+    JSON.parse(localStorage.getItem(KEY) || "null") || {
+      foods: [],
+      cart: [],
+      waiter: false
+    };
 
   function save() {
     localStorage.setItem(KEY, JSON.stringify(data));
   }
 
+  // ===== Admin Style =====
   const style = document.createElement("style");
+
   style.textContent = `
-    #hh-admin{
-      position:fixed;
-      bottom:15px;
-      left:50%;
-      transform:translateX(-50%);
-      z-index:999999;
-      width:min(460px,calc(100% - 20px));
-      max-height:80vh;
-      overflow:auto;
-      background:#fff;
-      color:#222;
-      padding:14px;
-      border-radius:18px;
-      box-shadow:0 8px 30px rgba(0,0,0,.25);
-      direction:rtl;
-      font-family:Tahoma,Arial,sans-serif;
+    #hh-admin {
+      position: fixed;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999999;
+      width: min(460px, calc(100% - 20px));
+      max-height: 80vh;
+      overflow: auto;
+      background: #fff;
+      color: #222;
+      padding: 14px;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+      direction: rtl;
+      font-family: Tahoma, Arial, sans-serif;
     }
 
-    #hh-admin *{
-      box-sizing:border-box;
+    #hh-admin * {
+      box-sizing: border-box;
     }
 
-    .hh-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:12px;
+    .hh-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
     }
 
-    .hh-head strong{
-      font-size:16px;
+    .hh-head strong {
+      font-size: 16px;
     }
 
-    .hh-close{
-      border:0;
-      background:#eee;
-      border-radius:50%;
-      width:30px;
-      height:30px;
-      cursor:pointer;
+    .hh-close {
+      border: 0;
+      background: #eee;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
     }
 
-    .hh-form{
-      background:#f7f7f7;
-      padding:10px;
-      border-radius:12px;
-      margin-bottom:12px;
+    .hh-form {
+      background: #f7f7f7;
+      padding: 10px;
+      border-radius: 12px;
+      margin-bottom: 12px;
     }
 
-    .hh-form input{
-      width:100%;
-      padding:9px;
-      margin-bottom:7px;
-      border:1px solid #ddd;
-      border-radius:9px;
-      font-family:inherit;
+    .hh-form input {
+      width: 100%;
+      padding: 9px;
+      margin-bottom: 7px;
+      border: 1px solid #ddd;
+      border-radius: 9px;
+      font-family: inherit;
     }
 
-    .hh-add{
-      width:100%;
-      border:0;
-      border-radius:9px;
-      padding:10px;
-      background:#0757a8;
-      color:white;
-      cursor:pointer;
-      font-family:inherit;
-      font-weight:bold;
+    .hh-add {
+      width: 100%;
+      border: 0;
+      border-radius: 9px;
+      padding: 10px;
+      background: #0757a8;
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: bold;
     }
 
-    .hh-food{
-      border:1px solid #eee;
-      border-radius:12px;
-      padding:10px;
-      margin-bottom:8px;
+    .hh-food {
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 8px;
     }
 
-    .hh-food-name{
-      font-weight:bold;
-      font-size:14px;
+    .hh-food-name {
+      font-weight: bold;
+      font-size: 14px;
     }
 
-    .hh-price{
-      color:#666;
-      font-size:12px;
-      margin:4px 0 8px;
+    .hh-price {
+      color: #666;
+      font-size: 12px;
+      margin: 4px 0 8px;
     }
 
-    .hh-buttons{
-      display:flex;
-      gap:6px;
-      flex-wrap:wrap;
+    .hh-buttons {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
     }
 
-    .hh-buttons button{
-      border:0;
-      border-radius:8px;
-      padding:7px 9px;
-      cursor:pointer;
-      font-family:inherit;
-      font-size:11px;
+    .hh-buttons button {
+      border: 0;
+      border-radius: 8px;
+      padding: 7px 9px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 11px;
     }
 
-    .hh-stock-on{
-      background:#159447;
-      color:white;
+    .hh-stock-on {
+      background: #159447;
+      color: white;
     }
 
-    .hh-stock-off{
-      background:#d62828;
-      color:white;
+    .hh-stock-off {
+      background: #d62828;
+      color: white;
     }
 
-    .hh-daily{
-      background:#0757a8;
-      color:white;
+    .hh-daily {
+      background: #0757a8;
+      color: white;
     }
 
-    .hh-delete{
-      background:#eee;
-      color:#333;
+    .hh-delete {
+      background: #eee;
+      color: #333;
     }
 
     .hh-cart,
-    .hh-waiter{
-      width:100%;
-      border:0;
-      border-radius:9px;
-      padding:10px;
-      margin-top:7px;
-      cursor:pointer;
-      font-family:inherit;
-      font-weight:bold;
+    .hh-waiter {
+      width: 100%;
+      border: 0;
+      border-radius: 9px;
+      padding: 10px;
+      margin-top: 7px;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: bold;
     }
 
-    .hh-cart{
-      background:#0757a8;
-      color:white;
+    .hh-cart {
+      background: #0757a8;
+      color: white;
     }
 
-    .hh-waiter{
-      background:#159447;
-      color:white;
+    .hh-waiter {
+      background: #159447;
+      color: white;
     }
 
-    .hh-empty{
-      text-align:center;
-      color:#777;
-      padding:10px;
-      font-size:12px;
+    .hh-empty {
+      text-align: center;
+      color: #777;
+      padding: 10px;
+      font-size: 12px;
     }
 
-    #hh-open{
-      position:fixed;
-      bottom:15px;
-      left:50%;
-      transform:translateX(-50%);
-      z-index:999998;
-      border:0;
-      border-radius:14px;
-      padding:11px 18px;
-      background:#0757a8;
-      color:white;
-      font-family:Tahoma,Arial,sans-serif;
-      cursor:pointer;
-      box-shadow:0 5px 18px rgba(0,0,0,.2);
-      direction:rtl;
+    #hh-open {
+      position: fixed;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 999998;
+      border: 0;
+      border-radius: 14px;
+      padding: 11px 18px;
+      background: #0757a8;
+      color: white;
+      font-family: Tahoma, Arial, sans-serif;
+      cursor: pointer;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, 0.2);
+      direction: rtl;
     }
   `;
 
   document.head.appendChild(style);
 
+  // ===== Open Admin Button =====
   const openButton = document.createElement("button");
   openButton.id = "hh-open";
   openButton.textContent = "⚙️ مدیریت منو";
   document.body.appendChild(openButton);
 
+  // ===== Admin Panel =====
   const admin = document.createElement("div");
   admin.id = "hh-admin";
   admin.style.display = "none";
@@ -204,7 +246,13 @@
 
     <div class="hh-form">
       <input id="hh-name" placeholder="نام غذا">
-      <input id="hh-price" placeholder="قیمت (افغانی)" inputmode="numeric">
+
+      <input
+        id="hh-price"
+        placeholder="قیمت (افغانی)"
+        inputmode="numeric"
+      >
+
       <button class="hh-add">➕ افزودن غذا</button>
     </div>
 
@@ -220,6 +268,7 @@
   const nameInput = admin.querySelector("#hh-name");
   const priceInput = admin.querySelector("#hh-price");
 
+  // ===== Render Foods =====
   function renderFoods() {
     foodsBox.innerHTML = "";
 
@@ -234,22 +283,37 @@
       item.className = "hh-food";
 
       item.innerHTML = `
-        <div class="hh-food-name">${escapeHTML(food.name)}</div>
-        <div class="hh-price">${Number(food.price || 0).toLocaleString()} افغانی</div>
+        <div class="hh-food-name">
+          ${escapeHTML(food.name)}
+        </div>
+
+        <div class="hh-price">
+          ${Number(food.price || 0).toLocaleString()} افغانی
+        </div>
 
         <div class="hh-buttons">
-          <button class="${food.available ? "hh-stock-on" : "hh-stock-off"}"
-                  data-action="stock">
+
+          <button
+            class="${food.available ? "hh-stock-on" : "hh-stock-off"}"
+            data-action="stock"
+          >
             ${food.available ? "🟢 موجود" : "🔴 تمام شد"}
           </button>
 
-          <button class="hh-daily" data-action="daily">
+          <button
+            class="hh-daily"
+            data-action="daily"
+          >
             ${food.daily ? "⭐ غذای روز" : "☆ غذای روز"}
           </button>
 
-          <button class="hh-delete" data-action="delete">
+          <button
+            class="hh-delete"
+            data-action="delete"
+          >
             🗑️ حذف
           </button>
+
         </div>
       `;
 
@@ -277,6 +341,7 @@
     });
   }
 
+  // ===== Add Food =====
   function addFood() {
     const name = nameInput.value.trim();
     const price = priceInput.value.trim();
@@ -302,6 +367,7 @@
     renderFoods();
   }
 
+  // ===== Escape HTML =====
   function escapeHTML(text) {
     return String(text)
       .replaceAll("&", "&amp;")
@@ -311,6 +377,7 @@
       .replaceAll("'", "&#039;");
   }
 
+  // ===== Events =====
   admin.querySelector(".hh-add").onclick = addFood;
 
   admin.querySelector(".hh-close").onclick = function () {
@@ -339,6 +406,7 @@
     alert("🔔 فراخوان گارسون ارسال شد.");
   };
 
+  // ===== Start =====
   renderFoods();
 
 })();
