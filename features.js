@@ -408,5 +408,82 @@
 
   // ===== Start =====
   renderFoods();
+  // ===== نمایش غذای روز در صفحه مشتری =====
+  function showDailyFoods() {
+  // حذف نشان‌های قبلی
+  document.querySelectorAll(".hh-daily-badge").forEach(function (el) {
+    el.remove();
+  });
 
+  // پیدا کردن غذاهای روز
+  const dailyFoods = data.foods.filter(function (food) {
+    return food.daily === true && food.available !== false;
+  });
+
+  if (!dailyFoods.length) return;
+
+  const names = dailyFoods.map(function (food) {
+    return String(food.name || "").trim();
+  });
+
+  // بررسی نوشته‌های صفحه
+  const elements = document.querySelectorAll("body *");
+
+  elements.forEach(function (element) {
+    // داخل پنل مدیریت چیزی اضافه نکن
+    if (element.closest("#hh-admin")) return;
+
+    // فقط عناصر متنی را بررسی کن
+    if (element.children.length > 0) return;
+
+    const text = element.textContent.trim();
+
+    names.forEach(function (name) {
+      if (!name) return;
+
+      // تطبیق دقیق یا وجود نام غذا داخل متن
+      if (text === name || text.includes(name)) {
+        // اگر قبلاً ستاره اضافه شده، دوباره اضافه نکن
+        if (element.querySelector(".hh-daily-badge")) return;
+
+        const badge = document.createElement("span");
+
+        badge.className = "hh-daily-badge";
+        badge.textContent = " ⭐ غذای روز";
+
+        badge.style.display = "inline-block";
+        badge.style.marginRight = "8px";
+        badge.style.fontWeight = "bold";
+        badge.style.fontSize = "13px";
+        badge.style.color = "#d99b00";
+
+        element.appendChild(badge);
+      }
+    });
+  });
+}
+
+// اجرای اولیه
+setTimeout(showDailyFoods, 1000);
+
+// اجرای دوباره وقتی محتوای سایت تغییر کرد
+const hhDailyObserver = new MutationObserver(function () {
+  showDailyFoods();
+});
+
+hhDailyObserver.observe(document.body, {
+  childList: true,
+  subtree: true
+});
+
+  // بررسی دوباره هنگام تغییر محتوای صفحه
+  const hhDailyObserver = new MutationObserver(function () {
+    showDailyFoods();
+  });
+
+  hhDailyObserver.observe(document.body, {
+    childList: true,
+    subtree: true
+    });
+  
 })();
