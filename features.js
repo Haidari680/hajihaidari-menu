@@ -433,7 +433,9 @@ function showDailyFoods() {
     names.forEach(function (name) {
       if (!name) return;
 
-      if (text === name) {
+      if (text === name || text.includes(name)) {
+        if (element.querySelector(".hh-daily-badge")) return;
+
         const badge = document.createElement("span");
 
         badge.className = "hh-daily-badge";
@@ -442,7 +444,7 @@ function showDailyFoods() {
         badge.style.display = "inline-block";
         badge.style.marginRight = "8px";
         badge.style.fontWeight = "bold";
-        badge.style.fontSize = "13px";
+        badge.style.fontSize = "14px";
         badge.style.color = "#d99b00";
 
         element.appendChild(badge);
@@ -451,7 +453,6 @@ function showDailyFoods() {
   });
 }
 
-// اجرای اولیه
 setTimeout(showDailyFoods, 1000);
 setTimeout(showDailyFoods, 2500);
 setTimeout(showDailyFoods, 5000);
