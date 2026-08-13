@@ -455,3 +455,5 @@ function showDailyFoods() {
 setTimeout(showDailyFoods, 1000);
 setTimeout(showDailyFoods, 2500);
 setTimeout(showDailyFoods, 5000);
+
+  })();
