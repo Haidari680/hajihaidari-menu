@@ -424,18 +424,30 @@ function showDailyFoods() {
     return String(food.name || "").trim();
   });
 
-  document.querySelectorAll("body *").forEach(function (element) {
-    if (element.closest("#hh-admin")) return;
-    if (element.children.length > 0) return;
+  const walker = document.createTreeWalker(
+    document.body,
+    NodeFilter.SHOW_TEXT
+  );
 
-    const text = element.textContent.trim();
+  const textNodes = [];
+
+  while (walker.nextNode()) {
+    textNodes.push(walker.currentNode);
+  }
+
+  textNodes.forEach(function (node) {
+    const parent = node.parentElement;
+
+    if (!parent) return;
+    if (parent.closest("#hh-admin")) return;
+    if (parent.closest(".hh-daily-badge")) return;
+
+    const text = node.textContent.trim();
 
     names.forEach(function (name) {
       if (!name) return;
 
-      if (text === name || text.includes(name)) {
-        if (element.querySelector(".hh-daily-badge")) return;
-
+      if (text === name) {
         const badge = document.createElement("span");
 
         badge.className = "hh-daily-badge";
@@ -446,15 +458,14 @@ function showDailyFoods() {
         badge.style.fontWeight = "bold";
         badge.style.fontSize = "14px";
         badge.style.color = "#d99b00";
+        badge.style.whiteSpace = "nowrap";
 
-        element.appendChild(badge);
+        parent.appendChild(badge);
       }
     });
   });
 }
 
 setTimeout(showDailyFoods, 1000);
-setTimeout(showDailyFoods, 2500);
-setTimeout(showDailyFoods, 5000);
 
   })();
