@@ -507,6 +507,26 @@ function saveFoods(){
  );
 }
 
+function syncLegacyMenu(){
+ try{
+  const oldData=JSON.parse(localStorage.getItem("hh_menu_data_v1") || "null");
+  if(!oldData || !Array.isArray(oldData.foods)) return false;
+  let changed=false;
+  oldData.foods.forEach(oldFood=>{
+   const name=String(oldFood.name || "").trim(); if(!name) return;
+   const existing=foods.find(f=>String(f.name || "").trim()===name);
+   if(existing){
+    const daily=oldFood.daily===true; const status=oldFood.available===false ? "finished" : "available";
+    if(existing.daily!==daily){existing.daily=daily; changed=true;}
+    if(existing.status!==status){existing.status=status; changed=true;}
+   }else{
+    foods.push({id:oldFood.id || Date.now()+Math.random(),name:name,price:Number(oldFood.price || 0),category:oldFood.category || "غذا",image:oldFood.image || "",desc:oldFood.desc || "",status:oldFood.available===false ? "finished" : "available",daily:oldFood.daily===true}); changed=true;
+   }
+  });
+  if(changed) saveFoods(); return changed;
+ }catch(e){console.log("Legacy sync error",e); return false;}
+}
+
 function renderCategories(){
 
  const categories=[
@@ -536,6 +556,8 @@ function selectCategory(category){
 }
 
 function renderMenu(){
+
+ syncLegacyMenu();
 
  let list=
  currentCategory==="همه"
@@ -958,6 +980,11 @@ setRating(5);
 renderCategories();
 renderMenu();
 updateCart();
+
+setInterval(function(){
+ const changed=syncLegacyMenu();
+ if(changed){ renderCategories(); renderMenu(); }
+},1000);
 
 </script>
 
