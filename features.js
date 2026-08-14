@@ -467,5 +467,65 @@ function showDailyFoods() {
 }
 
 setTimeout(showDailyFoods, 1000);
+// ===== اتصال مدیریت غذا به منوی اصلی =====
+function syncFoodsToMainMenu() {
+  try {
+    const adminData =
+      JSON.parse(localStorage.getItem("hh_menu_data_v1") || "null");
 
+    if (!adminData || !Array.isArray(adminData.foods)) return;
+
+    const mainData =
+      JSON.parse(localStorage.getItem("hajihaidariMenu") || "null");
+
+    if (!mainData || !Array.isArray(mainData.items)) return;
+
+    adminData.foods.forEach(function (food) {
+
+      const existing = mainData.items.find(function (item) {
+        return String(item.id) === String(food.id);
+      });
+
+      if (existing) {
+        existing.name = food.name;
+        existing.price = Number(food.price || 0);
+        existing.daily = food.daily === true;
+        existing.available = food.available !== false;
+        return;
+      }
+
+      mainData.items.push({
+        id: food.id,
+        category: 1,
+        name: food.name,
+        price: Number(food.price || 0),
+        oldPrice: 0,
+        image: "",
+        description: "",
+        daily: food.daily === true,
+        rating: 0,
+        available: food.available !== false
+      });
+    });
+
+    localStorage.setItem(
+      "hajihaidariMenu",
+      JSON.stringify(mainData)
+    );
+
+    if (typeof window.renderMenu === "function") {
+      window.renderMenu();
+    }
+
+    if (typeof window.renderDaily === "function") {
+      window.renderDaily();
+    }
+
+  } catch (error) {
+    console.error("HH menu sync error:", error);
+  }
+}
+
+// بعد از تغییر مدیریت، منوی اصلی را هم تازه کن
+setInterval(syncFoodsToMainMenu, 700);
   })();
