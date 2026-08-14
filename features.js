@@ -528,4 +528,98 @@ function syncFoodsToMainMenu() {
 
 // بعد از تغییر مدیریت، منوی اصلی را هم تازه کن
 setInterval(syncFoodsToMainMenu, 700);
+  // ===== نمایش غذاهای مدیریت در منوی اصلی =====
+function HH_showManagedFoods() {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem("hh_menu_data_v1") || "null"
+    );
+
+    if (!saved || !Array.isArray(saved.foods)) return;
+
+    saved.foods.forEach(function (food) {
+      if (!food || !food.name) return;
+
+      // اگر قبلاً نمایش داده شده، دوباره نساز
+      if (
+        document.querySelector(
+          '[data-hh-food-id="' + String(food.id) + '"]'
+        )
+      ) {
+        return;
+      }
+
+      // پیدا کردن عنوان بخش کباب
+      const headings = Array.from(
+        document.querySelectorAll("h1,h2,h3,h4,h5,div")
+      );
+
+      const kebabTitle = headings.find(function (el) {
+        return el.textContent.trim() === "کباب";
+      });
+
+      if (!kebabTitle) return;
+
+      // پیدا کردن نزدیک‌ترین محل مناسب برای کارت غذا
+      let container =
+        kebabTitle.parentElement ||
+        kebabTitle.closest("section") ||
+        kebabTitle.parentElement;
+
+      if (!container) return;
+
+      const card = document.createElement("div");
+
+      card.setAttribute("data-hh-food-id", String(food.id));
+
+      card.style.cssText = `
+        background:#fff;
+        border-radius:16px;
+        padding:16px;
+        margin:10px 0;
+        direction:rtl;
+        text-align:right;
+        box-shadow:0 3px 12px rgba(0,0,0,.12);
+        border:1px solid #eee;
+      `;
+
+      card.innerHTML = `
+        <div style="font-size:18px;font-weight:bold;color:#071f49;">
+          ${HH_escape(food.name)}
+        </div>
+
+        <div style="margin-top:8px;font-weight:bold;color:#c89400;">
+          ${Number(food.price || 0).toLocaleString("fa-IR")} افغانی
+        </div>
+
+        <div style="
+          margin-top:6px;
+          font-size:13px;
+          color:${food.available === false ? "#d62828" : "#159447"};
+        ">
+          ${food.available === false ? "🔴 تمام شده" : "🟢 موجود"}
+        </div>
+      `;
+
+      container.appendChild(card);
+    });
+  } catch (e) {
+    console.error("HH menu display error:", e);
+  }
+}
+
+function HH_escape(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+// بعد از بارگذاری صفحه
+setTimeout(HH_showManagedFoods, 1500);
+
+// وقتی مدیریت غذا تغییر کرد، دوباره بررسی کن
+setInterval(HH_showManagedFoods, 2000);
   })();
