@@ -1,0 +1,32 @@
+name: Fix stock labels
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  fix:
+    if: ${{ !contains(github.event.head_commit.message, '[stock-label-fix]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove stock labels from menu
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = '.stockBadge{position:absolute;z-index:20;transform:translate(50%,-50%);padding:4px 8px;border-radius:999px;font:700 11px Tahoma,Arial,sans-serif;line-height:1.2;white-space:nowrap;pointer-events:none;box-shadow:0 2px 8px rgba(0,0,0,.22)}.stockBadge.available{background:#168a45;color:#fff}.stockBadge.soldout{background:#c62828;color:#fff}'
+          new = '.stockBadge{display:none!important}'
+          if old not in s:
+              raise SystemExit('Expected stock badge CSS was not found; no changes made.')
+          p.write_text(s.replace(old, new, 1), encoding='utf-8')
+          PY
+      - name: Commit and remove this one-time workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git rm .github/workflows/fix-stock-labels.yml
+          git commit -m 'Hide stock labels from menu [stock-label-fix]'
+          git push
