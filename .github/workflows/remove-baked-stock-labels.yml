@@ -1,0 +1,45 @@
+name: Remove baked stock labels
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  remove:
+    if: ${{ !contains(github.event.head_commit.message, '[baked-stock-fix]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Pillow
+        run: python -m pip install pillow
+      - name: Edit embedded menu image
+        run: |
+          python - <<'PY'
+          import re, base64
+          from io import BytesIO
+          from pathlib import Path
+          from PIL import Image, ImageDraw
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          m = re.search(r'<img src="data:image/jpeg;base64,([^"]+)"', s)
+          if not m:
+              raise SystemExit('Embedded menu image not found')
+          im = Image.open(BytesIO(base64.b64decode(m.group(1)))).convert('RGB')
+          boxes = [(478,208,566,239),(478,368,566,400),(478,528,566,562),(929,368,1024,401),(929,528,1024,562),(936,208,1024,239)]
+          d = ImageDraw.Draw(im)
+          for box in boxes:
+              d.rectangle(box, fill=(255,255,255))
+          out = BytesIO()
+          im.save(out, format='JPEG', quality=95, optimize=True)
+          new_b64 = base64.b64encode(out.getvalue()).decode('ascii')
+          s = s[:m.start(1)] + new_b64 + s[m.end(1):]
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit fixed image and remove workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git rm .github/workflows/remove-baked-stock-labels.yml
+          git commit -m 'Remove baked stock labels from menu image [baked-stock-fix]'
+          git push
