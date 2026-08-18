@@ -100,4 +100,54 @@ function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;',
   };
 })();
 </script>
+<script>
+(function(){
+  function runCategory(category){
+    try { window.dispatchEvent(new CustomEvent('hh:category-change',{detail:{category:category}})); } catch(e) {}
+
+    const handlers = ['renderMenu','renderCategory','showCategory','filterCategory','openCategory'];
+    for (const name of handlers) {
+      if (typeof window[name] === 'function') {
+        try { window[name](category); return true; } catch(e) {}
+      }
+    }
+
+    const needle = String(category || '').trim();
+    const nodes = Array.from(document.querySelectorAll('[data-category],[data-cat],[data-category-name]'));
+    for (const el of nodes) {
+      const value = (el.dataset.category || el.dataset.cat || el.dataset.categoryName || '').trim();
+      if (value === needle) {
+        try { el.click(); return true; } catch(e) {}
+      }
+    }
+
+    const all = Array.from(document.querySelectorAll('h1,h2,h3,h4,h5,h6,button,a,div,section'));
+    const target = all.find(el => el.childElementCount === 0 && (el.textContent || '').trim() === needle);
+    if (target) {
+      try { target.scrollIntoView({behavior:'smooth',block:'start'}); return true; } catch(e) {}
+    }
+
+    const toast = document.getElementById('toast');
+    if (toast) {
+      toast.textContent = 'دسته «' + needle + '» انتخاب شد';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+    return false;
+  }
+
+  window.category = runCategory;
+  window.selectCategory = runCategory;
+
+  document.addEventListener('click', function(e){
+    const btn = e.target.closest('#category-hotspots button');
+    if (!btn) return;
+    const label = btn.getAttribute('aria-label') || btn.dataset.category || '';
+    if (label) {
+      e.preventDefault();
+      runCategory(label);
+    }
+  }, true);
+})();
+</script>
 </body></html>
