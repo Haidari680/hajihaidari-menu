@@ -11,26 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Add category selector to index.html
+      - name: Add real category hotspots to index.html
         run: |
           python3 - <<'PY'
           from pathlib import Path
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-          fn = r'''<script>
-          (function(){
-            window.selectCategory = function(category){
-              window.dispatchEvent(new CustomEvent('hh:category-change',{detail:{category:category}}));
-              if (typeof window.renderMenu === 'function') window.renderMenu(category);
-            };
-          })();
-          </script>'''
-          if 'window.selectCategory = function' not in s:
-              marker='</body>'
-              if marker in s:
-                  s=s.replace(marker, fn+'\n'+marker, 1)
-              else:
-                  s += '\n'+fn+'\n'
+          if 'id="category-hotspots"' not in s:
+              css = '''\n<style>\n#category-hotspots{position:absolute;left:0;right:0;top:25%;height:23%;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);gap:2px;z-index:20;direction:rtl}\n#category-hotspots button{border:0;background:transparent;cursor:pointer;padding:0;min-width:0}\n#category-hotspots button:focus{outline:2px solid #f5b51b;outline-offset:-2px}\n</style>\n'''
+              block = '''\n<div id="category-hotspots" aria-label="دسته‌بندی منو">\n  <button aria-label="کباب" onclick="category('کباب')"></button>\n  <button aria-label="پیتزا" onclick="category('پیتزا')"></button>\n  <button aria-label="غذا" onclick="category('غذا')"></button>\n  <button aria-label="آبمیوه" onclick="category('آبمیوه')"></button>\n  <button aria-label="نوشیدنی سرد" onclick="category('نوشیدنی سرد')"></button>\n  <button aria-label="سینی ها" onclick="category('سینی ها')"></button>\n  <button aria-label="مخصوص ها" onclick="category('مخصوص ها')"></button>\n  <button aria-label="ساده ها" onclick="category('ساده ها')"></button>\n</div>\n'''
+              s = s.replace('</head>', css + '</head>', 1)
+              s = s.replace('</main>', block + '</main>', 1)
               p.write_text(s, encoding='utf-8')
           PY
       - name: Commit fix
@@ -38,5 +29,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git diff --cached --quiet || git commit -m 'Fix category click in index.html'
+          git diff --cached --quiet || git commit -m 'Fix category hotspots in index.html'
           git push
