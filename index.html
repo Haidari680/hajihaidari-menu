@@ -16,6 +16,12 @@
 input,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;font-family:inherit;margin:4px 0 8px}.close{float:left;background:#eee;border:0;border-radius:50%;width:32px;height:32px;cursor:pointer}
 .stockBadge{display:none!important}
 </style>
+
+<style>
+#category-hotspots{position:absolute;left:0;right:0;top:25%;height:23%;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);gap:2px;z-index:20;direction:rtl}
+#category-hotspots button{border:0;background:transparent;cursor:pointer;padding:0;min-width:0}
+#category-hotspots button:focus{outline:2px solid #f5b51b;outline-offset:-2px}
+</style>
 </head>
 <body>
 <main id="page">
@@ -46,6 +52,17 @@ input,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;
 <button class="hot" aria-label="سبد خرید" style="left:61%;top:96%;width:10%;height:3%" onclick="showCart()"></button>
 <button class="hot" aria-label="فراخوان گارسون" style="left:39%;top:96%;width:13%;height:3%" onclick="waiter()"></button>
 <button class="hot" aria-label="مدیریت منو" style="left:76%;top:96%;width:8%;height:3%" onclick="admin()"></button>
+
+<div id="category-hotspots" aria-label="دسته‌بندی منو">
+  <button aria-label="کباب" onclick="category('کباب')"></button>
+  <button aria-label="پیتزا" onclick="category('پیتزا')"></button>
+  <button aria-label="غذا" onclick="category('غذا')"></button>
+  <button aria-label="آبمیوه" onclick="category('آبمیوه')"></button>
+  <button aria-label="نوشیدنی سرد" onclick="category('نوشیدنی سرد')"></button>
+  <button aria-label="سینی ها" onclick="category('سینی ها')"></button>
+  <button aria-label="مخصوص ها" onclick="category('مخصوص ها')"></button>
+  <button aria-label="ساده ها" onclick="category('ساده ها')"></button>
+</div>
 </main>
 <div id="toast"></div>
 <div id="modal" onclick="if(event.target===this)closeModal()"><div class="box" id="box"></div></div>
