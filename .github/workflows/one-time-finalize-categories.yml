@@ -1,0 +1,48 @@
+name: One-time finalize menu categories
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    if: ${{ !contains(github.event.head_commit.message, 'FINALIZE CATEGORIES') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Finalize eight menu categories
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+
+          old = '''categories:[\n         {id:1,name:"کباب"},\n         {id:2,name:"پیتزا"},\n         {id:3,name:"غذا"},\n         {id:4,name:"آبمیوه"}\n     ],'''
+          new = '''categories:[\n         {id:1,name:"کباب"},\n         {id:2,name:"پیتزا"},\n         {id:3,name:"غذا"},\n         {id:4,name:"آبمیوه"},\n         {id:5,name:"نوشیدنی سرد"},\n         {id:6,name:"سینی ها"},\n         {id:7,name:"مخصوص ها"},\n         {id:8,name:"ساده ها"}\n     ],'''
+          if old not in s:
+              raise SystemExit('default categories block not found')
+          s = s.replace(old, new, 1)
+
+          marker = 'let data = JSON.parse(localStorage.getItem("hajihaidariMenu")) || defaultData;'
+          migration = '''\n\n/* ===== FINAL CATEGORY LOCK =====\n   Keep the eight approved categories present even when older local data exists.\n*/\n(function ensureFinalCategories(){\n    const approved = [\n        {id:1,name:"کباب"},\n        {id:2,name:"پیتزا"},\n        {id:3,name:"غذا"},\n        {id:4,name:"آبمیوه"},\n        {id:5,name:"نوشیدنی سرد"},\n        {id:6,name:"سینی ها"},\n        {id:7,name:"مخصوص ها"},\n        {id:8,name:"ساده ها"}\n    ];\n    data.categories = Array.isArray(data.categories) ? data.categories : [];\n    approved.forEach(cat => {\n        if(!data.categories.some(x => Number(x.id) === cat.id)){\n            data.categories.push({...cat});\n        } else {\n            const existing = data.categories.find(x => Number(x.id) === cat.id);\n            existing.name = cat.name;\n        }\n    });\n    saveData();\n})();'''
+          if 'ensureFinalCategories' not in s:
+              if marker not in s:
+                  raise SystemExit('data marker not found')
+              s = s.replace(marker, marker + migration, 1)
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit and remove one-time workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html .github/workflows/one-time-finalize-categories.yml
+          git commit -m "FINALIZE CATEGORIES: activate eight menu categories"
+          git push
