@@ -1,0 +1,62 @@
+name: Finalize stock status safely
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch-stock-logic:
+    if: "!contains(github.event.head_commit.message, 'Finalize stock status')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch only stock logic
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          original = s
+
+          # 1) New foods use the admin's two-state selector.
+          old = 'stockStatus:"available",\n        rating:0'
+          new = 'stockStatus:(document.getElementById("itemStockStatus")?.value || "available"),\n        rating:0'
+          if old in s:
+              s = s.replace(old, new, 1)
+
+          # 2) Editing a food can switch only between available and soldout.
+          old_edit = '''    const description=prompt("توضیحات:",item.description);\n\n    if(name.trim())item.name=name.trim();'''
+          new_edit = '''    const description=prompt("توضیحات:",item.description);\n    const currentStatus=item.stockStatus || "available";\n    const status=prompt("وضعیت غذا:  موجود / تمام شده",currentStatus==="soldout" ? "تمام شده" : "موجود");\n\n    if(name.trim())item.name=name.trim();'''
+          if old_edit in s:
+              s = s.replace(old_edit, new_edit, 1)
+
+          old_desc = '''    if(description!==null)item.description=description;\n\n    saveData();'''
+          new_desc = '''    if(description!==null)item.description=description;\n    if(status!==null){\n        const normalized=status.trim();\n        if(normalized==="تمام شده" || normalized.toLowerCase()==="soldout") item.stockStatus="soldout";\n        else if(normalized==="موجود" || normalized.toLowerCase()==="available") item.stockStatus="available";\n    }\n\n    saveData();'''
+          if old_desc in s:
+              s = s.replace(old_desc, new_desc, 1)
+
+          # 3) Defense in depth: even if an old/stale button calls addToCart,
+          #    sold-out food can never enter the cart.
+          old_cart = '''    if(!item)return;\n\n    cart.push(item);'''
+          new_cart = '''    if(!item)return;\n\n    if((item.stockStatus || "available") === "soldout"){\n        alert("❌ این غذا تمام شده و قابل سفارش نیست.");\n        return;\n    }\n\n    cart.push(item);'''
+          if old_cart in s:
+              s = s.replace(old_cart, new_cart, 1)
+
+          if s == original:
+              raise SystemExit('No expected stock logic was found; refusing to change index.html.')
+
+          p.write_text(s, encoding='utf-8')
+      - name: Commit only if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Finalize stock status safely"
+          git push
