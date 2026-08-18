@@ -75,4 +75,12 @@ function delFood(i){if(confirm('این غذا حذف شود؟')){state.foods.spl
 function showReviews(){openModal(`<button class="close" onclick="closeModal()">×</button><h2>⭐ نظر مشتریان</h2><input id="rn" placeholder="نام (اختیاری)"><textarea id="rt" rows="4" placeholder="نظر، انتقاد یا پیشنهاد شما"></textarea><button class="btn blue" onclick="toast('نظر ثبت شد');closeModal()">ثبت نظر</button>`)}
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 </script>
+<script>
+(function(){
+  window.selectCategory = function(category){
+    window.dispatchEvent(new CustomEvent('hh:category-change',{detail:{category:category}}));
+    if (typeof window.renderMenu === 'function') window.renderMenu(category);
+  };
+})();
+</script>
 </body></html>
