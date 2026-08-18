@@ -11,23 +11,76 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Add real category hotspots to index.html
+      - name: Activate real category handler
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
+
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-          if 'id="category-hotspots"' not in s:
-              css = '''\n<style>\n#category-hotspots{position:absolute;left:0;right:0;top:25%;height:23%;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);gap:2px;z-index:20;direction:rtl}\n#category-hotspots button{border:0;background:transparent;cursor:pointer;padding:0;min-width:0}\n#category-hotspots button:focus{outline:2px solid #f5b51b;outline-offset:-2px}\n</style>\n'''
-              block = '''\n<div id="category-hotspots" aria-label="دسته‌بندی منو">\n  <button aria-label="کباب" onclick="category('کباب')"></button>\n  <button aria-label="پیتزا" onclick="category('پیتزا')"></button>\n  <button aria-label="غذا" onclick="category('غذا')"></button>\n  <button aria-label="آبمیوه" onclick="category('آبمیوه')"></button>\n  <button aria-label="نوشیدنی سرد" onclick="category('نوشیدنی سرد')"></button>\n  <button aria-label="سینی ها" onclick="category('سینی ها')"></button>\n  <button aria-label="مخصوص ها" onclick="category('مخصوص ها')"></button>\n  <button aria-label="ساده ها" onclick="category('ساده ها')"></button>\n</div>\n'''
-              s = s.replace('</head>', css + '</head>', 1)
-              s = s.replace('</main>', block + '</main>', 1)
-              p.write_text(s, encoding='utf-8')
+          fn = r'''<script>
+          (function(){
+            function runCategory(category){
+              try { window.dispatchEvent(new CustomEvent('hh:category-change',{detail:{category:category}})); } catch(e) {}
+
+              const handlers = ['renderMenu','renderCategory','showCategory','filterCategory','openCategory'];
+              for (const name of handlers) {
+                if (typeof window[name] === 'function') {
+                  try { window[name](category); return true; } catch(e) {}
+                }
+              }
+
+              const needle = String(category || '').trim();
+              const nodes = Array.from(document.querySelectorAll('[data-category],[data-cat],[data-category-name]'));
+              for (const el of nodes) {
+                const value = (el.dataset.category || el.dataset.cat || el.dataset.categoryName || '').trim();
+                if (value === needle) {
+                  try { el.click(); return true; } catch(e) {}
+                }
+              }
+
+              const all = Array.from(document.querySelectorAll('h1,h2,h3,h4,h5,h6,button,a,div,section'));
+              const target = all.find(el => el.childElementCount === 0 && (el.textContent || '').trim() === needle);
+              if (target) {
+                try { target.scrollIntoView({behavior:'smooth',block:'start'}); return true; } catch(e) {}
+              }
+
+              const toast = document.getElementById('toast');
+              if (toast) {
+                toast.textContent = 'دسته «' + needle + '» انتخاب شد';
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 1800);
+              }
+              return false;
+            }
+
+            window.category = runCategory;
+            window.selectCategory = runCategory;
+
+            document.addEventListener('click', function(e){
+              const btn = e.target.closest('#category-hotspots button');
+              if (!btn) return;
+              const label = btn.getAttribute('aria-label') || btn.dataset.category || '';
+              if (label) {
+                e.preventDefault();
+                runCategory(label);
+              }
+            }, true);
+          })();
+          </script>'''
+
+          if 'window.category = runCategory;' in s:
+              s = re.sub(r'<script>\s*\(function\(\)\{\s*function runCategory\(category\).*?</script>', fn, s, count=1, flags=re.S)
+          else:
+              marker = '</body>'
+              s = s.replace(marker, fn + '\n' + marker, 1) if marker in s else s + '\n' + fn + '\n'
+          p.write_text(s, encoding='utf-8')
           PY
       - name: Commit fix
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git diff --cached --quiet || git commit -m 'Fix category hotspots in index.html'
+          git add index.html .github/workflows/fix-category-click.yml
+          git diff --cached --quiet || git commit -m 'Fix real category click handler'
           git push
