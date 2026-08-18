@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>تست موجود / تمام شده</title></head>
+<body style="font-family:Tahoma,Arial;padding:30px;background:#f5f5f5">
+<h2>تست عملکرد موجود / تمام‌شده</h2>
+<p>این صفحه آزمایشی است و به <code>index.html</code> دست نمی‌زند.</p>
+<div id="result" style="padding:12px;background:white;border-radius:10px;margin:15px 0">در حال تست...</div>
+<button id="sold" style="padding:12px;margin:5px">🔴 تمام‌شده</button>
+<button id="available" style="padding:12px;margin:5px">🟢 موجود</button>
+<div style="margin-top:20px">
+  <button class="menu-item" style="padding:20px;font-size:20px;background:white;border:1px solid #ddd;border-radius:12px">
+    کباب سیخی
+  </button>
+</div>
+<script>
+localStorage.setItem('hh_menu_data_v1', JSON.stringify({foods:[{id:1,name:'کباب سیخی',price:200,available:true,daily:false}],cart:[],waiter:false}));
+function setStock(v){const d=JSON.parse(localStorage.getItem('hh_menu_data_v1'));d.foods[0].available=v;localStorage.setItem('hh_menu_data_v1',JSON.stringify(d));location.reload()}
+document.getElementById('sold').onclick=()=>setStock(false);
+document.getElementById('available').onclick=()=>setStock(true);
+document.querySelector('.menu-item').onclick=()=>document.getElementById('result').textContent='✅ سفارش کلیک شد';
+</script>
+<script src="stock-status.js"></script>
+</body></html>
