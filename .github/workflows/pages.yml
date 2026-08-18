@@ -27,14 +27,17 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Verify admin panel exists
         run: test -f admin.html
-      - name: Add guest reviews to the menu
+      - name: Add admin panel link and guest reviews to the menu
         run: python - <<'PY'
           from pathlib import Path
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          tag='<script src="reviews.js"></script>'
-          if tag not in s:
-              s=s.replace('</body>',tag+'</body>')
+          review_tag='<script src="reviews.js"></script>'
+          if review_tag not in s:
+              s=s.replace('</body>',review_tag+'</body>')
+          admin_link='''<a href="admin.html" aria-label="ورود به پنل مدیریت" style="position:fixed;left:14px;top:14px;z-index:9999;background:#07172f;color:#fff;border:1px solid #d8b45a;border-radius:12px;padding:9px 13px;text-decoration:none;font:800 13px Tahoma,Arial,sans-serif;box-shadow:0 8px 22px #0003">⚙️ مدیریت</a>'''
+          if 'aria-label="ورود به پنل مدیریت"' not in s:
+              s=s.replace('</body>',admin_link+'\n</body>')
           p.write_text(s,encoding='utf-8')
           PY
       - name: Upload artifact
