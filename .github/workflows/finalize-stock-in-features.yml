@@ -1,0 +1,115 @@
+name: Finalize stock logic in features.js
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: "!contains(github.event.head_commit.message, 'Finalize stock logic in features.js')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch features.js only
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('features.js')
+          s = p.read_text(encoding='utf-8')
+          marker = '  // ===== FINAL CUSTOMER STOCK GUARD ====='
+          if marker not in s:
+              guard = r'''
+  // ===== FINAL CUSTOMER STOCK GUARD =====
+  // Customer-side protection: sold-out managed foods cannot be ordered.
+  function HH_stockGuardData() {
+    try {
+      const saved = JSON.parse(localStorage.getItem("hh_menu_data_v1") || "null");
+      return saved && Array.isArray(saved.foods) ? saved.foods : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function HH_stockGuard() {
+    const foods = HH_stockGuardData();
+    const soldOut = foods.filter(function (food) {
+      return food && food.available === false && String(food.name || "").trim();
+    });
+
+    // Keep managed customer cards' status current without touching their design.
+    document.querySelectorAll('[data-hh-food-id]').forEach(function (card) {
+      const id = card.getAttribute('data-hh-food-id');
+      const food = foods.find(function (item) {
+        return String(item.id) === String(id);
+      });
+      if (!food || !card.children[2]) return;
+      card.children[2].textContent = food.available === false ? "🔴 تمام شده" : "🟢 موجود";
+      card.children[2].style.color = food.available === false ? "#d62828" : "#159447";
+    });
+
+    if (!soldOut.length) return;
+
+    // Block clicks inside a menu card that belongs to a sold-out food.
+    document.querySelectorAll('button, a, [role="button"]').forEach(function (button) {
+      if (button.closest('#hh-admin')) return;
+      const scope = button.closest('[data-hh-food-id], .food-card, .menu-item, .item-card, article, li, div');
+      if (!scope) return;
+      const text = String(scope.textContent || '').trim();
+      const hit = soldOut.some(function (food) {
+        return food.name && text.includes(String(food.name).trim());
+      });
+      if (hit) {
+        button.disabled = true;
+        button.setAttribute('aria-disabled', 'true');
+        button.setAttribute('data-hh-stock-disabled', 'true');
+        button.title = 'این غذا تمام شده است';
+      }
+    });
+  }
+
+  document.addEventListener('click', function (event) {
+    if (event.target.closest && event.target.closest('#hh-admin')) return;
+    const foods = HH_stockGuardData();
+    const soldOut = foods.filter(function (food) {
+      return food && food.available === false && String(food.name || '').trim();
+    });
+    if (!soldOut.length) return;
+    let node = event.target;
+    while (node && node !== document.body) {
+      const text = String(node.textContent || '').trim();
+      if (soldOut.some(function (food) { return text.includes(String(food.name).trim()); })) {
+        const clickable = node.closest && node.closest('button, a, [role="button"]');
+        if (clickable && !clickable.closest('#hh-admin')) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          alert('❌ این غذا تمام شده و قابل سفارش نیست.');
+          return;
+        }
+      }
+      node = node.parentElement;
+    }
+  }, true);
+
+  setInterval(HH_stockGuard, 700);
+  setTimeout(HH_stockGuard, 500);
+'''
+              s = s.replace('  })();', guard + '\n  })();', 1)
+              p.write_text(s, encoding='utf-8')
+          else:
+              print('Guard already present; refusing duplicate patch.')
+
+      - name: Verify and clean up workflow
+        shell: bash
+        run: |
+          node --check features.js
+          rm -f .github/workflows/finalize-stock-in-features.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add features.js .github/workflows/finalize-stock-in-features.yml
+          git commit -m "Finalize stock logic in features.js"
+          git push
