@@ -1,4 +1,4 @@
-name: Finalize food category management
+name: Finalize food category management v2
 on:
   push:
     paths:
