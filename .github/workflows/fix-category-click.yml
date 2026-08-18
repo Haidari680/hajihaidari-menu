@@ -77,10 +77,55 @@ jobs:
               s = s.replace(marker, fn + '\n' + marker, 1) if marker in s else s + '\n' + fn + '\n'
           p.write_text(s, encoding='utf-8')
           PY
+      - name: Add food category controls to management
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          if 'HH_CATEGORY_MANAGEMENT_FINAL' in s:
+              raise SystemExit(0)
+
+          cats = "const FOOD_CATEGORIES=['کباب','پیتزا','غذاهای ایرانی','فست فود','آبمیوه','نوشیدنی','دسر','سینی ها','مخصوص ها','ساده ها'];"
+          helpers = '''
+          function normalizeFoodCategory(c){ return String(c||'').trim() || FOOD_CATEGORIES[0]; }
+          function changeFoodCategory(i, c){
+            const cat=normalizeFoodCategory(c);
+            if(!state.foods[i]) return;
+            state.foods[i].category=cat;
+            save();
+            renderAdmin();
+            toast('دسته «'+(state.foods[i].name||'غذا')+'» به «'+cat+'» تغییر کرد');
+          }
+          function ensureFoodCategories(){
+            let changed=false;
+            if(!Array.isArray(state.foods)) state.foods=[];
+            state.foods.forEach(f=>{ if(!f.category){ f.category=FOOD_CATEGORIES[0]; changed=true; } });
+            if(changed) save();
+          }
+          '''
+          s = s.replace("function renderAdmin(){", cats + helpers + "\nfunction renderAdmin(){", 1)
+
+          old_render = """function renderAdmin(){let kebabRows=KEBABS.map(([n,p],k)=>`<div class=\"row\"><span><b>${n}</b><br><small>${p.toLocaleString()} افغانی</small></span><button class=\"btn\" onclick=\"toggleKebab(${k})\">${state.stock[n]===false?'🔴 تمام شد':'🟢 موجود'}</button></div>`).join('');let rows=state.foods.map((f,i)=>`<div class=\"row\"><span><b>${esc(f.name)}</b><br><small>${Number(f.price||0).toLocaleString()} افغانی</small></span><span><button class=\"btn\" onclick=\"toggleFood(${i})\">${f.available===false?'🔴 تمام شد':'🟢 موجود'}</button> <button class=\"btn\" onclick=\"toggleDaily(${i})\">${f.daily?'⭐ غذای روز':'☆ غذای روز'}</button> <button class=\"btn red\" onclick=\"delFood(${i})\">حذف</button></span></div>`).join('');if(!rows)rows='<p>هنوز غذای دیگری در مدیریت ثبت نشده است.</p>';openModal(`<button class=\"close\" onclick=\"closeModal()\">×</button><h2>⚙️ مدیریت منو</h2><h3>🍢 وضعیت کباب‌ها</h3>${kebabRows}<hr><input id=\"fn\" placeholder=\"نام غذا\"><input id=\"fp\" inputmode=\"numeric\" placeholder=\"قیمت (افغانی)\"><button class=\"btn blue\" onclick=\"addFood()\">➕ افزودن غذا</button><hr>${rows}<br><button class=\"btn\" onclick=\"showReviews()\">⭐ نظر مشتریان</button>`)}"""
+          new_render = """function renderAdmin(){ensureFoodCategories();let kebabRows=KEBABS.map(([n,p],k)=>`<div class=\"row\"><span><b>${n}</b><br><small>${p.toLocaleString()} افغانی</small></span><button class=\"btn\" onclick=\"toggleKebab(${k})\">${state.stock[n]===false?'🔴 تمام شد':'🟢 موجود'}</button></div>`).join('');let rows=state.foods.map((f,i)=>{const cat=normalizeFoodCategory(f.category);f.category=cat;return `<div class=\"row\"><span><b>${esc(f.name)}</b><br><small>${Number(f.price||0).toLocaleString()} افغانی</small><br><small>دسته: <b>${esc(cat)}</b></small></span><span><select class=\"btn\" onchange=\"changeFoodCategory(${i},this.value)\">${FOOD_CATEGORIES.map(c=>`<option value=\"${esc(c)}\" ${cat===c?'selected':''}>${esc(c)}</option>`).join('')}</select> <button class=\"btn\" onclick=\"toggleFood(${i})\">${f.available===false?'🔴 تمام شد':'🟢 موجود'}</button> <button class=\"btn\" onclick=\"toggleDaily(${i})\">${f.daily?'⭐ غذای روز':'☆ غذای روز'}</button> <button class=\"btn red\" onclick=\"delFood(${i})\">حذف</button></span></div>`}).join('');if(!rows)rows='<p>هنوز غذای دیگری در مدیریت ثبت نشده است.</p>';openModal(`<button class=\"close\" onclick=\"closeModal()\">×</button><h2>⚙️ مدیریت منو</h2><h3>🍢 وضعیت کباب‌ها</h3>${kebabRows}<hr><input id=\"fn\" placeholder=\"نام غذا\"><input id=\"fp\" inputmode=\"numeric\" placeholder=\"قیمت (افغانی)\"><select id=\"fc\" class=\"btn\">${FOOD_CATEGORIES.map(c=>`<option value=\"${esc(c)}\">${esc(c)}</option>`).join('')}</select><button class=\"btn blue\" onclick=\"addFood()\">➕ افزودن غذا</button><hr>${rows}<br><button class=\"btn\" onclick=\"showReviews()\">⭐ نظر مشتریان</button>`)}"""
+          if old_render not in s:
+              raise SystemExit('renderAdmin pattern not found')
+          s = s.replace(old_render,new_render,1)
+
+          old_add = "function addFood(){const n=document.getElementById('fn').value.trim(),p=Number(document.getElementById('fp').value||0);if(!n)return toast('نام غذا را وارد کنید');state.foods.push({name:n,price:p,available:true,daily:false});save();renderAdmin();toast('غذا اضافه شد')}"
+          new_add = "function addFood(){const n=document.getElementById('fn').value.trim(),p=Number(document.getElementById('fp').value||0),c=normalizeFoodCategory(document.getElementById('fc')&&document.getElementById('fc').value);if(!n)return toast('نام غذا را وارد کنید');state.foods.push({name:n,price:p,category:c,available:true,daily:false});save();renderAdmin();toast('غذا با دسته «'+c+'» اضافه شد')}"
+          if old_add not in s:
+              raise SystemExit('addFood pattern not found')
+          s = s.replace(old_add,new_add,1)
+
+          s = s.replace("</script>", "<script id=\"HH_CATEGORY_MANAGEMENT_FINAL\">ensureFoodCategories();</script>\n</script>", 1) if False else s
+          p.write_text(s,encoding='utf-8')
+          PY
       - name: Commit fix
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html .github/workflows/fix-category-click.yml
-          git diff --cached --quiet || git commit -m 'Fix real category click handler'
+          git diff --cached --quiet || git commit -m 'Finalize food category assignment in management'
           git push
