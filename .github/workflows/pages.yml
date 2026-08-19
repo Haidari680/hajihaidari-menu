@@ -63,3 +63,4 @@ jobs:
         uses: actions/deploy-pages@v4
 
 # Deployment trigger for the latest admin panel upload support.
+# Keep this workflow push-triggered so the latest main commit is published automatically.
