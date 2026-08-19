@@ -30,7 +30,7 @@ jobs:
       - name: Verify admin panel exists
         run: test -f admin.html
 
-      - name: Add admin panel link and guest reviews to the menu
+      - name: Add admin panel, reviews and Supabase menu connection
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -39,8 +39,12 @@ jobs:
           s = p.read_text(encoding='utf-8')
 
           review_tag = '<script src="reviews.js"></script>'
-          if review_tag not in s:
+          if review_tag not in s and Path('reviews.js').exists():
               s = s.replace('</body>', review_tag + '\n</body>', 1)
+
+          supabase_tag = '<script src="./supabase-menu.js"></script>'
+          if supabase_tag not in s and Path('supabase-menu.js').exists():
+              s = s.replace('</body>', supabase_tag + '\n</body>', 1)
 
           admin_link = '''<a href="admin.html" aria-label="ورود به پنل مدیریت" style="position:fixed;left:14px;top:14px;z-index:9999;background:#07172f;color:#fff;border:1px solid #d8b45a;border-radius:12px;padding:9px 13px;text-decoration:none;font:800 13px Tahoma,Arial,sans-serif;box-shadow:0 8px 22px #0003">⚙️ مدیریت</a>'''
           if 'aria-label="ورود به پنل مدیریت"' not in s:
