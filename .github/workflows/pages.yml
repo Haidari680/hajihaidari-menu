@@ -64,4 +64,4 @@ jobs:
 
 # Deployment trigger: push to main is the automatic deployment path.
 # workflow_dispatch is available in GitHub Actions when manual dispatch is supported.
-# This comment intentionally changes on each deployment-fix commit to trigger a fresh run.
+# Final deployment trigger verification.
