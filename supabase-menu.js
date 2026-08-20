@@ -19,30 +19,32 @@
     }
     .photo{
       aspect-ratio:4/3;
-      padding:10px;
-      display:grid;
-      place-items:center;
-      background:linear-gradient(145deg,#f8fafc,#eef2f6);
+      padding:0 !important;
+      display:block;
+      overflow:hidden;
+      background:#07172f !important;
     }
     .photo img{
       width:100%;
       height:100%;
-      object-fit:contain !important;
-      background:transparent !important;
+      object-fit:cover !important;
+      object-position:center;
+      background:#07172f !important;
       border:0 !important;
-      border-radius:18px;
-      box-shadow:0 8px 20px rgba(7,23,47,.10);
+      border-radius:0 !important;
+      box-shadow:none !important;
+      display:block;
       transition:transform .25s ease,filter .25s ease;
     }
     .card:hover .photo img{
       transform:scale(1.035);
-      filter:drop-shadow(0 10px 16px rgba(7,23,47,.12));
+      filter:brightness(1.04) saturate(1.05);
     }
-    .photo.noimg{padding:20px}
+    .photo.noimg{padding:20px !important;display:grid}
     .photo.noimg > div{font-size:15px;text-align:center}
     @media(max-width:430px){
-      .photo{aspect-ratio:16/10;padding:8px}
-      .photo img{border-radius:16px}
+      .photo{aspect-ratio:16/10;padding:0 !important}
+      .photo img{border-radius:0 !important}
     }
   `;
   document.head.appendChild(css);
