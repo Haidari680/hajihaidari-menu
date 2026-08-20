@@ -62,5 +62,5 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-# Deployment trigger for the latest admin panel upload support.
-# Keep this workflow push-triggered so the latest main commit is published automatically.
+# Deployment trigger: this workflow is intentionally push-triggered on main.
+# This comment is kept as a harmless change to force a fresh Pages deployment.
