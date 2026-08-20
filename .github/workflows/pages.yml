@@ -41,7 +41,7 @@ jobs:
               ('<script src="reviews.js"></script>', 'reviews.js'),
               ('<script src="./supabase-menu.js"></script>', 'supabase-menu.js'),
               ('<script src="./site-settings.js"></script>', 'site-settings.js'),
-              ('<script src="./menu-enhancements.js"></script>', 'menu-enhancements.js'),
+              ('<script src="./menu-enhancements.js?v=2"></script>', 'menu-enhancements.js'),
               ('<script src="./location-display.js"></script>', 'location-display.js'),
           ]:
               if tag not in s and Path(file_name).exists():
@@ -57,7 +57,7 @@ jobs:
           p = Path('admin.html')
           s = p.read_text(encoding='utf-8')
           for tag, file_name in [
-              ('<script src="./admin-categories.js?v=1"></script>', 'admin-categories.js'),
+              ('<script src="./admin-categories.js?v=2"></script>', 'admin-categories.js'),
               ('<script src="./admin-settings.js"></script>', 'admin-settings.js'),
               ('<script src="./admin-visual-settings.js"></script>', 'admin-visual-settings.js'),
               ('<script src="./admin-location-settings.js"></script>', 'admin-location-settings.js'),
