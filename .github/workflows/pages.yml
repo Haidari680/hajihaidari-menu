@@ -28,7 +28,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Verify required files
-        run: test -f admin.html && test -f site-settings.js && test -f admin-settings.js
+        run: test -f admin.html && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js
 
       - name: Add menu and admin scripts
         run: |
@@ -41,6 +41,7 @@ jobs:
               ('<script src="reviews.js"></script>', 'reviews.js'),
               ('<script src="./supabase-menu.js"></script>', 'supabase-menu.js'),
               ('<script src="./site-settings.js"></script>', 'site-settings.js'),
+              ('<script src="./menu-enhancements.js"></script>', 'menu-enhancements.js'),
           ]:
               if tag not in s and Path(file_name).exists():
                   s = s.replace('</body>', tag + '\n</body>', 1)
@@ -54,6 +55,7 @@ jobs:
           for tag, file_name in [
               ('<script src="./admin-categories.js?v=1"></script>', 'admin-categories.js'),
               ('<script src="./admin-settings.js"></script>', 'admin-settings.js'),
+              ('<script src="./admin-visual-settings.js"></script>', 'admin-visual-settings.js'),
           ]:
               if tag not in s and Path(file_name).exists():
                   s = s.replace('</body>', tag + '\n</body>', 1)
