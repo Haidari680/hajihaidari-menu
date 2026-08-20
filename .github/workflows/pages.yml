@@ -53,6 +53,18 @@ jobs:
           p.write_text(s, encoding='utf-8')
           PY
 
+      - name: Add editable category controls to admin panel
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('admin.html')
+          s = p.read_text(encoding='utf-8')
+          tag = '<script src="./admin-categories.js?v=1"></script>'
+          if tag not in s and Path('admin-categories.js').exists():
+              s = s.replace('</body>', tag + '\n</body>', 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -64,4 +76,4 @@ jobs:
 
 # Deployment trigger: push to main is the automatic deployment path.
 # workflow_dispatch is available in GitHub Actions when manual dispatch is supported.
-# Final deployment trigger verification.
+# Category management is injected into the deployed admin panel.
