@@ -3,6 +3,20 @@
 (() => {
   const css = document.createElement('style');
   css.textContent = `
+    .logo{
+      border:0 !important;
+      outline:0 !important;
+      box-shadow:none !important;
+      background:transparent !important;
+    }
+    .logo img{
+      border:0 !important;
+      outline:0 !important;
+      box-shadow:none !important;
+      background:transparent !important;
+      border-radius:0 !important;
+      padding:0 !important;
+    }
     .photo{
       aspect-ratio:4/3;
       padding:10px;
