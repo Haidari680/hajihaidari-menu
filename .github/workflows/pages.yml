@@ -62,5 +62,6 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-# Deployment trigger: this workflow is intentionally push-triggered on main.
-# This comment is kept as a harmless change to force a fresh Pages deployment.
+# Deployment trigger: push to main is the automatic deployment path.
+# workflow_dispatch is available in GitHub Actions when manual dispatch is supported.
+# This comment intentionally changes on each deployment-fix commit to trigger a fresh run.
