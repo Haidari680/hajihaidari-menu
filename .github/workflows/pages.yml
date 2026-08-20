@@ -27,41 +27,36 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Verify admin panel exists
-        run: test -f admin.html
+      - name: Verify required files
+        run: test -f admin.html && test -f site-settings.js && test -f admin-settings.js
 
-      - name: Add admin panel, reviews and Supabase menu connection
+      - name: Add menu and admin scripts
         run: |
           python - <<'PY'
           from pathlib import Path
 
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-
-          review_tag = '<script src="reviews.js"></script>'
-          if review_tag not in s and Path('reviews.js').exists():
-              s = s.replace('</body>', review_tag + '\n</body>', 1)
-
-          supabase_tag = '<script src="./supabase-menu.js"></script>'
-          if supabase_tag not in s and Path('supabase-menu.js').exists():
-              s = s.replace('</body>', supabase_tag + '\n</body>', 1)
-
+          for tag, file_name in [
+              ('<script src="reviews.js"></script>', 'reviews.js'),
+              ('<script src="./supabase-menu.js"></script>', 'supabase-menu.js'),
+              ('<script src="./site-settings.js"></script>', 'site-settings.js'),
+          ]:
+              if tag not in s and Path(file_name).exists():
+                  s = s.replace('</body>', tag + '\n</body>', 1)
           admin_link = '''<a href="admin.html" aria-label="ورود به پنل مدیریت" style="position:fixed;left:14px;top:14px;z-index:9999;background:#07172f;color:#fff;border:1px solid #d8b45a;border-radius:12px;padding:9px 13px;text-decoration:none;font:800 13px Tahoma,Arial,sans-serif;box-shadow:0 8px 22px #0003">⚙️ مدیریت</a>'''
           if 'aria-label="ورود به پنل مدیریت"' not in s:
               s = s.replace('</body>', admin_link + '\n</body>', 1)
-
           p.write_text(s, encoding='utf-8')
-          PY
 
-      - name: Add editable category controls to admin panel
-        run: |
-          python - <<'PY'
-          from pathlib import Path
           p = Path('admin.html')
           s = p.read_text(encoding='utf-8')
-          tag = '<script src="./admin-categories.js?v=1"></script>'
-          if tag not in s and Path('admin-categories.js').exists():
-              s = s.replace('</body>', tag + '\n</body>', 1)
+          for tag, file_name in [
+              ('<script src="./admin-categories.js?v=1"></script>', 'admin-categories.js'),
+              ('<script src="./admin-settings.js"></script>', 'admin-settings.js'),
+          ]:
+              if tag not in s and Path(file_name).exists():
+                  s = s.replace('</body>', tag + '\n</body>', 1)
           p.write_text(s, encoding='utf-8')
           PY
 
@@ -73,7 +68,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-# Deployment trigger: push to main is the automatic deployment path.
-# workflow_dispatch is available in GitHub Actions when manual dispatch is supported.
-# Category management is injected into the deployed admin panel.
