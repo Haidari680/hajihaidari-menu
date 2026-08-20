@@ -58,3 +58,5 @@ jobs:
             git commit -m "Fix category editing and speed up menu images"
             git push
           fi
+
+# trigger: apply fixes to the live main branch
