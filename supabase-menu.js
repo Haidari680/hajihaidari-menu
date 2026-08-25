@@ -19,11 +19,17 @@
     @keyframes foodZoomIn{from{transform:scale(.94);opacity:.6}to{transform:scale(1);opacity:1}}
     @media(max-width:650px){.grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important}.photo{aspect-ratio:3/4!important}.food-image-modal{padding:12px}.food-image-modal img{max-width:96vw;max-height:80vh}.food-image-close{top:10px;right:10px}}
     @media(max-width:430px){.grid{grid-template-columns:repeat(2,1fr)!important;gap:10px!important}.photo{aspect-ratio:3/4!important}.body{padding:11px!important}.body h3{font-size:16px!important}}
+    .managed-services{display:grid!important;grid-template-columns:repeat(4,1fr);gap:0;margin:10px 0 45px;background:#081b38;border:1px solid #8c6320;border-radius:20px;padding:12px}
+    .managed-services .service{min-width:0;text-align:center;padding:14px;border-left:1px solid #8c632055;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:105px}
+    .managed-services .service:last-child{border-left:0}
+    .managed-services .service b{display:block;color:#f5d27a;margin-bottom:5px;font-size:15px}
+    .managed-services .service span{font-size:12px;color:#c5c9d2}
+    .managed-services .service img{width:100%;height:90px;object-fit:cover;border-radius:12px;display:block}
+    @media(max-width:650px){.managed-services{grid-template-columns:1fr 1fr}.managed-services .service:nth-child(2){border-left:0}.managed-services .service{border-bottom:1px solid #8c632055}}
+    @media(max-width:430px){.managed-services{grid-template-columns:1fr}.managed-services .service{border-left:0;border-bottom:1px solid #8c632055}.managed-services .service:last-child{border-bottom:0}}
   `;
   document.head.appendChild(css);
 
-  // Reduce image payloads at the source. Supabase Image Transformation serves
-  // only the size/quality needed by the menu instead of the original upload.
   const optimizedUrl = (url, width = 700, quality = 72) => {
     try {
       if (!url) return url;
@@ -74,7 +80,6 @@
   window.addEventListener('resize', scheduleOptimize, {passive:true});
   new MutationObserver(scheduleOptimize).observe(document.body,{childList:true,subtree:true});
 
-  // Reliable cart total + delete control.
   window.removeFromCart = function(id) {
     cart = cart.filter(item => String(item.id) !== String(id));
     localStorage.setItem('hh_cart', JSON.stringify(cart));
@@ -99,7 +104,24 @@
     $('sum').textContent = fa(total);
   };
 
-  // Food image zoom preview: click/tap any food photo to see a larger version.
+  const renderManagedServices = async () => {
+    try {
+      const r = await sb.from('access_bar_items').select('title,subtitle,icon,image_url,style,sort_order,active').eq('active',true).order('sort_order');
+      if (r.error || !r.data?.length) return;
+      const box = document.querySelector('.services');
+      if (!box) return;
+      box.classList.add('managed-services');
+      box.innerHTML = r.data.map(x => {
+        const mode = x.style || 'icon';
+        const media = x.image_url && (mode === 'image' || mode === 'both') ? `<img src="${esc(x.image_url)}" alt="${esc(x.title || '')}" loading="lazy" decoding="async">` : '';
+        const icon = mode === 'image' ? '' : `<b>${esc(x.icon || '')} ${esc(x.title || '')}</b>`;
+        const title = mode === 'image' && !media ? `<b>${esc(x.icon || '')} ${esc(x.title || '')}</b>` : '';
+        return `<div class="service">${media}${icon}${title}<span>${esc(x.subtitle || '')}</span></div>`;
+      }).join('');
+      scheduleOptimize();
+    } catch (_) {}
+  };
+
   const imageModal = document.createElement('div');
   imageModal.className = 'food-image-modal';
   imageModal.innerHTML = '<button class="food-image-close" aria-label="بستن">×</button><img alt="نمای بزرگ غذا"><div class="food-image-hint">برای بستن، بیرون عکس را لمس کنید</div>';
@@ -116,6 +138,6 @@
   });
   document.addEventListener('keydown', e => { if(e.key === 'Escape') closeImage(); });
 
-  // Repaint totals once the existing page finishes loading.
-  window.addEventListener('load', () => { bar(); if ($('ov').classList.contains('open')) renderCart(); });
+  window.addEventListener('load', () => { bar(); if ($('ov').classList.contains('open')) renderCart(); renderManagedServices(); });
+  setTimeout(renderManagedServices, 1200);
 })();
