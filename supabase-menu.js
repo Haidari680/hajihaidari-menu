@@ -23,7 +23,7 @@
     .managed-services .service{min-width:0;text-align:center;padding:14px;border-left:1px solid #8c632055;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:105px}
     .managed-services .service:last-child{border-left:0}
     .managed-services .service b{display:block;color:#f5d27a;margin-bottom:5px;font-size:15px}
-    .managed-services .service span{font-size:12px;color:#c5c9d2}
+    .managed-services .service span{font-size:12px;color:#c5c9d2;white-space:pre-line;line-height:1.8;direction:rtl}
     .managed-services .service img{width:100%;height:90px;object-fit:cover;border-radius:12px;display:block}
     @media(max-width:650px){.managed-services{grid-template-columns:1fr 1fr}.managed-services .service:nth-child(2){border-left:0}.managed-services .service{border-bottom:1px solid #8c632055}}
     @media(max-width:430px){.managed-services{grid-template-columns:1fr}.managed-services .service{border-left:0;border-bottom:1px solid #8c632055}.managed-services .service:last-child{border-bottom:0}}
