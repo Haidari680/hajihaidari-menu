@@ -6,7 +6,7 @@ permissions:
   contents: write
 jobs:
   attach:
-    if: ${{ !contains(github.event.head_commit.message, 'Load pizza size module') }}
+    if: ${{ github.event.head_commit.message != 'Load pizza size module' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
