@@ -22,12 +22,57 @@
   `;
   document.head.appendChild(css);
 
-  const optimizeImages = () => document.querySelectorAll('.card img,.slide img').forEach((img,i) => {
-    if(i > 0 || img.closest('.card')) img.loading = 'lazy';
-    img.decoding = 'async';
-  });
-  window.addEventListener('load', optimizeImages, {once:true});
-  new MutationObserver(optimizeImages).observe(document.body,{childList:true,subtree:true});
+  // Reduce image payloads at the source. Supabase Image Transformation serves
+  // only the size/quality needed by the menu instead of the original upload.
+  const optimizedUrl = (url, width = 700, quality = 72) => {
+    try {
+      if (!url) return url;
+      const u = new URL(url, location.href);
+      if (!u.hostname.endsWith('.supabase.co')) return url;
+      if (!u.pathname.includes('/storage/v1/object/public/')) return url;
+      if (u.pathname.includes('/storage/v1/render/image/public/')) return url;
+      u.pathname = u.pathname.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/');
+      u.searchParams.set('width', String(width));
+      u.searchParams.set('quality', String(quality));
+      u.searchParams.set('resize', 'contain');
+      return u.toString();
+    } catch (_) { return url; }
+  };
+
+  const optimizeImages = () => {
+    const images = document.querySelectorAll('.card img,.slide img');
+    images.forEach((img, i) => {
+      const isSlide = !!img.closest('.slide');
+      const isFirstSlide = isSlide && !!img.closest('.slide.on');
+      const width = isSlide ? (isFirstSlide ? 1200 : 900) : (window.innerWidth <= 650 ? 520 : 700);
+      const quality = isSlide ? 68 : 72;
+      if (!img.dataset.optimized) {
+        const original = img.currentSrc || img.src;
+        const next = optimizedUrl(original, width, quality);
+        if (next && next !== original) img.src = next;
+        img.dataset.optimized = '1';
+      }
+      img.decoding = 'async';
+      if (isFirstSlide) {
+        img.loading = 'eager';
+        img.setAttribute('fetchpriority', 'high');
+      } else {
+        img.loading = 'lazy';
+        img.setAttribute('fetchpriority', 'low');
+      }
+      if (img.closest('.card')) img.sizes = '(max-width: 650px) 50vw, 25vw';
+    });
+  };
+
+  let optimizeQueued = false;
+  const scheduleOptimize = () => {
+    if (optimizeQueued) return;
+    optimizeQueued = true;
+    requestAnimationFrame(() => { optimizeQueued = false; optimizeImages(); });
+  };
+  window.addEventListener('load', scheduleOptimize, {once:true});
+  window.addEventListener('resize', scheduleOptimize, {passive:true});
+  new MutationObserver(scheduleOptimize).observe(document.body,{childList:true,subtree:true});
 
   // Reliable cart total + delete control.
   window.removeFromCart = function(id) {
