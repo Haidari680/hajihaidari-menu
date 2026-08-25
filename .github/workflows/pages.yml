@@ -67,6 +67,21 @@ jobs:
           p.write_text(s, encoding='utf-8')
           PY
 
+      - name: Remove heavy embedded service image from deployed HTML
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          pattern = r'<div class="service service-pick"><img src="data:image/webp;base64,[A-Za-z0-9+/=]+"[^>]*></div>'
+          replacement = '<div class="service service-pick"><b>⚡ سفارش سریع</b><span>ساده و سریع</span></div>'
+          s2, n = re.subn(pattern, replacement, s, count=1)
+          if n:
+              p.write_text(s2, encoding='utf-8')
+          PY
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
