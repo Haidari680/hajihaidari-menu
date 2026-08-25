@@ -83,6 +83,9 @@ jobs:
               p.write_text(s2, encoding='utf-8')
           PY
 
+      - name: Confirm food reorder controls are present
+        run: grep -q "moveFood" admin.html && grep -q "title=\"یک پله بالا\"" admin.html && grep -q "title=\"یک پله پایین\"" admin.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
