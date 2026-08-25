@@ -28,7 +28,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Verify required files
-        run: test -f admin.html && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js
+        run: test -f admin.html && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js && test -f pizza-sizes.js
 
       - name: Add menu and admin scripts
         run: |
@@ -43,6 +43,7 @@ jobs:
               ('<script src="./site-settings.js"></script>', 'site-settings.js'),
               ('<script src="./menu-enhancements.js?v=2"></script>', 'menu-enhancements.js'),
               ('<script src="./location-display.js"></script>', 'location-display.js'),
+              ('<script src="./pizza-sizes.js"></script>', 'pizza-sizes.js'),
           ]:
               if tag not in s and Path(file_name).exists():
                   s = s.replace('</body>', tag + '\n</body>', 1)
@@ -62,6 +63,7 @@ jobs:
               ('<script src="./admin-visual-settings.js"></script>', 'admin-visual-settings.js'),
               ('<script src="./admin-location-settings.js"></script>', 'admin-location-settings.js'),
               ('<script src="./image-optimizer.js"></script>', 'image-optimizer.js'),
+              ('<script src="./pizza-sizes.js"></script>', 'pizza-sizes.js'),
           ]:
               if tag not in s and Path(file_name).exists():
                   s = s.replace('</body>', tag + '\n</body>', 1)
@@ -73,7 +75,6 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import re
-
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
           pattern = r'<div class="service service-pick"><img src="data:image/webp;base64,[A-Za-z0-9+/=]+"[^>]*></div>'
@@ -85,6 +86,9 @@ jobs:
 
       - name: Confirm food reorder controls are present
         run: grep -q "moveFood" admin.html && grep -q "title=\"یک پله بالا\"" admin.html && grep -q "title=\"یک پله پایین\"" admin.html
+
+      - name: Confirm pizza sizes script is deployed
+        run: grep -q "pizza-sizes.js" index.html && grep -q "pizza-sizes.js" admin.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
