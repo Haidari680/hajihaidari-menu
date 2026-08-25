@@ -1,0 +1,36 @@
+name: Add food reorder controls
+on:
+  workflow_dispatch:
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch admin food ordering
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('admin.html')
+          s=p.read_text()
+          s=s.replace("let v={name:fn.value.trim(),price:Number(fp.value||0),category_id:Number(fc.value),description:fd.value.trim()||null,stock_status:fs.value,daily:fdaily.checked,active:true};", "let v={name:fn.value.trim(),price:Number(fp.value||0),category_id:Number(fc.value),description:fd.value.trim()||null,stock_status:fs.value,daily:fdaily.checked,active:true,sort_order:Date.now()};")
+          s=s.replace("async function loadFoods(categoryId){let r=await sb.from('foods').select('id,name,price,image_url,description,category_id,stock_status,active,daily,categories(name)').order('id',{ascending:false});", "async function loadFoods(categoryId){let r=await sb.from('foods').select('id,name,price,image_url,description,category_id,stock_status,active,daily,sort_order,categories(name)').order('sort_order',{ascending:true}).order('id',{ascending:true});")
+          old="foodList.innerHTML=data.map(f=>`<div class=\"item row\">${f.image_url?`<img class=\"thumb\" src=\"${esc(f.image_url)}\">`:''}<div style=\"flex:1\"><b>${esc(f.name)}</b> — ${Number(f.price).toLocaleString('fa-AF')} افغانی<div class=\"muted\">دسته: ${esc(f.categories?.name||'بدون دسته')} | ${esc(f.stock_status)} ${f.daily?'| غذای روز':''}</div></div><button class=\"btn gold\" onclick=\"openEdit(${f.id})\">✏️ ویرایش</button><button class=\"btn ${f.active?'danger':'ok'}\" onclick=\"toggleFood(${f.id},${f.active})\">${f.active?'خاموش':'فعال'}</button><button class=\"btn danger\" onclick=\"delFood(${f.id})\">حذف</button></div>`).join('')||'<p class=\"muted\">در این دسته غذایی نیست.</p>'}"
+          new="foodList.innerHTML=data.map((f,i)=>`<div class=\"item row\">${f.image_url?`<img class=\"thumb\" src=\"${esc(f.image_url)}\" onerror=\"imgFallback(this)\">`:''}<div style=\"flex:1\"><b>${esc(f.name)}</b> — ${Number(f.price).toLocaleString('fa-AF')} افغانی<div class=\"muted\">دسته: ${esc(f.categories?.name||'بدون دسته')} | ${esc(f.stock_status)} ${f.daily?'| غذای روز':''} | جایگاه: ${i+1}</div></div><button class=\"btn\" title=\"یک پله بالا\" onclick=\"moveFood(${f.id},'up',${f.category_id})\">▲</button><button class=\"btn\" title=\"یک پله پایین\" onclick=\"moveFood(${f.id},'down',${f.category_id})\">▼</button><button class=\"btn gold\" onclick=\"openEdit(${f.id})\">✏️ ویرایش</button><button class=\"btn ${f.active?'danger':'ok'}\" onclick=\"toggleFood(${f.id},${f.active})\">${f.active?'خاموش':'فعال'}</button><button class=\"btn danger\" onclick=\"delFood(${f.id})\">حذف</button></div>`).join('')||'<p class=\"muted\">در این دسته غذایی نیست.</p>'}"
+          if old in s: s=s.replace(old,new)
+          else: raise SystemExit('food list pattern not found')
+          needle="async function toggleFood(id,v){"
+          insert="async function moveFood(id,direction,categoryId){try{let r=await sb.from('foods').select('id,sort_order').eq('category_id',categoryId).order('sort_order',{ascending:true}).order('id',{ascending:true});if(r.error)throw r.error;let a=r.data||[],i=a.findIndex(x=>x.id===id),j=direction==='up'?i-1:i+1;if(i<0||j<0||j>=a.length)return;let cur=a[i],other=a[j],base=Number(cur.sort_order||0),otherVal=Number(other.sort_order||0);let u1=await sb.from('foods').update({sort_order:otherVal}).eq('id',cur.id);if(u1.error)throw u1.error;let u2=await sb.from('foods').update({sort_order:base}).eq('id',other.id);if(u2.error)throw u2.error;await loadFoods(categoryId)}catch(e){alert('جابجایی غذا انجام نشد: '+e.message)}}"
+          if needle not in s: raise SystemExit('toggleFood pattern not found')
+          s=s.replace(needle,insert+needle,1)
+          p.write_text(s)
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add admin.html
+          git diff --cached --quiet || git commit -m "Add up and down controls for foods"
+          git push
