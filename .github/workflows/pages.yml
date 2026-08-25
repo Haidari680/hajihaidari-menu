@@ -61,6 +61,7 @@ jobs:
               ('<script src="./admin-settings.js"></script>', 'admin-settings.js'),
               ('<script src="./admin-visual-settings.js"></script>', 'admin-visual-settings.js'),
               ('<script src="./admin-location-settings.js"></script>', 'admin-location-settings.js'),
+              ('<script src="./image-optimizer.js"></script>', 'image-optimizer.js'),
           ]:
               if tag not in s and Path(file_name).exists():
                   s = s.replace('</body>', tag + '\n</body>', 1)
