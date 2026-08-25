@@ -1,5 +1,8 @@
 name: Add food reorder controls
 on:
+  push:
+    paths:
+      - '.github/workflows/add-food-reorder.yml'
   workflow_dispatch:
 
 jobs:
