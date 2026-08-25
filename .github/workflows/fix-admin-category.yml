@@ -1,0 +1,60 @@
+name: Fix admin category filter
+
+on:
+  push:
+    paths:
+      - .github/workflows/fix-admin-category.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Patch admin category filter
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('admin.html')
+          s = p.read_text(encoding='utf-8')
+
+          s = s.replace('<select id="fc"></select>', '<select id="fc" onchange="loadFoods(this.value)"></select>')
+          s = s.replace('await loadCats();await loadFoods();await loadSlides();', 'await loadCats();await loadFoods(fc.value);await loadSlides();', 1)
+
+          s = s.replace("fc.innerHTML=(r.data||[]).filter(c=>c.active).map(c=>`<option value=\"${c.id}\">${esc(c.name)}</option>`).join('');catList.innerHTML=", "fc.innerHTML=(r.data||[]).filter(c=>c.active).map(c=>`<option value=\"${c.id}\">${esc(c.name)}</option>`).join('');if(fc.options.length&&!fc.value)fc.selectedIndex=0;catList.innerHTML=", 1)
+
+          s = s.replace("m('foodMsg','✅ غذا با عکس و دسته ثبت شد.','#197a4b');loadFoods()", "m('foodMsg','✅ غذا با عکس و دسته ثبت شد.','#197a4b');loadFoods(fc.value)", 1)
+
+          pattern = r"async function loadFoods\(\)\{.*?\}async function openEdit"
+          replacement = '''async function loadFoods(categoryId){let r=await sb.from('foods').select('id,name,price,image_url,description,category_id,stock_status,active,daily,categories(name)').order('id',{ascending:false});if(r.error){foodList.innerHTML='<p>'+esc(r.error.message)+'</p>';return}let data=r.data||[];if(categoryId)data=data.filter(f=>String(f.category_id)===String(categoryId));foodList.innerHTML=data.map(f=>`<div class="item row">${f.image_url?`<img class="thumb" src="${esc(f.image_url)}">`:''}<div style="flex:1"><b>${esc(f.name)}</b> — ${Number(f.price).toLocaleString('fa-AF')} افغانی<div class="muted">دسته: ${esc(f.categories?.name||'بدون دسته')} | ${esc(f.stock_status)} ${f.daily?'| غذای روز':''}</div></div><button class="btn gold" onclick="openEdit(${f.id})">✏️ ویرایش</button><button class="btn ${f.active?'danger':'ok'}" onclick="toggleFood(${f.id},${f.active})">${f.active?'خاموش':'فعال'}</button><button class="btn danger" onclick="delFood(${f.id})">حذف</button></div>`).join('')||'<p class="muted">در این دسته غذایی نیست.</p>'}async function openEdit'''
+          s, n = re.subn(pattern, replacement, s, count=1, flags=re.S)
+          if n != 1:
+              raise SystemExit('loadFoods function not found')
+
+          s = s.replace("await loadFoods();setTimeout(closeEdit,500)", "await loadFoods(fc.value);setTimeout(closeEdit,500)", 1)
+          s = s.replace("if(r.error)alert(r.error.message);loadFoods()}async function delFood", "if(r.error)alert(r.error.message);loadFoods(fc.value)}async function delFood", 1)
+          s = s.replace("if(r.error)alert(r.error.message);loadFoods()}async function loadOrders", "if(r.error)alert(r.error.message);loadFoods(fc.value)}async function loadOrders", 1)
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit patched admin
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add admin.html
+          git diff --cached --quiet && exit 0
+          git commit -m "Filter admin foods by selected category"
+          git push
+
+      - name: Remove temporary workflow
+        if: always()
+        run: |
+          git rm -f .github/workflows/fix-admin-category.yml || true
+          git commit -m "Remove temporary admin patch workflow" || true
+          git push || true
