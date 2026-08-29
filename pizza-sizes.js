@@ -1,4 +1,4 @@
-/* 🍕 اتصال واقعی پیتزا: اندازه، قیمت، عکس و سبد خرید */
+/* 🍕 پیتزا: اندازه، قیمت، عکس و سبد خرید */
 (function(){
   'use strict';
   const U='https://bjpascssizuskiujnzvf.supabase.co';
@@ -28,20 +28,20 @@
   function getSizes(id){const p=sizes[String(id)];if(!p)return[];return Object.entries({one:p.one_price,two:p.two_price,family:p.family_price}).filter(([,v])=>Number(v)>0).map(([key,v])=>({key,label:labels[key],price:Number(v)}))}
   function cartId(foodId,key){return -(Number(foodId)*10+({one:1,two:2,family:3}[key]||9))}
   function addSize(food,key){
-    const f=(window.foods||[]).find(x=>Number(x.id)===Number(food.id));
+    const f=foods.find(x=>Number(x.id)===Number(food.id));
     const p=sizes[String(food.id)];if(!f||!p)return;
     const price=Number(p[key+'_price']||0);if(price<=0||f.stock_status==='soldout')return;
-    const id=cartId(f.id,key), name=f.name+' — '+labels[key];
-    const existing=(window.cart||[]).find(x=>Number(x.id)===id);
-    if(existing)existing.q+=1;else (window.cart||[]).push({id,name,price,q:1,pizzaSize:key,pizzaFoodId:Number(f.id)});
-    if(typeof window.saveCart==='function')window.saveCart();else{localStorage.setItem('hh_cart',JSON.stringify(window.cart||[]));if(typeof window.bar==='function')window.bar()}
+    const id=cartId(f.id,key),name=f.name+' — '+labels[key];
+    const existing=cart.find(x=>Number(x.id)===id);
+    if(existing)existing.q+=1;else cart.push({id,name,price,q:1,pizzaSize:key,pizzaFoodId:Number(f.id)});
+    saveCart();
   }
   function decorate(){
-    if(!ready||!window.foods||!$('grid'))return;
+    if(!ready||!Array.isArray(foods)||!$('grid'))return;
     document.querySelectorAll('#grid .card').forEach(card=>{
       if(card.querySelector('.pizza-size-block'))return;
       const title=card.querySelector('.body h3')?.textContent?.trim();if(!title)return;
-      const food=window.foods.find(f=>f.name===title&&isPizza(f));if(!food)return;
+      const food=foods.find(f=>f.name===title&&isPizza(f));if(!food)return;
       const ss=getSizes(food.id);if(!ss.length)return;
       const oldPrice=card.querySelector('.price');if(oldPrice)oldPrice.textContent='انتخاب اندازه';
       const oldAdd=card.querySelector('.add');if(oldAdd)oldAdd.style.display='none';
@@ -60,7 +60,7 @@
   async function boot(){
     if(!getDb())return;
     await loadData();patch();
-    let tries=0;const timer=setInterval(()=>{decorate();patch();if((window.foods&&window.foods.length)||++tries>60)clearInterval(timer)},250);
+    let tries=0;const timer=setInterval(()=>{try{decorate();patch()}catch(e){}if((Array.isArray(foods)&&foods.length)||++tries>80)clearInterval(timer)},250);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,50));else setTimeout(boot,50);
 })();
