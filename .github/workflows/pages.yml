@@ -28,7 +28,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Verify required files
-        run: test -f admin.html && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js && test -f pizza-sizes.js
+        run: test -f admin.html && test -f auth-guard.js && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js && test -f pizza-sizes.js
 
       - name: Add menu and admin scripts
         run: |
@@ -61,6 +61,7 @@ jobs:
               ('<script src="./admin-location-settings.js"></script>', 'admin-location-settings.js'),
               ('<script src="./image-optimizer.js"></script>', 'image-optimizer.js'),
               ('<script src="./pizza-sizes.js"></script>', 'pizza-sizes.js'),
+              ('<script src="./auth-guard.js"></script>', 'auth-guard.js'),
           ]:
               if tag not in s and Path(file_name).exists():
                   s = s.replace('</body>', tag + '\n</body>', 1)
