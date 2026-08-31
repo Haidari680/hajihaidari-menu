@@ -1,0 +1,65 @@
+name: Optimize menu for slow mobile internet
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Remove Base64 and add lazy loading
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          original = s
+
+          # Remove huge inline Base64 images. Keep the service card lightweight.
+          s = re.sub(r'<img\s+src=["\']data:image/[^;]+;base64,[^"\']+["\'][^>]*>', '<div aria-hidden="true" style="font-size:48px">🍽️</div>', s, flags=re.I)
+
+          # Optimize Supabase Storage URLs for transformed WebP delivery.
+          if 'function optimizeImageUrl' not in s:
+              helper = '''<script>function optimizeImageUrl(url,width=700){try{if(!url)return url;const u=new URL(url,location.href);if(u.hostname.endsWith('.supabase.co')&&u.pathname.includes('/storage/v1/object/public/')){u.pathname=u.pathname.replace('/storage/v1/object/public/','/storage/v1/render/image/public/');u.searchParams.set('width',String(width));u.searchParams.set('quality','72');u.searchParams.set('resize','contain');u.searchParams.set('format','webp')}return u.toString()}catch(e){return url}}</script>'''
+              s = s.replace('</body>', helper + '</body>', 1)
+
+          # Existing dynamic menu templates: lazy + async decoding + optimized URL.
+          s = s.replace('<img src="${esc(f.image_url)}">', '<img loading="lazy" decoding="async" fetchpriority="low" src="${esc(optimizeImageUrl(f.image_url,700))}">')
+          s = s.replace('<img src="${esc(s.image_url)}">', '<img loading="lazy" decoding="async" fetchpriority="low" src="${esc(optimizeImageUrl(s.image_url,1100))}">')
+
+          # Safety net for other generated image tags: lazy-load them unless explicitly high priority.
+          s = re.sub(r'<img(?![^>]*loading=)([^>]*?)>', r'<img loading="lazy" decoding="async" fetchpriority="low"\1>', s, flags=re.I)
+
+          # Avoid rendering off-screen cards until needed on mobile.
+          if 'contain-intrinsic-size:360px 430px' not in s:
+              s = s.replace('</style>', '.card{content-visibility:auto;contain-intrinsic-size:360px 430px}.photo img{content-visibility:auto}</style>', 1)
+
+          if s != original:
+              p.write_text(s, encoding='utf-8')
+              print('index.html optimized')
+          else:
+              print('index.html already optimized')
+          PY
+
+      - name: Commit optimization
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html .github/workflows/optimize-menu.yml
+          if git diff --cached --quiet; then
+            echo "No changes needed"
+          else
+            git commit -m "Optimize menu images and loading for slow mobile internet"
+            git push
+          fi
