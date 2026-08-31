@@ -1,6 +1,5 @@
 (function () {
   "use strict";
-
   window.HH_FEATURES = window.HH_FEATURES || {};
 
   window.selectCategory = function (category) {
@@ -8,100 +7,80 @@
     if (typeof window.renderMenu === "function") window.renderMenu(category);
   };
 
-  // Pizza sizes/prices: read the same pizza_sizes records used by the admin panel
-  // and add the selectable prices to the customer menu without changing the core menu code.
-  const SUPABASE_URL = "https://bjpascssizuskiujnzvf.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_VMPe2QDMNfdwwAEAYQ2Y4A_3idOGTvrK";
-  let pizzaSizes = new Map();
-  let pizzaLoaded = false;
+  const API = "https://bjpascssizuskiujnzvf.supabase.co/rest/v1/";
+  const KEY = "sb_publishable_VMPe2QDMNfdwwAEAYQ2Y4A_3idOGTvrK";
+  const headers = { apikey: KEY, Authorization: "Bearer " + KEY };
+  const foodByName = new Map();
+  const pizzaByFood = new Map();
+  let loaded = false;
 
   function fa(n) { return Number(n || 0).toLocaleString("fa-AF"); }
-  function clean(v) { return String(v || "").replace(/[&<>\"']/g, function (m) { return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]); }); }
+  function safe(v) { return String(v ?? "").replace(/[&<>\"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m])); }
 
-  async function loadPizzaSizes() {
+  async function loadPizzaData() {
+    if (loaded) return;
     try {
-      const r = await fetch(SUPABASE_URL + "/rest/v1/pizza_sizes?select=food_id,one_price,two_price,family_price", {
-        headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY }
-      });
-      if (!r.ok) return;
-      const rows = await r.json();
-      pizzaSizes.clear();
-      rows.forEach(function (x) {
-        pizzaSizes.set(String(x.food_id), x);
-      });
-      pizzaLoaded = true;
-      decoratePizzaCards();
-    } catch (e) {
-      console.warn("Pizza sizes could not be loaded", e);
-    }
+      const [foodsRes, sizesRes] = await Promise.all([
+        fetch(API + "foods?select=id,name,category_id", { headers }),
+        fetch(API + "pizza_sizes?select=food_id,one_price,two_price,family_price", { headers })
+      ]);
+      if (!foodsRes.ok || !sizesRes.ok) return;
+      const foods = await foodsRes.json();
+      const sizes = await sizesRes.json();
+      foods.forEach(f => foodByName.set(String(f.name || "").trim(), String(f.id)));
+      sizes.forEach(p => pizzaByFood.set(String(p.food_id), p));
+      loaded = true;
+      decorate();
+    } catch (e) { console.warn("Pizza price load failed", e); }
   }
 
-  function getFoodId(card) {
-    return card.dataset.foodId || card.dataset.id || card.getAttribute("data-food-id") || "";
-  }
-
-  function getName(card) {
-    const h = card.querySelector("h3,h2,.name,.food-name");
-    return h ? h.textContent.trim() : "";
-  }
-
-  function findFoodIdByName(name) {
-    if (!window.foods || !Array.isArray(window.foods)) return "";
-    const f = window.foods.find(function (x) { return String(x.name || "").trim() === name; });
-    return f ? String(f.id) : "";
-  }
-
-  function decoratePizzaCards() {
-    if (!pizzaLoaded) return;
-    document.querySelectorAll("#grid .card").forEach(function (card) {
-      let id = getFoodId(card) || findFoodIdByName(getName(card));
-      if (!id || !pizzaSizes.has(String(id))) return;
-      const p = pizzaSizes.get(String(id));
+  function decorate() {
+    document.querySelectorAll("#grid .card").forEach(card => {
       if (card.querySelector(".hh-pizza-sizes")) return;
+      const title = card.querySelector("h3,h2,.name,.food-name");
+      if (!title) return;
+      const id = card.dataset.foodId || card.dataset.id || foodByName.get(title.textContent.trim());
+      const p = pizzaByFood.get(String(id || ""));
+      if (!p) return;
 
       const options = [
-        ["one", "یک‌نفره", p.one_price],
-        ["two", "دو‌نفره", p.two_price],
-        ["family", "خانواده", p.family_price]
-      ].filter(function (x) { return x[2] !== null && x[2] !== undefined && x[2] !== ""; });
+        ["یک‌نفره", p.one_price],
+        ["دو‌نفره", p.two_price],
+        ["خانواده", p.family_price]
+      ].filter(x => x[1] !== null && x[1] !== undefined && x[1] !== "");
       if (!options.length) return;
-
-      const box = document.createElement("div");
-      box.className = "hh-pizza-sizes";
-      box.innerHTML = '<div class="hh-pizza-label">🍕 اندازه و قیمت</div>' + options.map(function (x, i) {
-        return '<button type="button" class="hh-pizza-size' + (i === 0 ? ' active' : '') + '" data-price="' + clean(x[2]) + '" data-size="' + clean(x[1]) + '">' + clean(x[1]) + '<strong>' + fa(x[2]) + ' افغانی</strong></button>';
-      }).join("");
 
       const body = card.querySelector(".body") || card;
       const row = body.querySelector(".row");
+      const box = document.createElement("div");
+      box.className = "hh-pizza-sizes";
+      box.innerHTML = '<div class="hh-pizza-label">🍕 اندازه و قیمت</div>' + options.map((x, i) =>
+        '<button type="button" class="hh-pizza-size' + (i === 0 ? ' active' : '') + '" data-price="' + safe(x[1]) + '" data-size="' + safe(x[0]) + '">' + safe(x[0]) + '<strong>' + fa(x[1]) + ' افغانی</strong></button>'
+      ).join("");
       if (row) body.insertBefore(box, row); else body.appendChild(box);
 
       const price = body.querySelector(".price");
       const add = body.querySelector(".add");
-      const first = options[0][2];
-      if (price) price.innerHTML = fa(first) + " افغانی";
+      if (price) price.innerHTML = fa(options[0][1]) + " افغانی";
+      if (add) { add.dataset.pizzaSize = options[0][0]; add.dataset.pizzaPrice = options[0][1]; }
 
-      box.addEventListener("click", function (ev) {
-        const btn = ev.target.closest(".hh-pizza-size");
-        if (!btn) return;
-        box.querySelectorAll(".hh-pizza-size").forEach(function (b) { b.classList.remove("active"); });
-        btn.classList.add("active");
-        if (price) price.innerHTML = fa(btn.dataset.price) + " افغانی";
-        if (add) {
-          add.dataset.pizzaSize = btn.dataset.size;
-          add.dataset.pizzaPrice = btn.dataset.price;
-        }
+      box.addEventListener("click", e => {
+        const b = e.target.closest(".hh-pizza-size");
+        if (!b) return;
+        box.querySelectorAll(".hh-pizza-size").forEach(x => x.classList.remove("active"));
+        b.classList.add("active");
+        if (price) price.innerHTML = fa(b.dataset.price) + " افغانی";
+        if (add) { add.dataset.pizzaSize = b.dataset.size; add.dataset.pizzaPrice = b.dataset.price; }
       });
     });
   }
 
   const style = document.createElement("style");
-  style.textContent = ".hh-pizza-sizes{margin-top:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.hh-pizza-label{grid-column:1/-1;color:#f5d27a;font-size:12px;font-weight:900}.hh-pizza-size{border:1px solid #53617a;background:#06152f;color:#eee;border-radius:9px;padding:6px 3px;font-size:10px}.hh-pizza-size strong{display:block;color:#f5d27a;font-size:10px;margin-top:3px}.hh-pizza-size.active{border-color:#f5d27a;background:#183253}.hh-pizza-size:disabled{opacity:.5}@media(max-width:430px){.hh-pizza-size{font-size:9px;padding:5px 2px}.hh-pizza-size strong{font-size:9px}}";
+  style.textContent = ".hh-pizza-sizes{margin-top:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.hh-pizza-label{grid-column:1/-1;color:#f5d27a;font-size:12px;font-weight:900}.hh-pizza-size{border:1px solid #53617a;background:#06152f;color:#eee;border-radius:9px;padding:6px 3px;font-size:10px}.hh-pizza-size strong{display:block;color:#f5d27a;font-size:10px;margin-top:3px}.hh-pizza-size.active{border-color:#f5d27a;background:#183253}@media(max-width:430px){.hh-pizza-size{font-size:9px;padding:5px 2px}.hh-pizza-size strong{font-size:9px}}";
   document.head.appendChild(style);
 
-  const observer = new MutationObserver(function () { decoratePizzaCards(); });
+  const observer = new MutationObserver(() => decorate());
   observer.observe(document.documentElement, { childList: true, subtree: true });
-
-  window.addEventListener("load", function () { loadPizzaSizes(); setTimeout(loadPizzaSizes, 1200); });
-  setTimeout(loadPizzaSizes, 500);
+  loadPizzaData();
+  window.addEventListener("load", loadPizzaData);
 })();
