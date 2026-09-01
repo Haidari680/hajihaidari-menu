@@ -46,5 +46,19 @@ window.saveEdit=async function(){
  finally{$('saveEditBtn').disabled=false}
 };
 const s=document.createElement('style');s.textContent='#pizzaAdminFix{order:9}.pizza-price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.pizza-price-grid label{font-weight:700}.pizza-price-grid input{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:10px;border:1px solid #ccc;border-radius:9px;font:inherit}@media(max-width:700px){.pizza-price-grid{grid-template-columns:1fr}}';document.head.appendChild(s);
+
+/* Hard-fix: intercept the actual edit buttons before inline onclick runs. */
+document.addEventListener('click',function(e){
+ const btn=e.target.closest('button');
+ if(!btn)return;
+ const text=(btn.textContent||'').trim();
+ if(!text.includes('ویرایش'))return;
+ const m=btn.getAttribute('onclick')||'';
+ const hit=m.match(/openEdit\((\d+)\)/);
+ if(!hit)return;
+ e.preventDefault();
+ e.stopImmediatePropagation();
+ window.openEdit(Number(hit[1]));
+},true);
 })();
-// FORCE-INJECT-2026-09-02-02
+// FORCE-INJECT-2026-09-02-03
