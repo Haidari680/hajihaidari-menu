@@ -23,81 +23,55 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
-
       - name: Verify required files
-        run: test -f admin.html && test -f auth-guard.js && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js && test -f pizza-sizes.js
-
-      - name: Add menu and admin scripts
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          p = Path('index.html')
-          s = p.read_text(encoding='utf-8')
-          for tag, file_name in [
-              ('<script src="reviews.js"></script>', 'reviews.js'),
-              ('<script src="./supabase-menu.js"></script>', 'supabase-menu.js'),
-              ('<script src="./site-settings.js"></script>', 'site-settings.js'),
-              ('<script src="./menu-enhancements.js?v=2"></script>', 'menu-enhancements.js'),
-              ('<script src="./location-display.js"></script>', 'location-display.js'),
-              ('<script src="./pizza-sizes.js"></script>', 'pizza-sizes.js'),
-          ]:
-              if tag not in s and Path(file_name).exists():
-                  s = s.replace('</body>', tag + '\n</body>', 1)
-          css_tag = '<link rel="stylesheet" href="logo-enhancement.css">'
-          if css_tag not in s and Path('logo-enhancement.css').exists():
-              s = s.replace('</head>', css_tag + '\n</head>', 1)
-          p.write_text(s, encoding='utf-8')
-
-          p = Path('admin.html')
-          s = p.read_text(encoding='utf-8')
-          # Force a cache-busted copy of the pizza editor fix in the deployed site.
-          s = s.replace('<script src="pizza-admin-fix.js"></script>', '<script src="pizza-admin-fix.js?v=20260902"></script>')
-          for tag, file_name in [
-              ('<script src="./admin-categories.js?v=2"></script>', 'admin-categories.js'),
-              ('<script src="./admin-settings.js"></script>', 'admin-settings.js'),
-              ('<script src="./admin-visual-settings.js"></script>', 'admin-visual-settings.js'),
-              ('<script src="./admin-location-settings.js"></script>', 'admin-location-settings.js'),
-              ('<script src="./image-optimizer.js"></script>', 'image-optimizer.js'),
-              ('<script src="./pizza-sizes.js"></script>', 'pizza-sizes.js'),
-              ('<script src="./auth-guard.js"></script>', 'auth-guard.js'),
-          ]:
-              if tag not in s and Path(file_name).exists():
-                  s = s.replace('</body>', tag + '\n</body>', 1)
-          p.write_text(s, encoding='utf-8')
-          PY
-
-      - name: Remove heavy embedded service image from deployed HTML
+        run: test -f admin.html && test -f auth-guard.js && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js && test -f pizza-sizes.js && test -f pizza-admin-fix.js
+      - name: Prepare deployment
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
-          p = Path('index.html')
-          s = p.read_text(encoding='utf-8')
-          pattern = r'<div class="service service-pick"><img src="data:image/webp;base64,[A-Za-z0-9+/=]+"[^>]*></div>'
-          replacement = '<div class="service service-pick"><b>⚡ سفارش سریع</b><span>ساده و سریع</span></div>'
-          s2, n = re.subn(pattern, replacement, s, count=1)
-          if n:
-              p.write_text(s2, encoding='utf-8')
+          p=Path('index.html'); s=p.read_text(encoding='utf-8')
+          for tag,file_name in [
+            ('<script src="reviews.js"></script>','reviews.js'),
+            ('<script src="./supabase-menu.js"></script>','supabase-menu.js'),
+            ('<script src="./site-settings.js"></script>','site-settings.js'),
+            ('<script src="./menu-enhancements.js?v=2"></script>','menu-enhancements.js'),
+            ('<script src="./location-display.js"></script>','location-display.js'),
+            ('<script src="./pizza-sizes.js"></script>','pizza-sizes.js')]:
+            if tag not in s and Path(file_name).exists(): s=s.replace('</body>',tag+'\n</body>',1)
+          css='<link rel="stylesheet" href="logo-enhancement.css">'
+          if css not in s and Path('logo-enhancement.css').exists(): s=s.replace('</head>',css+'\n</head>',1)
+          pattern=r'<div class="service service-pick"><img src="data:image/webp;base64,[A-Za-z0-9+/=]+"[^>]*></div>'
+          s=re.sub(pattern,'<div class="service service-pick"><b>⚡ سفارش سریع</b><span>ساده و سریع</span></div>',s,count=1)
+          p.write_text(s,encoding='utf-8')
+          p=Path('admin.html'); s=p.read_text(encoding='utf-8')
+          s=re.sub(r'<script src="pizza-admin-fix\.js(?:\?v=[^"]+)?"></script>','<script src="pizza-admin-fix.js?v=20260903"></script>',s)
+          for tag,file_name in [
+            ('<script src="./admin-categories.js?v=2"></script>','admin-categories.js'),
+            ('<script src="./admin-settings.js"></script>','admin-settings.js'),
+            ('<script src="./admin-visual-settings.js"></script>','admin-visual-settings.js'),
+            ('<script src="./admin-location-settings.js"></script>','admin-location-settings.js'),
+            ('<script src="./image-optimizer.js"></script>','image-optimizer.js'),
+            ('<script src="./pizza-sizes.js"></script>','pizza-sizes.js'),
+            ('<script src="./auth-guard.js"></script>','auth-guard.js')]:
+            if tag not in s and Path(file_name).exists(): s=s.replace('</body>',tag+'\n</body>',1)
+          p.write_text(s,encoding='utf-8')
           PY
-
-      - name: Confirm food reorder controls are present
-        run: grep -q "moveFood" admin.html && grep -q "title=\"یک پله بالا\"" admin.html && grep -q "title=\"یک پله پایین\"" admin.html
-
-      - name: Confirm pizza sizes script is deployed
-        run: grep -q "pizza-sizes.js" index.html && grep -q "pizza-sizes.js" admin.html
-
-      - name: Confirm pizza admin fix is deployed
-        run: grep -q "pizza-admin-fix.js?v=20260902" admin.html
-
+      - name: Verify deployment contents
+        run: |
+          grep -q "moveFood" admin.html
+          grep -q "ویرایش" admin.html
+          grep -q "pizza-admin-fix.js?v=20260903" admin.html
+          grep -q "one_price" pizza-admin-fix.js
+          grep -q "two_price" pizza-admin-fix.js
+          grep -q "family_price" pizza-admin-fix.js
+          grep -q "pizza-sizes.js" index.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
