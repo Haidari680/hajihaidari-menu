@@ -54,6 +54,8 @@ jobs:
 
           p = Path('admin.html')
           s = p.read_text(encoding='utf-8')
+          # Force a cache-busted copy of the pizza editor fix in the deployed site.
+          s = s.replace('<script src="pizza-admin-fix.js"></script>', '<script src="pizza-admin-fix.js?v=20260902"></script>')
           for tag, file_name in [
               ('<script src="./admin-categories.js?v=2"></script>', 'admin-categories.js'),
               ('<script src="./admin-settings.js"></script>', 'admin-settings.js'),
@@ -87,6 +89,9 @@ jobs:
 
       - name: Confirm pizza sizes script is deployed
         run: grep -q "pizza-sizes.js" index.html && grep -q "pizza-sizes.js" admin.html
+
+      - name: Confirm pizza admin fix is deployed
+        run: grep -q "pizza-admin-fix.js?v=20260902" admin.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
