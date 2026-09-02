@@ -11,9 +11,23 @@ async function getFood(id){
 }
 function pizza(f){return /پیتزا|pizza/i.test(String(f?.categories?.name||''));}
 function removeBox(){const x=$('pizzaAdminFix');if(x)x.remove();}
+async function ensureCategories(currentId){
+ const r=await db.from('categories').select('id,name,active').order('sort_order');
+ if(r.error)throw r.error;
+ const cats=r.data||[];
+ const active=cats.filter(c=>c.active||Number(c.id)===Number(currentId));
+ const html=active.map(c=>`<option value="${c.id}">${String(c.name||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</option>`).join('');
+ $('ec').innerHTML=html;
+ $('ec').value=String(currentId??'');
+ if(!$('ec').value && currentId) {
+  const c=cats.find(x=>Number(x.id)===Number(currentId));
+  if(c){$('ec').insertAdjacentHTML('beforeend',`<option value="${c.id}">${String(c.name||'')}</option>`);$('ec').value=String(c.id);}
+ }
+}
 async function openPizza(id){
  const f=await getFood(id);
- $('editId').value=f.id;$('en').value=f.name||'';$('ep').value=f.price??'';$('ec').value=f.category_id??'';$('es').value=f.stock_status||'available';$('ed').value=f.description||'';$('edaily').checked=!!f.daily;$('ef').value='';
+ await ensureCategories(f.category_id);
+ $('editId').value=f.id;$('en').value=f.name||'';$('ep').value=f.price??'';$('es').value=f.stock_status||'available';$('ed').value=f.description||'';$('edaily').checked=!!f.daily;$('ef').value='';
  msg('editMsg','');$('editModal').classList.remove('hide');removeBox();
  if(!pizza(f))return;
  const box=document.createElement('div');box.id='pizzaAdminFix';box.style.cssText='margin:14px 0;padding:14px;border:2px solid #e4b84f;border-radius:14px;background:#fffaf0';
@@ -46,7 +60,6 @@ window.saveEdit=async function(){
  finally{$('saveEditBtn').disabled=false}
 };
 const s=document.createElement('style');s.textContent='#pizzaAdminFix{order:9}.pizza-price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.pizza-price-grid label{font-weight:700}.pizza-price-grid input{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:10px;border:1px solid #ccc;border-radius:9px;font:inherit}@media(max-width:700px){.pizza-price-grid{grid-template-columns:1fr}}';document.head.appendChild(s);
-
 document.addEventListener('click',function(e){
  const btn=e.target.closest('button');
  if(!btn)return;
@@ -60,4 +73,4 @@ document.addEventListener('click',function(e){
  window.openEdit(Number(hit[1]));
 },true);
 })();
-// FORCE-INJECT-2026-09-02-04
+// FORCE-CATEGORY-FIX-2026-09-02
