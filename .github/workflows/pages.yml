@@ -47,7 +47,7 @@ jobs:
           s=re.sub(pattern,'<div class="service service-pick"><b>⚡ سفارش سریع</b><span>ساده و سریع</span></div>',s,count=1)
           p.write_text(s,encoding='utf-8')
           p=Path('admin.html'); s=p.read_text(encoding='utf-8')
-          s=re.sub(r'<script src="pizza-admin-fix\.js(?:\?v=[^"]+)?"></script>','<script src="pizza-admin-fix.js?v=20260903"></script>',s)
+          s=re.sub(r'<script src="pizza-admin-fix\.js(?:\?v=[^"]+)?"></script>','<script src="pizza-admin-fix.js?v=20260902-2"></script>',s)
           for tag,file_name in [
             ('<script src="./admin-categories.js?v=2"></script>','admin-categories.js'),
             ('<script src="./admin-settings.js"></script>','admin-settings.js'),
@@ -63,7 +63,7 @@ jobs:
         run: |
           grep -q "moveFood" admin.html
           grep -q "ویرایش" admin.html
-          grep -q "pizza-admin-fix.js?v=20260903" admin.html
+          grep -q "pizza-admin-fix.js?v=20260902-2" admin.html
           grep -q "one_price" pizza-admin-fix.js
           grep -q "two_price" pizza-admin-fix.js
           grep -q "family_price" pizza-admin-fix.js
