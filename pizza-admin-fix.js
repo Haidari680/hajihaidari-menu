@@ -1,8 +1,8 @@
-/* FINAL admin pizza editor fix - stable pizza fields + RLS session */
+/* FINAL admin pizza editor fix - legacy anon compatibility + stable pizza fields + RLS session */
 (function(){
 'use strict';
 const U='https://bjpascssizuskiujnzvf.supabase.co';
-const K='sb_publishable_VMPeQ2DMNfdwwAEAYQ2Y4A_3idOGTvr';
+const K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqcGFzY3NzaXp1c2tpdWpuenZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwNzE3MDUsImV4cCI6MjEwMjY0NzcwNX0.bo8Q2OaYZsa9lm1j0wRY2CAfubbjyX3vcjq9vntuBds';
 const db=window.supabase?.createClient(U,K);
 const $=id=>document.getElementById(id);
 function msg(id,t,c){const x=$(id);if(x){x.textContent=t;x.style.color=c||''}}
@@ -69,4 +69,4 @@ const save=$('saveEditBtn');if(save){save.onclick=window.saveEdit;save.addEventL
 const s=document.createElement('style');s.textContent='#pizzaAdminFix{order:9}.pizza-price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.pizza-price-grid label{font-weight:700}.pizza-price-grid input{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:10px;border:1px solid #ccc;border-radius:9px;font:inherit}@media(max-width:700px){.pizza-price-grid{grid-template-columns:1fr}}';document.head.appendChild(s);
 document.addEventListener('click',function(e){const btn=e.target.closest('button');if(!btn)return;const text=(btn.textContent||'').trim();if(!text.includes('ویرایش'))return;const m=btn.getAttribute('onclick')||'';const hit=m.match(/openEdit\((\d+)\)/);if(!hit)return;e.preventDefault();e.stopImmediatePropagation();window.openEdit(Number(hit[1]));},true);
 })();
-// PIZZA-EDIT-STABLE-2026-09-02
+// PIZZA-EDIT-STABLE-2026-09-02-LEGACY-KEY
