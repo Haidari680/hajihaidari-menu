@@ -32,4 +32,4 @@ async function load(){
 }
 window.loadPizzaModule=load;load();
 })();
-// CUSTOMER-PIZZA-PRICE-STABLE-2026-09-02
+// FINAL-STABLE-PIZZA-PRICES-2026-09-02
