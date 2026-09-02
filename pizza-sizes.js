@@ -1,6 +1,6 @@
 /* pizza sizes module - stable customer bridge */
 (function(){'use strict';
-const U='https://bjpascssizuskiujnzvf.supabase.co',K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqcGFzY3NzaXp1c2tpdWpuenZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwNzE3MDUsImV4cCI6MjEwMjY0NzcwNX0.bo8Q2OaYZsa9lm1j0wRY2CAfubbjyX3vcjq9vntuBds';
+const U='https://bjpascssizuskiujnzvf.supabase.co',K='sb_publishable_VMPeQ2DMNfdwwAEAYQ2Y4A_3idOGTvr';
 if(!window.supabase)return;
 const db=window.supabase.createClient(U,K);let sizes={};
 function addButtons(card,id,s){
@@ -17,19 +17,8 @@ function cardId(card){
  const all=card.querySelectorAll('[data-id],[data-food-id]');for(const e of all){id=Number(e.dataset.foodId||e.dataset.id||0);if(id)return id}
  return 0;
 }
-function render(){
- document.querySelectorAll('.card').forEach(card=>{const id=cardId(card),s=sizes[id];if(id&&s)addButtons(card,id,s)});
-}
-async function load(){
- try{
-  const p=await db.from('pizza_sizes').select('food_id,one_price,two_price,family_price');
-  if(p.error)throw p.error;sizes={};(p.data||[]).forEach(x=>sizes[Number(x.food_id)]=x);
-  render();
-  const obs=new MutationObserver(()=>render());obs.observe(document.getElementById('grid')||document.body,{childList:true,subtree:true});
-  let tries=0;const timer=setInterval(()=>{render();if(++tries>=60)clearInterval(timer)},500);
-  if(!document.getElementById('pizza-size-style')){const st=document.createElement('style');st.id='pizza-size-style';st.textContent='.pizza-sizes{display:grid;gap:7px;margin-top:10px}.pizza-sizes button{width:100%;border:1px solid #e8b84f;border-radius:10px;padding:8px;background:#06152f;color:#f5d27a;font-weight:800}';document.head.appendChild(st)}
- }catch(e){console.warn('pizza sizes:',e)}
-}
+function render(){document.querySelectorAll('.card').forEach(card=>{const id=cardId(card),s=sizes[id];if(id&&s)addButtons(card,id,s)})}
+async function load(){try{const p=await db.from('pizza_sizes').select('food_id,one_price,two_price,family_price');if(p.error)throw p.error;sizes={};(p.data||[]).forEach(x=>sizes[Number(x.food_id)]=x);render();const obs=new MutationObserver(()=>render());obs.observe(document.getElementById('grid')||document.body,{childList:true,subtree:true});let tries=0;const timer=setInterval(()=>{render();if(++tries>=60)clearInterval(timer)},500);if(!document.getElementById('pizza-size-style')){const st=document.createElement('style');st.id='pizza-size-style';st.textContent='.pizza-sizes{display:grid;gap:7px;margin-top:10px}.pizza-sizes button{width:100%;border:1px solid #e8b84f;border-radius:10px;padding:8px;background:#06152f;color:#f5d27a;font-weight:800}';document.head.appendChild(st)}}catch(e){console.warn('pizza sizes:',e)}}
 window.loadPizzaModule=load;load();
 })();
-// FINAL-STABLE-PIZZA-PRICES-2026-09-02-LEGACY-KEY
+// FINAL-STABLE-PIZZA-PRICES-2026-09-02-CACHE-BUST-2
