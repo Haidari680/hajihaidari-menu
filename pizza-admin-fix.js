@@ -1,10 +1,18 @@
-/* FINAL admin pizza editor fix */
+/* FINAL admin pizza editor fix - RLS session safe */
 (function(){
 'use strict';
 const U='https://bjpascssizuskiujnzvf.supabase.co';
-const K='sb_publishable_VMPe2QDMNfdwwAEAYQ2Y4A_3idOGTvr';
+const K='sb_publishable_VMPeQ2DMNfdwwAEAYQ2Y4A_3idOGTvr';
 const db=window.supabase?.createClient(U,K);
 const $=id=>document.getElementById(id);
+async function ensureAdminSession(){
+  if(!db) throw new Error('اتصال Supabase برقرار نیست');
+  let r=await db.auth.getSession();
+  if(!r.data?.session){try{await db.auth.refreshSession()}catch(e){}}
+  r=await db.auth.getSession();
+  if(!r.data?.session) throw new Error('نشست مدیر معتبر نیست؛ دوباره وارد مدیریت شوید');
+  return r.data.session;
+}
 async function getFood(id){
  const r=await db.from('foods').select('id,name,price,image_url,description,category_id,stock_status,active,daily,categories(name)').eq('id',id).single();
  if(r.error) throw r.error; return r.data;
@@ -19,7 +27,6 @@ async function ensureCategories(currentId){
  const html=active.map(c=>`<option value="${c.id}">${String(c.name||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</option>`).join('');
  $('ec').innerHTML=html;
  $('ec').value=String(currentId??'');
- if(!$('ec').value&&currentId){const c=cats.find(x=>Number(x.id)===Number(currentId));if(c){$('ec').insertAdjacentHTML('beforeend',`<option value="${c.id}">${String(c.name||'')}</option>`);$('ec').value=String(c.id);}}
 }
 async function openPizza(id){
  const f=await getFood(id);await ensureCategories(f.category_id);
@@ -40,6 +47,7 @@ window.saveEdit=async function(){
  if(!v.name||!v.category_id)return msg('editMsg','❌ نام و دسته را کامل کنید.','#b52b2b');
  $('saveEditBtn').disabled=true;
  try{
+  await ensureAdminSession();
   const f=await getFood(id);const file=$('ef').files[0];
   if(file){const p='site/'+crypto.randomUUID()+'-'+file.name.replace(/[^a-zA-Z0-9._-]/g,'_');const u=await db.storage.from('food-images').upload(p,file,{upsert:false});if(u.error)throw u.error;v.image_url=db.storage.from('food-images').getPublicUrl(p).data.publicUrl}
   const r=await db.from('foods').update(v).eq('id',id);if(r.error)throw r.error;
@@ -57,4 +65,4 @@ const save=$('saveEditBtn');if(save){save.onclick=window.saveEdit;save.addEventL
 const s=document.createElement('style');s.textContent='#pizzaAdminFix{order:9}.pizza-price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.pizza-price-grid label{font-weight:700}.pizza-price-grid input{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:10px;border:1px solid #ccc;border-radius:9px;font:inherit}@media(max-width:700px){.pizza-price-grid{grid-template-columns:1fr}}';document.head.appendChild(s);
 document.addEventListener('click',function(e){const btn=e.target.closest('button');if(!btn)return;const text=(btn.textContent||'').trim();if(!text.includes('ویرایش'))return;const m=btn.getAttribute('onclick')||'';const hit=m.match(/openEdit\((\d+)\)/);if(!hit)return;e.preventDefault();e.stopImmediatePropagation();window.openEdit(Number(hit[1]));},true);
 })();
-// FORCE-SAVE-HANDLER-2026-09-02
+// RLS-SESSION-FIX-2026-09-02
