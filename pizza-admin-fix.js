@@ -19,14 +19,10 @@ async function ensureCategories(currentId){
  const html=active.map(c=>`<option value="${c.id}">${String(c.name||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</option>`).join('');
  $('ec').innerHTML=html;
  $('ec').value=String(currentId??'');
- if(!$('ec').value && currentId) {
-  const c=cats.find(x=>Number(x.id)===Number(currentId));
-  if(c){$('ec').insertAdjacentHTML('beforeend',`<option value="${c.id}">${String(c.name||'')}</option>`);$('ec').value=String(c.id);}
- }
+ if(!$('ec').value&&currentId){const c=cats.find(x=>Number(x.id)===Number(currentId));if(c){$('ec').insertAdjacentHTML('beforeend',`<option value="${c.id}">${String(c.name||'')}</option>`);$('ec').value=String(c.id);}}
 }
 async function openPizza(id){
- const f=await getFood(id);
- await ensureCategories(f.category_id);
+ const f=await getFood(id);await ensureCategories(f.category_id);
  $('editId').value=f.id;$('en').value=f.name||'';$('ep').value=f.price??'';$('es').value=f.stock_status||'available';$('ed').value=f.description||'';$('edaily').checked=!!f.daily;$('ef').value='';
  msg('editMsg','');$('editModal').classList.remove('hide');removeBox();
  if(!pizza(f))return;
@@ -38,9 +34,7 @@ async function openPizza(id){
  $('pizzaOnePrice').value=r.data?.one_price??'';$('pizzaTwoPrice').value=r.data?.two_price??'';$('pizzaFamilyPrice').value=r.data?.family_price??'';
 }
 function msg(id,t,c){const x=$(id);if(x){x.textContent=t;x.style.color=c||''}}
-window.openEdit=async function(id){
- try{await openPizza(Number(id))}catch(e){msg('editMsg','❌ '+(e?.message||'خطا در باز کردن ویرایش'),'#b52b2b');$('editModal')?.classList.remove('hide')}
-};
+window.openEdit=async function(id){try{await openPizza(Number(id))}catch(e){msg('editMsg','❌ '+(e?.message||'خطا در باز کردن ویرایش'),'#b52b2b');$('editModal')?.classList.remove('hide')}};
 window.saveEdit=async function(){
  const id=Number($('editId').value);const v={name:$('en').value.trim(),price:Number($('ep').value||0),category_id:Number($('ec').value),description:$('ed').value.trim()||null,stock_status:$('es').value,daily:$('edaily').checked};
  if(!v.name||!v.category_id)return msg('editMsg','❌ نام و دسته را کامل کنید.','#b52b2b');
@@ -59,18 +53,8 @@ window.saveEdit=async function(){
  }catch(e){msg('editMsg','❌ '+(e?.message||'خطا در ذخیره'),'#b52b2b')}
  finally{$('saveEditBtn').disabled=false}
 };
+const save=$('saveEditBtn');if(save){save.onclick=window.saveEdit;save.addEventListener('click',e=>{if(save.onclick!==window.saveEdit){e.preventDefault();e.stopImmediatePropagation();window.saveEdit()}},true)}
 const s=document.createElement('style');s.textContent='#pizzaAdminFix{order:9}.pizza-price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.pizza-price-grid label{font-weight:700}.pizza-price-grid input{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:10px;border:1px solid #ccc;border-radius:9px;font:inherit}@media(max-width:700px){.pizza-price-grid{grid-template-columns:1fr}}';document.head.appendChild(s);
-document.addEventListener('click',function(e){
- const btn=e.target.closest('button');
- if(!btn)return;
- const text=(btn.textContent||'').trim();
- if(!text.includes('ویرایش'))return;
- const m=btn.getAttribute('onclick')||'';
- const hit=m.match(/openEdit\((\d+)\)/);
- if(!hit)return;
- e.preventDefault();
- e.stopImmediatePropagation();
- window.openEdit(Number(hit[1]));
-},true);
+document.addEventListener('click',function(e){const btn=e.target.closest('button');if(!btn)return;const text=(btn.textContent||'').trim();if(!text.includes('ویرایش'))return;const m=btn.getAttribute('onclick')||'';const hit=m.match(/openEdit\((\d+)\)/);if(!hit)return;e.preventDefault();e.stopImmediatePropagation();window.openEdit(Number(hit[1]));},true);
 })();
-// FORCE-CATEGORY-FIX-2026-09-02
+// FORCE-SAVE-HANDLER-2026-09-02
