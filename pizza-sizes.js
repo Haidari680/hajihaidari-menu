@@ -1,6 +1,6 @@
 /* pizza sizes module - stable customer bridge */
 (function(){'use strict';
-const U='https://bjpascssizuskiujnzvf.supabase.co',K='sb_publishable_VMPeQ2DMNfdwwAEAYQ2Y4A_3idOGTvr';
+const U='https://bjpascssizuskiujnzvf.supabase.co',K='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJqcGFzY3NzaXp1c2tpdWp1enZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwNzE3MDUsImV4cCI6MjEwMjY0NzcwNX0.bo8Q2OaYZsa9lm1j0wRY2CAfubbjyX3vcjq9vntuBds';
 if(!window.supabase)return;
 const db=window.supabase.createClient(U,K);let sizes={};
 function addButtons(card,id,s){
@@ -32,4 +32,4 @@ async function load(){
 }
 window.loadPizzaModule=load;load();
 })();
-// FINAL-STABLE-PIZZA-PRICES-2026-09-02
+// FINAL-STABLE-PIZZA-PRICES-2026-09-02-LEGACY-KEY
