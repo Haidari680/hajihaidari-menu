@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const U='https://bjpascssizuskiujnzvf.supabase.co';
-const K='sb_publishable_VMPe2QDMNfdwwAEAYQ2Y4A_3idOGTvrK';
+const K='sb_publishable_VMPe2QDMNfdwwAEAYQ2Y4A_3idOGTvr';
 const db=window.supabase?.createClient(U,K);
 const $=id=>document.getElementById(id);
 async function getFood(id){
@@ -47,7 +47,6 @@ window.saveEdit=async function(){
 };
 const s=document.createElement('style');s.textContent='#pizzaAdminFix{order:9}.pizza-price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.pizza-price-grid label{font-weight:700}.pizza-price-grid input{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:10px;border:1px solid #ccc;border-radius:9px;font:inherit}@media(max-width:700px){.pizza-price-grid{grid-template-columns:1fr}}';document.head.appendChild(s);
 
-/* Hard-fix: intercept the actual edit buttons before inline onclick runs. */
 document.addEventListener('click',function(e){
  const btn=e.target.closest('button');
  if(!btn)return;
@@ -61,4 +60,4 @@ document.addEventListener('click',function(e){
  window.openEdit(Number(hit[1]));
 },true);
 })();
-// FORCE-INJECT-2026-09-02-03
+// FORCE-INJECT-2026-09-02-04
