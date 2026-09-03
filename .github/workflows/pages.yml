@@ -26,7 +26,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Verify required files
-        run: test -f admin.html && test -f auth-guard.js && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js && test -f pizza-sizes.js && test -f pizza-admin-fix.js
+        run: test -f admin.html && test -f auth-guard.js && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js && test -f pizza-sizes.js && test -f pizza-admin-fix.js && test -f api-key-fix.js
       - name: Prepare deployment
         run: |
           python - <<'PY'
@@ -48,6 +48,9 @@ jobs:
           p.write_text(s,encoding='utf-8')
           p=Path('admin.html'); s=p.read_text(encoding='utf-8')
           s=re.sub(r'<script src="pizza-admin-fix\.js(?:\?v=[^"]+)?"></script>','<script src="pizza-admin-fix.js?v=20260902-2"></script>',s)
+          cdn='<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>'
+          fix='<script src="api-key-fix.js?v=20260904-1"></script>'
+          if fix not in s and cdn in s: s=s.replace(cdn,fix+'\n'+cdn,1)
           for tag,file_name in [
             ('<script src="./admin-categories.js?v=2"></script>','admin-categories.js'),
             ('<script src="./admin-settings.js"></script>','admin-settings.js'),
@@ -64,6 +67,7 @@ jobs:
           grep -q "moveFood" admin.html
           grep -q "ویرایش" admin.html
           grep -q "pizza-admin-fix.js?v=20260902-2" admin.html
+          grep -q "api-key-fix.js?v=20260904-1" admin.html
           grep -q "one_price" pizza-admin-fix.js
           grep -q "two_price" pizza-admin-fix.js
           grep -q "family_price" pizza-admin-fix.js
