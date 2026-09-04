@@ -33,19 +33,24 @@ jobs:
           from pathlib import Path
           import re
           p=Path('index.html'); s=p.read_text(encoding='utf-8')
-          for tag,file_name in [
-            ('<script src="reviews.js"></script>','reviews.js'),
-            ('<script src="./supabase-menu.js"></script>','supabase-menu.js'),
-            ('<script src="./site-settings.js"></script>','site-settings.js'),
-            ('<script src="./menu-enhancements.js?v=2"></script>','menu-enhancements.js'),
-            ('<script src="./location-display.js"></script>','location-display.js'),
-            ('<script src="./pizza-sizes.js?v=20260904-3"></script>','pizza-sizes.js'),
-            ('<script src="./pizza-customer-bridge.js?v=20260904-3"></script>','pizza-customer-bridge.js')]:
-            if file_name=='pizza-sizes.js':
-              s=re.sub(r'<script src="\./pizza-sizes\.js(?:\?v=[^"]+)?"></script>','<script src="./pizza-sizes.js?v=20260904-3"></script>',s)
-            elif file_name=='pizza-customer-bridge.js':
-              s=re.sub(r'<script src="\./pizza-customer-bridge\.js(?:\?v=[^"]+)?"></script>','<script src="./pizza-customer-bridge.js?v=20260904-3"></script>',s)
-            elif tag not in s and Path(file_name).exists(): s=s.replace('</body>',tag+'\n</body>',1)
+          def ensure_script(s, filename, version):
+              pattern=rf'<script src="\./{re.escape(filename)}(?:\?v=[^"]+)?"></script>'
+              tag=f'<script src="./{filename}?v={version}"></script>'
+              if re.search(pattern,s): return re.sub(pattern,tag,s,count=1)
+              return s.replace('</body>',tag+'\n</body>',1)
+          for filename,version in [
+            ('reviews.js',''),
+            ('supabase-menu.js',''),
+            ('site-settings.js',''),
+            ('menu-enhancements.js','2'),
+            ('location-display.js',''),
+            ('pizza-sizes.js','20260904-4'),
+            ('pizza-customer-bridge.js','20260904-4')]:
+              if version:
+                s=ensure_script(s,filename,version)
+              else:
+                tag=f'<script src="./{filename}"></script>'
+                if tag not in s and Path(filename).exists(): s=s.replace('</body>',tag+'\n</body>',1)
           css='<link rel="stylesheet" href="logo-enhancement.css">'
           if css not in s and Path('logo-enhancement.css').exists(): s=s.replace('</head>',css+'\n</head>',1)
           pattern=r'<div class="service service-pick"><img src="data:image/webp;base64,[A-Za-z0-9+/=]+"[^>]*></div>'
@@ -56,17 +61,17 @@ jobs:
           cdn='<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>'
           fix='<script src="api-key-fix.js?v=20260904-2"></script>'
           if fix not in s and cdn in s: s=s.replace(cdn,cdn+'\n'+fix,1)
+          tag='<script src="./pizza-sizes.js?v=20260904-4"></script>'
+          s=re.sub(r'<script src="\./pizza-sizes\.js(?:\?v=[^"]+)?"></script>',tag,s)
+          if tag not in s and Path('pizza-sizes.js').exists(): s=s.replace('</body>',tag+'\n</body>',1)
           for tag,file_name in [
             ('<script src="./admin-categories.js?v=2"></script>','admin-categories.js'),
             ('<script src="./admin-settings.js"></script>','admin-settings.js'),
             ('<script src="./admin-visual-settings.js"></script>','admin-visual-settings.js'),
             ('<script src="./admin-location-settings.js"></script>','admin-location-settings.js'),
             ('<script src="./image-optimizer.js"></script>','image-optimizer.js'),
-            ('<script src="./pizza-sizes.js?v=20260904-3"></script>','pizza-sizes.js'),
             ('<script src="./auth-guard.js"></script>','auth-guard.js')]:
-            if file_name=='pizza-sizes.js':
-              s=re.sub(r'<script src="\./pizza-sizes\.js(?:\?v=[^"]+)?"></script>','<script src="./pizza-sizes.js?v=20260904-3"></script>',s)
-            elif tag not in s and Path(file_name).exists(): s=s.replace('</body>',tag+'\n</body>',1)
+            if tag not in s and Path(file_name).exists(): s=s.replace('</body>',tag+'\n</body>',1)
           p.write_text(s,encoding='utf-8')
           PY
       - name: Verify deployment contents
@@ -78,8 +83,8 @@ jobs:
           grep -q "one_price" pizza-admin-fix.js
           grep -q "two_price" pizza-admin-fix.js
           grep -q "family_price" pizza-admin-fix.js
-          grep -q "pizza-sizes.js?v=20260904-3" index.html
-          grep -q "pizza-customer-bridge.js?v=20260904-3" index.html
+          grep -q "pizza-sizes.js?v=20260904-4" index.html
+          grep -q "pizza-customer-bridge.js?v=20260904-4" index.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
