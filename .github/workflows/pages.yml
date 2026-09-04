@@ -44,8 +44,8 @@ jobs:
             ('site-settings.js',''),
             ('menu-enhancements.js','2'),
             ('location-display.js',''),
-            ('pizza-sizes.js','20260904-4'),
-            ('pizza-customer-bridge.js','20260904-4')]:
+            ('pizza-sizes.js','20260905-1'),
+            ('pizza-customer-bridge.js','20260905-1')]:
               if version:
                 s=ensure_script(s,filename,version)
               else:
@@ -61,7 +61,7 @@ jobs:
           cdn='<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>'
           fix='<script src="api-key-fix.js?v=20260904-2"></script>'
           if fix not in s and cdn in s: s=s.replace(cdn,cdn+'\n'+fix,1)
-          tag='<script src="./pizza-sizes.js?v=20260904-4"></script>'
+          tag='<script src="./pizza-sizes.js?v=20260905-1"></script>'
           s=re.sub(r'<script src="\./pizza-sizes\.js(?:\?v=[^"]+)?"></script>',tag,s)
           if tag not in s and Path('pizza-sizes.js').exists(): s=s.replace('</body>',tag+'\n</body>',1)
           for tag,file_name in [
@@ -83,8 +83,8 @@ jobs:
           grep -q "one_price" pizza-admin-fix.js
           grep -q "two_price" pizza-admin-fix.js
           grep -q "family_price" pizza-admin-fix.js
-          grep -q "pizza-sizes.js?v=20260904-4" index.html
-          grep -q "pizza-customer-bridge.js?v=20260904-4" index.html
+          grep -q "pizza-sizes.js?v=20260905-1" index.html
+          grep -q "pizza-customer-bridge.js?v=20260905-1" index.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
