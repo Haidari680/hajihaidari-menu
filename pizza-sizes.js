@@ -11,7 +11,7 @@ function addButtons(card,id,s){
  box.querySelectorAll('button').forEach(b=>b.onclick=()=>{
    const foodId=Number(b.dataset.pizzaId),price=Number(b.dataset.price),size=b.dataset.size;
    if(typeof window.addToCart==='function') window.addToCart(foodId,price,size);
-   else if(typeof window.add==='function') window.add(foodId);
+   else if(typeof window.add==='function') window.add(foodId,price,size);
  });
 }
 function cardId(card){
@@ -28,4 +28,4 @@ function render(){document.querySelectorAll('#grid .card,.grid .card,.card').for
 async function load(){try{const p=await db.from('pizza_sizes').select('food_id,one_price,two_price,family_price');if(p.error)throw p.error;sizes={};(p.data||[]).forEach(x=>sizes[Number(x.food_id)]=x);render();const obs=new MutationObserver(()=>render());obs.observe(document.getElementById('grid')||document.body,{childList:true,subtree:true});let tries=0;const timer=setInterval(()=>{render();if(++tries>=60)clearInterval(timer)},500);if(!document.getElementById('pizza-size-style')){const st=document.createElement('style');st.id='pizza-size-style';st.textContent='.pizza-size-options{display:grid;gap:7px;margin-top:10px}.pizza-size-options button{width:100%;border:1px solid #e8b84f;border-radius:10px;padding:8px;background:#06152f;color:#f5d27a;font-weight:800}.pizza-size-options button:active{transform:scale(.99)}';document.head.appendChild(st)}}catch(e){console.warn('pizza sizes:',e)}}
 window.loadPizzaModule=load;load();
 })();
-// FINAL-STABLE-PIZZA-PRICES-2026-09-04
+// FINAL-STABLE-PIZZA-PRICES-2026-09-04-CART
