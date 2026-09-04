@@ -26,7 +26,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Verify required files
-        run: test -f admin.html && test -f auth-guard.js && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js && test -f pizza-sizes.js && test -f pizza-admin-fix.js && test -f api-key-fix.js
+        run: test -f admin.html && test -f auth-guard.js && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js && test -f pizza-sizes.js && test -f pizza-admin-fix.js && test -f api-key-fix.js && test -f pizza-customer-bridge.js
       - name: Prepare deployment
         run: |
           python - <<'PY'
@@ -39,7 +39,8 @@ jobs:
             ('<script src="./site-settings.js"></script>','site-settings.js'),
             ('<script src="./menu-enhancements.js?v=2"></script>','menu-enhancements.js'),
             ('<script src="./location-display.js"></script>','location-display.js'),
-            ('<script src="./pizza-sizes.js"></script>','pizza-sizes.js')]:
+            ('<script src="./pizza-sizes.js"></script>','pizza-sizes.js'),
+            ('<script src="./pizza-customer-bridge.js?v=20260904-1"></script>','pizza-customer-bridge.js')]:
             if tag not in s and Path(file_name).exists(): s=s.replace('</body>',tag+'\n</body>',1)
           css='<link rel="stylesheet" href="logo-enhancement.css">'
           if css not in s and Path('logo-enhancement.css').exists(): s=s.replace('</head>',css+'\n</head>',1)
@@ -72,6 +73,7 @@ jobs:
           grep -q "two_price" pizza-admin-fix.js
           grep -q "family_price" pizza-admin-fix.js
           grep -q "pizza-sizes.js" index.html
+          grep -q "pizza-customer-bridge.js?v=20260904-1" index.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
