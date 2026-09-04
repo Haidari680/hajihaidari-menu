@@ -39,9 +39,13 @@ jobs:
             ('<script src="./site-settings.js"></script>','site-settings.js'),
             ('<script src="./menu-enhancements.js?v=2"></script>','menu-enhancements.js'),
             ('<script src="./location-display.js"></script>','location-display.js'),
-            ('<script src="./pizza-sizes.js"></script>','pizza-sizes.js'),
-            ('<script src="./pizza-customer-bridge.js?v=20260904-1"></script>','pizza-customer-bridge.js')]:
-            if tag not in s and Path(file_name).exists(): s=s.replace('</body>',tag+'\n</body>',1)
+            ('<script src="./pizza-sizes.js?v=20260904-3"></script>','pizza-sizes.js'),
+            ('<script src="./pizza-customer-bridge.js?v=20260904-3"></script>','pizza-customer-bridge.js')]:
+            if file_name=='pizza-sizes.js':
+              s=re.sub(r'<script src="\./pizza-sizes\.js(?:\?v=[^"]+)?"></script>','<script src="./pizza-sizes.js?v=20260904-3"></script>',s)
+            elif file_name=='pizza-customer-bridge.js':
+              s=re.sub(r'<script src="\./pizza-customer-bridge\.js(?:\?v=[^"]+)?"></script>','<script src="./pizza-customer-bridge.js?v=20260904-3"></script>',s)
+            elif tag not in s and Path(file_name).exists(): s=s.replace('</body>',tag+'\n</body>',1)
           css='<link rel="stylesheet" href="logo-enhancement.css">'
           if css not in s and Path('logo-enhancement.css').exists(): s=s.replace('</head>',css+'\n</head>',1)
           pattern=r'<div class="service service-pick"><img src="data:image/webp;base64,[A-Za-z0-9+/=]+"[^>]*></div>'
@@ -58,9 +62,11 @@ jobs:
             ('<script src="./admin-visual-settings.js"></script>','admin-visual-settings.js'),
             ('<script src="./admin-location-settings.js"></script>','admin-location-settings.js'),
             ('<script src="./image-optimizer.js"></script>','image-optimizer.js'),
-            ('<script src="./pizza-sizes.js"></script>','pizza-sizes.js'),
+            ('<script src="./pizza-sizes.js?v=20260904-3"></script>','pizza-sizes.js'),
             ('<script src="./auth-guard.js"></script>','auth-guard.js')]:
-            if tag not in s and Path(file_name).exists(): s=s.replace('</body>',tag+'\n</body>',1)
+            if file_name=='pizza-sizes.js':
+              s=re.sub(r'<script src="\./pizza-sizes\.js(?:\?v=[^"]+)?"></script>','<script src="./pizza-sizes.js?v=20260904-3"></script>',s)
+            elif tag not in s and Path(file_name).exists(): s=s.replace('</body>',tag+'\n</body>',1)
           p.write_text(s,encoding='utf-8')
           PY
       - name: Verify deployment contents
@@ -72,8 +78,8 @@ jobs:
           grep -q "one_price" pizza-admin-fix.js
           grep -q "two_price" pizza-admin-fix.js
           grep -q "family_price" pizza-admin-fix.js
-          grep -q "pizza-sizes.js" index.html
-          grep -q "pizza-customer-bridge.js?v=20260904-1" index.html
+          grep -q "pizza-sizes.js?v=20260904-3" index.html
+          grep -q "pizza-customer-bridge.js?v=20260904-3" index.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
