@@ -22,6 +22,40 @@
   `;
   document.head.appendChild(css);
 
+  // Convert Supabase storage URLs BEFORE innerHTML creates <img> elements.
+  // This prevents the browser from starting a download of the original heavy file first.
+  const optimizeUrl = (url, kind='card') => {
+    try {
+      if(!url || !url.includes('/storage/v1/object/public/')) return url;
+      const u = new URL(url);
+      u.pathname = u.pathname.replace('/storage/v1/object/public/','/storage/v1/render/image/public/');
+      const width = kind==='hero' ? 1200 : kind==='logo' ? 420 : (window.innerWidth<=650 ? 420 : 700);
+      const quality = kind==='hero' ? 70 : 65;
+      u.searchParams.set('width',String(width));
+      u.searchParams.set('quality',String(quality));
+      u.searchParams.set('resize','contain');
+      return u.toString();
+    } catch { return url; }
+  };
+
+  const htmlSetter = Object.getOwnPropertyDescriptor(Element.prototype,'innerHTML');
+  if(htmlSetter?.set) {
+    Object.defineProperty(Element.prototype,'innerHTML',{
+      configurable:true,
+      enumerable:htmlSetter.enumerable,
+      get:htmlSetter.get,
+      set(value){
+        if(typeof value==='string' && value.includes('/storage/v1/object/public/')) {
+          value=value.replace(/(<img\b[^>]*\bsrc\s*=\s*["'])([^"']+)(["'])/gi,(m,a,url,q)=>{
+            const elKind=/class\s*=\s*["'][^"']*\bslide\b/i.test(m)?'hero':/class\s*=\s*["'][^"']*heroLogoImg/i.test(m)?'logo':'card';
+            return a+optimizeUrl(url,elKind)+q;
+          });
+        }
+        return htmlSetter.set.call(this,value);
+      }
+    });
+  }
+
   const optimizeImages = () => {
     const cards = [...document.querySelectorAll('.card img')];
     const slides = [...document.querySelectorAll('.slide img')];
@@ -40,7 +74,6 @@
   window.addEventListener('load', optimizeImages, {once:true});
   new MutationObserver(optimizeImages).observe(document.body,{childList:true,subtree:true});
 
-  // Reliable cart total + delete control.
   window.removeFromCart = function(id) {
     cart = cart.filter(item => String(item.id) !== String(id));
     localStorage.setItem('hh_cart', JSON.stringify(cart));
@@ -65,7 +98,6 @@
     $('sum').textContent = fa(total);
   };
 
-  // Food image zoom preview: click/tap any food photo to see a larger version.
   const imageModal = document.createElement('div');
   imageModal.className = 'food-image-modal';
   imageModal.innerHTML = '<button class="food-image-close" aria-label="بستن">×</button><img alt="نمای بزرگ غذا"><div class="food-image-hint">برای بستن، بیرون عکس را لمس کنید</div>';
@@ -82,6 +114,5 @@
   });
   document.addEventListener('keydown', e => { if(e.key === 'Escape') closeImage(); });
 
-  // Repaint totals once the existing page finishes loading.
   window.addEventListener('load', () => { bar(); if ($('ov').classList.contains('open')) renderCart(); });
 })();
