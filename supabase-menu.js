@@ -25,15 +25,14 @@
   const optimizeImages = () => {
     const cards = [...document.querySelectorAll('.card img')];
     const slides = [...document.querySelectorAll('.slide img')];
-    cards.forEach((img,i) => {
-      const nearTop = i < 8;
-      img.loading = nearTop ? 'eager' : 'lazy';
-      img.fetchPriority = nearTop ? 'high' : 'low';
+    cards.forEach(img => {
+      img.loading = 'eager';
+      img.fetchPriority = 'high';
       img.decoding = 'async';
     });
     slides.forEach((img,i) => {
-      img.loading = i === 0 ? 'eager' : 'lazy';
-      img.fetchPriority = i === 0 ? 'high' : 'low';
+      img.loading = 'eager';
+      img.fetchPriority = i === 0 ? 'high' : 'auto';
       img.decoding = 'async';
     });
   };
