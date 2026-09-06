@@ -22,10 +22,22 @@
   `;
   document.head.appendChild(css);
 
-  const optimizeImages = () => document.querySelectorAll('.card img,.slide img').forEach((img,i) => {
-    if(i > 0 || img.closest('.card')) img.loading = 'lazy';
-    img.decoding = 'async';
-  });
+  const optimizeImages = () => {
+    const cards = [...document.querySelectorAll('.card img')];
+    const slides = [...document.querySelectorAll('.slide img')];
+    cards.forEach((img,i) => {
+      const nearTop = i < 8;
+      img.loading = nearTop ? 'eager' : 'lazy';
+      img.fetchPriority = nearTop ? 'high' : 'low';
+      img.decoding = 'async';
+    });
+    slides.forEach((img,i) => {
+      img.loading = i === 0 ? 'eager' : 'lazy';
+      img.fetchPriority = i === 0 ? 'high' : 'low';
+      img.decoding = 'async';
+    });
+  };
+  optimizeImages();
   window.addEventListener('load', optimizeImages, {once:true});
   new MutationObserver(optimizeImages).observe(document.body,{childList:true,subtree:true});
 
