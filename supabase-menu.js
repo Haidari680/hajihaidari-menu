@@ -22,8 +22,8 @@
   `;
   document.head.appendChild(css);
 
-  // Convert Supabase storage URLs BEFORE innerHTML creates <img> elements.
-  // This prevents the browser from starting a download of the original heavy file first.
+  // Transform Supabase images before innerHTML creates <img> elements.
+  // This avoids the browser downloading the original full-size file first.
   const optimizeUrl = (url, kind='card') => {
     try {
       if(!url || !url.includes('/storage/v1/object/public/')) return url;
@@ -38,6 +38,8 @@
     } catch { return url; }
   };
 
+  // The page builds cards/slides with innerHTML. Intercept those assignments so
+  // transformed URLs are present before the browser sees the image elements.
   const htmlSetter = Object.getOwnPropertyDescriptor(Element.prototype,'innerHTML');
   if(htmlSetter?.set) {
     Object.defineProperty(Element.prototype,'innerHTML',{
@@ -46,33 +48,63 @@
       get:htmlSetter.get,
       set(value){
         if(typeof value==='string' && value.includes('/storage/v1/object/public/')) {
-          value=value.replace(/(<img\b[^>]*\bsrc\s*=\s*["'])([^"']+)(["'])/gi,(m,a,url,q)=>{
-            const elKind=/class\s*=\s*["'][^"']*\bslide\b/i.test(m)?'hero':/class\s*=\s*["'][^"']*heroLogoImg/i.test(m)?'logo':'card';
-            return a+optimizeUrl(url,elKind)+q;
-          });
+          const kind = /<div\b[^>]*class\s*=\s*["'][^"']*\bslide\b/i.test(value)
+            ? 'hero'
+            : /heroLogoImg/i.test(value) ? 'logo' : 'card';
+          value=value.replace(/(<img\b[^>]*\bsrc\s*=\s*["'])([^"']+)(["'])/gi,(m,a,url,q)=>a+optimizeUrl(url,kind)+q);
         }
         return htmlSetter.set.call(this,value);
       }
     });
   }
 
-  const optimizeImages = () => {
+  const applyLoadingPolicy = () => {
     const cards = [...document.querySelectorAll('.card img')];
     const slides = [...document.querySelectorAll('.slide img')];
-    cards.forEach(img => {
-      img.loading = 'eager';
-      img.fetchPriority = 'high';
+
+    // Only the first visible row is eager. Everything else stays lazy until
+    // it gets close to the viewport. This is much lighter than eager-loading
+    // every food image on the page.
+    cards.forEach((img,i) => {
+      const eager = i < 4;
+      img.loading = eager ? 'eager' : 'lazy';
+      img.fetchPriority = eager ? 'high' : 'low';
       img.decoding = 'async';
     });
     slides.forEach((img,i) => {
-      img.loading = 'eager';
-      img.fetchPriority = i === 0 ? 'high' : 'auto';
+      const eager = i === 0;
+      img.loading = eager ? 'eager' : 'lazy';
+      img.fetchPriority = eager ? 'high' : 'low';
       img.decoding = 'async';
     });
   };
-  optimizeImages();
-  window.addEventListener('load', optimizeImages, {once:true});
-  new MutationObserver(optimizeImages).observe(document.body,{childList:true,subtree:true});
+
+  applyLoadingPolicy();
+
+  // Ask the browser to start nearby images before the user reaches them.
+  if('IntersectionObserver' in window) {
+    const nearViewport = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(!entry.isIntersecting) return;
+        const img = entry.target;
+        img.loading = 'eager';
+        img.fetchPriority = 'high';
+        nearViewport.unobserve(img);
+      });
+    }, {rootMargin:'900px 0px'});
+    document.querySelectorAll('.card img,.slide img').forEach(img => nearViewport.observe(img));
+  }
+
+  const refresh = () => {
+    applyLoadingPolicy();
+    if('IntersectionObserver' in window) {
+      document.querySelectorAll('.card img,.slide img').forEach(img => {
+        if(img.loading === 'lazy') img.fetchPriority = 'low';
+      });
+    }
+  };
+  window.addEventListener('load', refresh, {once:true});
+  new MutationObserver(() => requestAnimationFrame(refresh)).observe(document.body,{childList:true,subtree:true});
 
   window.removeFromCart = function(id) {
     cart = cart.filter(item => String(item.id) !== String(id));
