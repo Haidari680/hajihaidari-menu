@@ -22,8 +22,6 @@
   `;
   document.head.appendChild(css);
 
-  // Transform Supabase images before innerHTML creates <img> elements.
-  // This avoids the browser downloading the original full-size file first.
   const optimizeUrl = (url, kind='card') => {
     try {
       if(!url || !url.includes('/storage/v1/object/public/')) return url;
@@ -38,8 +36,6 @@
     } catch { return url; }
   };
 
-  // The page builds cards/slides with innerHTML. Intercept those assignments so
-  // transformed URLs are present before the browser sees the image elements.
   const htmlSetter = Object.getOwnPropertyDescriptor(Element.prototype,'innerHTML');
   if(htmlSetter?.set) {
     Object.defineProperty(Element.prototype,'innerHTML',{
@@ -61,18 +57,14 @@
   const applyLoadingPolicy = () => {
     const cards = [...document.querySelectorAll('.card img')];
     const slides = [...document.querySelectorAll('.slide img')];
-
-    // Only the first visible row is eager. Everything else stays lazy until
-    // it gets close to the viewport. This is much lighter than eager-loading
-    // every food image on the page.
     cards.forEach((img,i) => {
-      const eager = i < 4;
+      const eager = i < 4 || img.dataset.preloaded === '1';
       img.loading = eager ? 'eager' : 'lazy';
       img.fetchPriority = eager ? 'high' : 'low';
       img.decoding = 'async';
     });
     slides.forEach((img,i) => {
-      const eager = i === 0;
+      const eager = i === 0 || img.dataset.preloaded === '1';
       img.loading = eager ? 'eager' : 'lazy';
       img.fetchPriority = eager ? 'high' : 'low';
       img.decoding = 'async';
@@ -81,17 +73,17 @@
 
   applyLoadingPolicy();
 
-  // Ask the browser to start nearby images before the user reaches them.
   if('IntersectionObserver' in window) {
     const nearViewport = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if(!entry.isIntersecting) return;
         const img = entry.target;
+        img.dataset.preloaded = '1';
         img.loading = 'eager';
         img.fetchPriority = 'high';
         nearViewport.unobserve(img);
       });
-    }, {rootMargin:'900px 0px'});
+    }, {rootMargin:'2000px 0px'});
     document.querySelectorAll('.card img,.slide img').forEach(img => nearViewport.observe(img));
   }
 
