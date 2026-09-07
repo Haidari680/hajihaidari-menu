@@ -47,7 +47,12 @@
           const kind = /<div\b[^>]*class\s*=\s*["'][^"']*\bslide\b/i.test(value)
             ? 'hero'
             : /heroLogoImg/i.test(value) ? 'logo' : 'card';
-          value=value.replace(/(<img\b[^>]*\bsrc\s*=\s*["'])([^"']+)(["'])/gi,(m,a,url,q)=>a+optimizeUrl(url,kind)+q);
+          value=value.replace(/(<img\b[^>]*\bsrc\s*=\s*["'])([^"']+)(["'])/gi,(m,a,url,q)=>{
+            const optimized = optimizeUrl(url,kind);
+            if(optimized === url) return m;
+            const safeOriginal = String(url).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            return a+optimized+q+' data-original-src="'+safeOriginal+'"';
+          });
         }
         return htmlSetter.set.call(this,value);
       }
@@ -70,6 +75,18 @@
       img.decoding = 'async';
     });
   };
+
+  document.addEventListener('error', e => {
+    const img = e.target;
+    if(!(img instanceof HTMLImageElement)) return;
+    if(img.dataset.fallbackTried === '1') return;
+    const original = img.getAttribute('data-original-src');
+    if(!original || img.src === original) return;
+    img.dataset.fallbackTried = '1';
+    img.loading = 'eager';
+    img.fetchPriority = 'high';
+    img.src = original;
+  }, true);
 
   applyLoadingPolicy();
 
