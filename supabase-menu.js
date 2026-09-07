@@ -22,6 +22,9 @@
   `;
   document.head.appendChild(css);
 
+  // Use only width + quality for Supabase transformations.
+  // Avoiding resize=contain makes the transformed endpoint safer for
+  // different source image formats while keeping the visual design unchanged.
   const optimizeUrl = (url, kind='card') => {
     try {
       if(!url || !url.includes('/storage/v1/object/public/')) return url;
@@ -31,7 +34,6 @@
       const quality = kind==='hero' ? 70 : 65;
       u.searchParams.set('width',String(width));
       u.searchParams.set('quality',String(quality));
-      u.searchParams.set('resize','contain');
       return u.toString();
     } catch { return url; }
   };
@@ -149,7 +151,7 @@
   document.addEventListener('click', e => {
     const img = e.target.closest('.card .photo img');
     if(!img) return;
-    previewImg.src = img.currentSrc || img.src;
+    previewImg.src = img.dataset.originalSrc || img.currentSrc || img.src;
     previewImg.alt = img.alt || 'نمای بزرگ غذا';
     imageModal.classList.add('open');
   });
