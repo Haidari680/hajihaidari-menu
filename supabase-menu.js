@@ -22,100 +22,23 @@
   `;
   document.head.appendChild(css);
 
-  // Use only width + quality for Supabase transformations.
-  // Avoiding resize=contain makes the transformed endpoint safer for
-  // different source image formats while keeping the visual design unchanged.
-  const optimizeUrl = (url, kind='card') => {
-    try {
-      if(!url || !url.includes('/storage/v1/object/public/')) return url;
-      const u = new URL(url);
-      u.pathname = u.pathname.replace('/storage/v1/object/public/','/storage/v1/render/image/public/');
-      const width = kind==='hero' ? 1200 : kind==='logo' ? 420 : (window.innerWidth<=650 ? 420 : 700);
-      const quality = kind==='hero' ? 70 : 65;
-      u.searchParams.set('width',String(width));
-      u.searchParams.set('quality',String(quality));
-      return u.toString();
-    } catch { return url; }
-  };
-
-  const htmlSetter = Object.getOwnPropertyDescriptor(Element.prototype,'innerHTML');
-  if(htmlSetter?.set) {
-    Object.defineProperty(Element.prototype,'innerHTML',{
-      configurable:true,
-      enumerable:htmlSetter.enumerable,
-      get:htmlSetter.get,
-      set(value){
-        if(typeof value==='string' && value.includes('/storage/v1/object/public/')) {
-          const kind = /<div\b[^>]*class\s*=\s*["'][^"']*\bslide\b/i.test(value)
-            ? 'hero'
-            : /heroLogoImg/i.test(value) ? 'logo' : 'card';
-          value=value.replace(/(<img\b[^>]*\bsrc\s*=\s*["'])([^"']+)(["'])/gi,(m,a,url,q)=>{
-            const optimized = optimizeUrl(url,kind);
-            if(optimized === url) return m;
-            const safeOriginal = String(url).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-            return a+optimized+q+' data-original-src="'+safeOriginal+'"';
-          });
-        }
-        return htmlSetter.set.call(this,value);
-      }
-    });
-  }
-
-  const applyLoadingPolicy = () => {
-    const cards = [...document.querySelectorAll('.card img')];
-    const slides = [...document.querySelectorAll('.slide img')];
-    cards.forEach((img,i) => {
-      const eager = i < 4 || img.dataset.preloaded === '1';
-      img.loading = eager ? 'eager' : 'lazy';
-      img.fetchPriority = eager ? 'high' : 'low';
-      img.decoding = 'async';
-    });
-    slides.forEach((img,i) => {
-      const eager = i === 0 || img.dataset.preloaded === '1';
-      img.loading = eager ? 'eager' : 'lazy';
-      img.fetchPriority = eager ? 'high' : 'low';
-      img.decoding = 'async';
-    });
-  };
-
-  document.addEventListener('error', e => {
-    const img = e.target;
-    if(!(img instanceof HTMLImageElement)) return;
-    if(img.dataset.fallbackTried === '1') return;
-    const original = img.getAttribute('data-original-src');
-    if(!original || img.src === original) return;
-    img.dataset.fallbackTried = '1';
-    img.loading = 'eager';
-    img.fetchPriority = 'high';
-    img.src = original;
-  }, true);
-
-  applyLoadingPolicy();
-
-  if('IntersectionObserver' in window) {
-    const nearViewport = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if(!entry.isIntersecting) return;
-        const img = entry.target;
-        img.dataset.preloaded = '1';
-        img.loading = 'eager';
-        img.fetchPriority = 'high';
-        nearViewport.unobserve(img);
-      });
-    }, {rootMargin:'2000px 0px'});
-    document.querySelectorAll('.card img,.slide img').forEach(img => nearViewport.observe(img));
-  }
-
-  const refresh = () => {
-    applyLoadingPolicy();
-    if('IntersectionObserver' in window) {
-      document.querySelectorAll('.card img,.slide img').forEach(img => {
-        if(img.loading === 'lazy') img.fetchPriority = 'low';
-      });
+  // Keep the original image URLs. The previous Supabase image transformation
+  // could produce incomplete/broken images for some source files.
+  const optimizeImages = () => document.querySelectorAll('.card img,.slide img').forEach((img,i) => {
+    if(i < 4 && img.closest('.card')) {
+      img.loading = 'eager';
+      img.fetchPriority = 'high';
+    } else if(img.closest('.card')) {
+      img.loading = 'lazy';
+      img.fetchPriority = 'auto';
+    } else if(img.closest('.slide')) {
+      img.loading = i === 0 ? 'eager' : 'lazy';
+      img.fetchPriority = i === 0 ? 'high' : 'auto';
     }
-  };
-  window.addEventListener('load', refresh, {once:true});
-  new MutationObserver(() => requestAnimationFrame(refresh)).observe(document.body,{childList:true,subtree:true});
+    img.decoding = 'async';
+  });
+  window.addEventListener('load', optimizeImages, {once:true});
+  new MutationObserver(optimizeImages).observe(document.body,{childList:true,subtree:true});
 
   window.removeFromCart = function(id) {
     cart = cart.filter(item => String(item.id) !== String(id));
@@ -151,7 +74,7 @@
   document.addEventListener('click', e => {
     const img = e.target.closest('.card .photo img');
     if(!img) return;
-    previewImg.src = img.dataset.originalSrc || img.currentSrc || img.src;
+    previewImg.src = img.currentSrc || img.src;
     previewImg.alt = img.alt || 'نمای بزرگ غذا';
     imageModal.classList.add('open');
   });
