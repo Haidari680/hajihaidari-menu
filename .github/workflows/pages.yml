@@ -2,7 +2,7 @@ name: Deploy static menu to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, TEST-SPEED-FINAL]
   workflow_dispatch:
 
 permissions:
@@ -23,20 +23,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
-
       - name: Verify required files
-        run: test -f admin.html && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js
-
+        run: test -f admin.html && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js && test -f speed-loader.js
       - name: Add menu and admin scripts
         run: |
           python - <<'PY'
           from pathlib import Path
-
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
+          speed_tag = '<script src="./speed-loader.js"></script>'
+          if speed_tag not in s:
+              s = s.replace('</head>', speed_tag + '\n</head>', 1)
           for tag, file_name in [
               ('<script src="reviews.js"></script>', 'reviews.js'),
               ('<script src="./supabase-menu.js"></script>', 'supabase-menu.js'),
@@ -53,7 +52,6 @@ jobs:
           if 'aria-label="ورود به پنل مدیریت"' not in s:
               s = s.replace('</body>', admin_link + '\n</body>', 1)
           p.write_text(s, encoding='utf-8')
-
           p = Path('admin.html')
           s = p.read_text(encoding='utf-8')
           for tag, file_name in [
@@ -66,12 +64,10 @@ jobs:
                   s = s.replace('</body>', tag + '\n</body>', 1)
           p.write_text(s, encoding='utf-8')
           PY
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
