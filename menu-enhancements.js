@@ -9,39 +9,24 @@
   const addCss=()=>{if(document.getElementById('menuEnhCss'))return;const s=document.createElement('style');s.id='menuEnhCss';s.textContent=css;document.head.appendChild(s)};
   const esc=v=>String(v??'').replace(/[&<>\\"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','\\"':'&quot;',"'":'&#039;'}[ch]));
   function optimizeImages(){
-    document.querySelectorAll('img').forEach(im=>{
-      const raw=im.currentSrc||im.src;
-      if(!raw||!raw.includes('/storage/v1/'))return;
-      try{
-        const u=new URL(raw);
-        if(u.pathname.includes('/storage/v1/render/image/public/')){
-          // Already transformed: keep it, but never allow lazy loading.
-          im.loading='eager';
-          im.decoding='async';
-          im.fetchPriority=im.closest('.hero')?.querySelector('.slide:first-child img')===im?'high':'auto';
-          return;
-        }
-        if(!u.pathname.includes('/storage/v1/object/public/'))return;
-        const isHero=!!im.closest('.hero');
-        const isLogo=im.classList.contains('heroLogoImg');
-        const width=isHero?'1200':(isLogo?'420':(window.innerWidth<=650?'420':'700'));
-        const quality=isHero?'70':'65';
-        u.pathname=u.pathname.replace('/storage/v1/object/public/','/storage/v1/render/image/public/');
-        u.searchParams.set('width',width);
-        u.searchParams.set('quality',quality);
-        u.searchParams.set('resize','contain');
-        im.loading='eager';
-        im.decoding='async';
-        im.fetchPriority=isHero?'high':'high';
-        im.src=u.toString();
-      }catch{}
+    document.querySelectorAll('.card img').forEach((im,i)=>{
+      const eager=i<4;
+      im.loading=eager?'eager':'lazy';
+      im.fetchPriority=eager?'high':'low';
+      im.decoding='async';
+    });
+    document.querySelectorAll('.hero .slide img').forEach((im,i)=>{
+      const eager=i===0;
+      im.loading=eager?'eager':'lazy';
+      im.fetchPriority=eager?'high':'low';
+      im.decoding='async';
     });
   }
-  const start=()=>{if(!window.supabase)return setTimeout(start,250);addCss();const db=window.sb||window.supabase.createClient(URL,KEY);load(db);optimizeImages();new MutationObserver(()=>optimizeImages()).observe(document.body,{childList:true,subtree:true})};
+  const start=()=>{if(!window.supabase)return setTimeout(start,250);addCss();const db=window.sb||window.supabase.createClient(URL,KEY);load(db);optimizeImages()};
   async function load(db){const r=await db.from('site_settings').select('key,value').in('key',['hero_logo','hero_slides','hero_texts']);if(r.error)return;const o=Object.fromEntries((r.data||[]).map(x=>[x.key,x.value]));
     if(o.hero_logo){const logo=document.querySelector('.logo');if(logo){const url=typeof o.hero_logo==='string'?o.hero_logo:o.hero_logo.url;if(url)logo.innerHTML='<img class="heroLogoImg" src="'+esc(url)+'" alt="لوگوی مجموعه حاجی حیدری"><small>طعم اصیل، تجربه‌ای ماندگار</small>'}}
     let slides=o.hero_slides;if(typeof slides==='string'){try{slides=JSON.parse(slides)}catch{}}
-    if(Array.isArray(slides)&&slides.length){document.querySelectorAll('.hero .slide').forEach((el,i)=>{const x=slides[i];if(!x)return;const url=x.url||x;if(!url)return;let im=el.querySelector('img');if(!im){im=document.createElement('img');el.appendChild(im)}im.src=url;im.width=1200;im.height=390;im.loading='eager';im.fetchPriority='high';im.decoding='async';})}
+    if(Array.isArray(slides)&&slides.length){document.querySelectorAll('.hero .slide').forEach((el,i)=>{const x=slides[i];if(!x)return;const url=x.url||x;if(!url)return;let im=el.querySelector('img');if(!im){im=document.createElement('img');el.appendChild(im)}im.src=url;im.width=1200;im.height=390;im.loading=i===0?'eager':'lazy';im.fetchPriority=i===0?'high':'low';im.decoding='async';})}
     let texts=o.hero_texts;if(typeof texts==='string'){try{texts=JSON.parse(texts)}catch{}}if(texts&&typeof texts==='object'){const h=document.querySelector('.heroText h1'),p=document.querySelector('.heroText p');if(h&&texts.title)h.textContent=texts.title;if(p&&texts.subtitle)p.textContent=texts.subtitle}
     optimizeImages();
   }
