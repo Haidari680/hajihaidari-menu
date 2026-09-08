@@ -22,14 +22,7 @@
   `;
   document.head.appendChild(css);
 
-  const optimizeImages = () => document.querySelectorAll('.card img,.slide img').forEach((img,i) => {
-    if(i > 0 || img.closest('.card')) img.loading = 'lazy';
-    img.decoding = 'async';
-  });
-  window.addEventListener('load', optimizeImages, {once:true});
-  new MutationObserver(optimizeImages).observe(document.body,{childList:true,subtree:true});
-
-  // Reliable cart total + delete control.
+  // Image loading is handled only by speed-loader.js to avoid duplicate observers and downloads.
   window.removeFromCart = function(id) {
     cart = cart.filter(item => String(item.id) !== String(id));
     localStorage.setItem('hh_cart', JSON.stringify(cart));
@@ -54,7 +47,6 @@
     $('sum').textContent = fa(total);
   };
 
-  // Food image zoom preview: click/tap any food photo to see a larger version.
   const imageModal = document.createElement('div');
   imageModal.className = 'food-image-modal';
   imageModal.innerHTML = '<button class="food-image-close" aria-label="بستن">×</button><img alt="نمای بزرگ غذا"><div class="food-image-hint">برای بستن، بیرون عکس را لمس کنید</div>';
@@ -71,6 +63,5 @@
   });
   document.addEventListener('keydown', e => { if(e.key === 'Escape') closeImage(); });
 
-  // Repaint totals once the existing page finishes loading.
   window.addEventListener('load', () => { bar(); if ($('ov').classList.contains('open')) renderCart(); });
 })();
