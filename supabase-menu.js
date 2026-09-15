@@ -23,11 +23,18 @@
   document.head.appendChild(css);
 
   const optimizeImages = () => document.querySelectorAll('.card img,.slide img').forEach((img,i) => {
-    if(i > 0 || img.closest('.card')) img.loading = 'lazy';
+    img.loading = i === 0 && img.closest('.slide') ? 'eager' : 'lazy';
     img.decoding = 'async';
+    img.fetchPriority = i === 0 ? 'high' : 'low';
   });
+
+  // Install before the menu renders so newly-created images get lazy loading immediately.
+  const root = document.documentElement;
+  const observer = new MutationObserver(() => optimizeImages());
+  observer.observe(root,{childList:true,subtree:true});
+  optimizeImages();
+
   window.addEventListener('load', optimizeImages, {once:true});
-  new MutationObserver(optimizeImages).observe(document.body,{childList:true,subtree:true});
 
   // Reliable cart total + delete control.
   window.removeFromCart = function(id) {
@@ -71,6 +78,5 @@
   });
   document.addEventListener('keydown', e => { if(e.key === 'Escape') closeImage(); });
 
-  // Repaint totals once the existing page finishes loading.
   window.addEventListener('load', () => { bar(); if ($('ov').classList.contains('open')) renderCart(); });
 })();
