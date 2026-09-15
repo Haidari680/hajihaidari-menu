@@ -28,7 +28,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Verify required files
-        run: test -f admin.html && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js
+        run: test -f admin.html && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js && test -f admin-filter.js
 
       - name: Add menu and admin scripts
         run: |
@@ -61,6 +61,7 @@ jobs:
               ('<script src="./admin-settings.js"></script>', 'admin-settings.js'),
               ('<script src="./admin-visual-settings.js"></script>', 'admin-visual-settings.js'),
               ('<script src="./admin-location-settings.js"></script>', 'admin-location-settings.js'),
+              ('<script src="./admin-filter.js"></script>', 'admin-filter.js'),
           ]:
               if tag not in s and Path(file_name).exists():
                   s = s.replace('</body>', tag + '\n</body>', 1)
