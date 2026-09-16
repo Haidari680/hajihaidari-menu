@@ -40,16 +40,12 @@
   };
 
   const optimizeImages = () => document.querySelectorAll('.card img,.slide img').forEach((img,i) => prepareImage(img,i));
-
-  // Install before the menu renders so newly-created images get lazy loading and a safe fallback immediately.
   const root = document.documentElement;
   const observer = new MutationObserver(() => optimizeImages());
   observer.observe(root,{childList:true,subtree:true});
   optimizeImages();
-
   window.addEventListener('load', optimizeImages, {once:true});
 
-  // Reliable cart total + delete control.
   window.removeFromCart = function(id) {
     cart = cart.filter(item => String(item.id) !== String(id));
     localStorage.setItem('hh_cart', JSON.stringify(cart));
@@ -74,7 +70,6 @@
     $('sum').textContent = fa(total);
   };
 
-  // Food image zoom preview: click/tap any food photo to see a larger version.
   const imageModal = document.createElement('div');
   imageModal.className = 'food-image-modal';
   imageModal.innerHTML = '<button class="food-image-close" aria-label="بستن">×</button><img alt="نمای بزرگ غذا"><div class="food-image-hint">برای بستن، بیرون عکس را لمس کنید</div>';
@@ -85,7 +80,8 @@
   document.addEventListener('click', e => {
     const img = e.target.closest('.card .photo img');
     if(!img) return;
-    previewImg.src = img.currentSrc || img.src;
+    // Always open the complete source, not the cropped/current display source.
+    previewImg.src = img.dataset.originalSrc || img.src;
     previewImg.alt = img.alt || 'نمای بزرگ غذا';
     imageModal.classList.add('open');
   });
