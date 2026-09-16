@@ -22,13 +22,26 @@
   `;
   document.head.appendChild(css);
 
-  const optimizeImages = () => document.querySelectorAll('.card img,.slide img').forEach((img,i) => {
+  const prepareImage = (img,i) => {
+    if (!img || img.dataset.hhPrepared) return;
+    img.dataset.hhPrepared = '1';
+    const original = img.getAttribute('src') || img.currentSrc || '';
+    if (original) img.dataset.originalSrc = original;
     img.loading = i === 0 && img.closest('.slide') ? 'eager' : 'lazy';
     img.decoding = 'async';
     img.fetchPriority = i === 0 ? 'high' : 'low';
-  });
+    img.addEventListener('error', () => {
+      if (img.dataset.hhFallbackTried === '1') return;
+      const fallback = img.dataset.originalSrc;
+      if (!fallback || fallback === img.src) return;
+      img.dataset.hhFallbackTried = '1';
+      img.src = fallback;
+    }, {once:false});
+  };
 
-  // Install before the menu renders so newly-created images get lazy loading immediately.
+  const optimizeImages = () => document.querySelectorAll('.card img,.slide img').forEach((img,i) => prepareImage(img,i));
+
+  // Install before the menu renders so newly-created images get lazy loading and a safe fallback immediately.
   const root = document.documentElement;
   const observer = new MutationObserver(() => optimizeImages());
   observer.observe(root,{childList:true,subtree:true});
