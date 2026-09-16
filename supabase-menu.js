@@ -46,6 +46,27 @@
   optimizeImages();
   window.addEventListener('load', optimizeImages, {once:true});
 
+  // Recover the customer menu when an optional settings/slides query fails.
+  // The original page treats all four queries as fatal; categories + foods are the actual menu core.
+  const recoverMenuConnection = async () => {
+    const grid = $('grid');
+    if (!grid || !grid.textContent.includes('خطا در اتصال به منو')) return;
+    try {
+      const [c,f] = await Promise.all([
+        sb.from('categories').select('id,name,active,sort_order').eq('active',true).order('sort_order'),
+        sb.from('foods').select('id,name,price,description,image_url,stock_status,category_id,active,daily').eq('active',true).order('id',{ascending:false})
+      ]);
+      if (c.error || f.error) return;
+      cats = c.data || [];
+      foods = (f.data || []).map(x => ({...x,cat:(cats.find(cat => String(cat.id) === String(x.category_id)) || {}).name || ''}));
+      renderCats();
+      draw();
+      bar();
+    } catch (_) {}
+  };
+  setTimeout(recoverMenuConnection, 250);
+  setTimeout(recoverMenuConnection, 1200);
+
   window.removeFromCart = function(id) {
     cart = cart.filter(item => String(item.id) !== String(id));
     localStorage.setItem('hh_cart', JSON.stringify(cart));
@@ -80,7 +101,6 @@
   document.addEventListener('click', e => {
     const img = e.target.closest('.card .photo img');
     if(!img) return;
-    // Always open the complete source, not the cropped/current display source.
     previewImg.src = img.dataset.originalSrc || img.src;
     previewImg.alt = img.alt || 'نمای بزرگ غذا';
     imageModal.classList.add('open');
