@@ -8,11 +8,15 @@
   const QUALITY = 0.90;
   const CONCURRENCY = 3;
 
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.textContent = '🖼️ بهینه‌سازی عکس‌های قبلی';
-  button.style.cssText = 'position:fixed;left:18px;bottom:18px;z-index:10050;background:#07172f;color:#fff;border:1px solid #d8b45a;border-radius:12px;padding:11px 15px;font:800 13px Tahoma,Arial,sans-serif;box-shadow:0 8px 22px #0004;cursor:pointer';
-  document.body.appendChild(button);
+  const button = document.getElementById('batchImageOptimizerBtn') || (() => {
+    const b = document.createElement('button');
+    b.id = 'batchImageOptimizerBtn';
+    b.type = 'button';
+    b.textContent = '🖼️ بهینه‌سازی عکس‌های قبلی';
+    b.style.cssText = 'position:fixed;left:18px;bottom:18px;z-index:10050;background:#07172f;color:#fff;border:1px solid #d8b45a;border-radius:12px;padding:11px 15px;font:800 13px Tahoma,Arial,sans-serif;box-shadow:0 8px 22px #0004;cursor:pointer;display:block!important;visibility:visible!important;opacity:1!important';
+    document.body.appendChild(b);
+    return b;
+  })();
 
   const supabase = window.supabase || null;
   const client = supabase?.createClient ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
@@ -81,7 +85,10 @@
   }
 
   async function run() {
-    if (!client) throw new Error('Supabase client not available');
+    if (!client) {
+      alert('اتصال Supabase در این صفحه آماده نیست. صفحه را یک‌بار با Ctrl+F5 تازه کنید.');
+      return;
+    }
     button.disabled = true;
     const oldText = button.textContent;
     button.textContent = '⏳ در حال بهینه‌سازی...';
@@ -122,7 +129,6 @@
     }
   }
 
-  button.addEventListener('click', () => {
-    if (confirm('عکس‌های موجود به نسخه WebP تبدیل و لینک جدیدشان در منو ثبت می‌شود. عکس اصلی حذف نمی‌شود. ادامه می‌دهید؟')) run();
-  });
+  window.__batchImageOptimizerRun = run;
+  button.onclick = run;
 })();
