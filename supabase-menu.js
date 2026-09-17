@@ -13,11 +13,11 @@
     .delete-item{border:0;background:#6b1d2a;color:#fff;border-radius:8px;width:30px;height:30px;cursor:pointer;font-weight:900;margin-right:4px}
     .food-image-modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.86);display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(3px)}
     .food-image-modal.open{display:flex}
-    .food-image-modal img{max-width:min(94vw,900px);max-height:86vh;width:auto;height:auto;object-fit:contain;border-radius:18px;box-shadow:0 12px 45px rgba(0,0,0,.65);animation:foodZoomIn .18s ease-out}
+    .food-image-modal img{width:min(82vw,760px);height:min(82vh,760px);max-width:92vw;max-height:86vh;object-fit:cover;object-position:center;border-radius:18px;box-shadow:0 12px 45px rgba(0,0,0,.65);animation:foodZoomIn .18s ease-out}
     .food-image-close{position:absolute;top:16px;right:16px;width:42px;height:42px;border:1px solid #e8b84f;border-radius:50%;background:#06152f;color:#fff;font-size:27px;line-height:1;cursor:pointer}
     .food-image-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:#06152fe8;color:#fff;border:1px solid #e8b84f;border-radius:12px;padding:8px 13px;font-size:12px}
     @keyframes foodZoomIn{from{transform:scale(.94);opacity:.6}to{transform:scale(1);opacity:1}}
-    @media(max-width:650px){.grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important}.photo{aspect-ratio:3/4!important}.food-image-modal{padding:12px}.food-image-modal img{max-width:96vw;max-height:80vh}.food-image-close{top:10px;right:10px}}
+    @media(max-width:650px){.grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important}.photo{aspect-ratio:3/4!important}.food-image-modal{padding:12px}.food-image-modal img{width:88vw;height:78vh;max-width:92vw;max-height:78vh}.food-image-close{top:10px;right:10px}}
     @media(max-width:430px){.grid{grid-template-columns:repeat(2,1fr)!important;gap:10px!important}.photo{aspect-ratio:3/4!important}.body{padding:11px!important}.body h3{font-size:16px!important}}
   `;
   document.head.appendChild(css);
@@ -101,7 +101,7 @@
   document.addEventListener('click', e => {
     const img = e.target.closest('.card .photo img');
     if(!img) return;
-    previewImg.src = img.dataset.originalSrc || img.src;
+    previewImg.src = img.currentSrc || img.src;
     previewImg.alt = img.alt || 'نمای بزرگ غذا';
     imageModal.classList.add('open');
   });
