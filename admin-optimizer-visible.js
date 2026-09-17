@@ -1,10 +1,8 @@
 (() => {
   function placeOptimizerButton() {
     const button = document.getElementById('batchImageOptimizerBtn');
-    if (!button) return false;
-
     const target = document.querySelector('#app > .panel.row');
-    if (!target) return false;
+    if (!button || !target) return false;
 
     button.style.position = 'static';
     button.style.left = 'auto';
@@ -21,9 +19,12 @@
     return true;
   }
 
-  let tries = 0;
-  const timer = setInterval(() => {
-    tries += 1;
-    if (placeOptimizerButton() || tries >= 30) clearInterval(timer);
-  }, 300);
+  if (placeOptimizerButton()) return;
+
+  const observer = new MutationObserver(() => {
+    if (placeOptimizerButton()) observer.disconnect();
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+  setTimeout(() => observer.disconnect(), 120000);
 })();
