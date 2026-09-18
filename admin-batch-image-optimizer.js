@@ -1,5 +1,4 @@
 // One-click batch optimizer for existing Supabase food/site images.
-// Preserves aspect ratio, creates WebP copies, and updates the database URLs.
 (() => {
   const SUPABASE_URL = 'https://bjpascssizuskiujnzvf.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_VMPeQ2DMNfdwwAEAYQ2Y4A_3idOGTvr';
@@ -22,11 +21,16 @@
   const client = supabase?.createClient ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
   function isSupabaseImage(url) {
-    return typeof url === 'string' && url.startsWith(SUPABASE_URL + '/storage/v1/object/public/' + BUCKET + '/');
+    return typeof url === 'string' && (
+      url.startsWith(SUPABASE_URL + '/storage/v1/object/public/' + BUCKET + '/') ||
+      url.startsWith(SUPABASE_URL + '/storage/v1/render/image/public/' + BUCKET + '/')
+    );
   }
 
   function getPath(url) {
-    const prefix = SUPABASE_URL + '/storage/v1/object/public/' + BUCKET + '/';
+    const objectPrefix = SUPABASE_URL + '/storage/v1/object/public/' + BUCKET + '/';
+    const renderPrefix = SUPABASE_URL + '/storage/v1/render/image/public/' + BUCKET + '/';
+    const prefix = url.startsWith(renderPrefix) ? renderPrefix : objectPrefix;
     return decodeURIComponent(url.slice(prefix.length).split('?')[0]);
   }
 
@@ -67,7 +71,9 @@
     const oldUrl = row.image_url;
     if (!isSupabaseImage(oldUrl)) return { skipped: true };
     const oldPath = getPath(oldUrl);
-    const response = await fetch(oldUrl, { cache: 'no-store' });
+    const sourceUrl = SUPABASE_URL + '/storage/v1/render/image/public/' + BUCKET + '/' +
+      oldPath.split('/').map(encodeURIComponent).join('/') + '?width=' + MAX_SIZE + '&quality=85';
+    const response = await fetch(sourceUrl, { cache: 'no-store' });
     if (!response.ok) throw new Error('download failed: ' + response.status);
     const source = await response.blob();
     const file = await optimize(source, oldPath.split('/').pop() || 'image');
@@ -91,7 +97,7 @@
     }
     button.disabled = true;
     const oldText = button.textContent;
-    button.textContent = '⏳ در حال بهینه‌سازی...';
+    button.textContent = '⏳ در حال بررسی عکس‌ها...';
     try {
       const [foodsRes, slidesRes] = await Promise.all([
         client.from('foods').select('id,image_url').not('image_url', 'is', null),
@@ -99,14 +105,17 @@
       ]);
       if (foodsRes.error) throw foodsRes.error;
       if (slidesRes.error) throw slidesRes.error;
+
       const jobs = [
         ...(foodsRes.data || []).map(row => ({ row, table: 'foods' })),
         ...(slidesRes.data || []).map(row => ({ row, table: 'site_slides' }))
-      ].filter(x => isSupabaseImage(x.row.image_url));
+      ].filter(x => isSupabaseImage(x.row.image_url) && !x.row.image_url.includes('/optimized/'));
+
       if (!jobs.length) {
-        alert('عکس Supabase برای بهینه‌سازی پیدا نشد.');
+        alert('عکس قابل بهینه‌سازی پیدا نشد.');
         return;
       }
+
       let done = 0, failed = 0, skipped = 0;
       for (let i = 0; i < jobs.length; i += CONCURRENCY) {
         const batch = jobs.slice(i, i + CONCURRENCY);
