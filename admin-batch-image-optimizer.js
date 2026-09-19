@@ -57,7 +57,7 @@
           canvas.toBlob(out => {
             URL.revokeObjectURL(url);
             if (!out) return reject(new Error('WebP conversion failed'));
-            resolve(new File([out], name.replace(/.[^.]+$/, '') + '.webp', { type: 'image/webp' }));
+            resolve(new File([out], name.replace(/[.][^.]+$/, '') + '.webp', { type: 'image/webp' }));
           }, 'image/webp', QUALITY);
         } catch (e) {
           URL.revokeObjectURL(url);
@@ -79,7 +79,7 @@
     if (!response.ok) throw new Error('download failed: ' + response.status);
     const source = await response.blob();
     const file = await optimize(source, oldPath.split('/').pop() || 'image');
-    const newPath = 'optimized/' + oldPath.replace(/.[^.]+$/, '') + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7) + '.webp';
+    const newPath = 'optimized/' + oldPath.replace(/[.][^.]+$/, '') + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7) + '.webp';
     const { error: uploadError } = await client.storage.from(BUCKET).upload(newPath, file, {
       cacheControl: '31536000',
       contentType: 'image/webp',
