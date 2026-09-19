@@ -17,8 +17,10 @@
     return b;
   })();
 
+  // Reuse the authenticated admin client when admin.html already created it.
+  const existingClient = (typeof sb !== 'undefined' && sb?.from && sb?.auth && sb?.storage) ? sb : null;
   const supabase = window.supabase || null;
-  const client = supabase?.createClient ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+  const client = existingClient || (supabase?.createClient ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null);
 
   function isSupabaseImage(url) {
     return typeof url === 'string' && (
@@ -55,7 +57,7 @@
           canvas.toBlob(out => {
             URL.revokeObjectURL(url);
             if (!out) return reject(new Error('WebP conversion failed'));
-            resolve(new File([out], name.replace(/\.[^.]+$/, '') + '.webp', { type: 'image/webp' }));
+            resolve(new File([out], name.replace(/.[^.]+$/, '') + '.webp', { type: 'image/webp' }));
           }, 'image/webp', QUALITY);
         } catch (e) {
           URL.revokeObjectURL(url);
@@ -77,7 +79,7 @@
     if (!response.ok) throw new Error('download failed: ' + response.status);
     const source = await response.blob();
     const file = await optimize(source, oldPath.split('/').pop() || 'image');
-    const newPath = 'optimized/' + oldPath.replace(/\.[^.]+$/, '') + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7) + '.webp';
+    const newPath = 'optimized/' + oldPath.replace(/.[^.]+$/, '') + '-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7) + '.webp';
     const { error: uploadError } = await client.storage.from(BUCKET).upload(newPath, file, {
       cacheControl: '31536000',
       contentType: 'image/webp',
@@ -95,9 +97,17 @@
       alert('اتصال Supabase در این صفحه آماده نیست. صفحه را یک‌بار با Ctrl+F5 تازه کنید.');
       return;
     }
+
+    const sessionRes = await client.auth.getSession();
+    if (!sessionRes?.data?.session) {
+      alert('ابتدا با حساب مدیریت وارد شوید، سپس بهینه‌سازی را اجرا کنید.');
+      return;
+    }
+
     button.disabled = true;
     const oldText = button.textContent;
     button.textContent = '⏳ در حال بررسی عکس‌ها...';
+
     try {
       const [foodsRes, slidesRes] = await Promise.all([
         client.from('foods').select('id,image_url').not('image_url', 'is', null),
@@ -117,18 +127,28 @@
       }
 
       let done = 0, failed = 0, skipped = 0;
+      const errors = [];
+
       for (let i = 0; i < jobs.length; i += CONCURRENCY) {
         const batch = jobs.slice(i, i + CONCURRENCY);
         const results = await Promise.all(batch.map(async job => {
-          try { return await optimizeOne(job.row, job.table); }
-          catch (e) { console.error('Image optimization failed', job.row.id, e); return { failed: true }; }
+          try {
+            return await optimizeOne(job.row, job.table);
+          } catch (e) {
+            console.error('Image optimization failed', job.row.id, e);
+            if (errors.length < 3) errors.push((e?.message || String(e)));
+            return { failed: true };
+          }
         }));
+
         done += results.filter(r => r.optimized).length;
         failed += results.filter(r => r.failed).length;
         skipped += results.filter(r => r.skipped).length;
         button.textContent = `⏳ ${Math.min(i + batch.length, jobs.length)}/${jobs.length} عکس`;
       }
-      alert(`بهینه‌سازی تمام شد.\n\nبهینه شد: ${done}\nخطا: ${failed}\nرد شد: ${skipped}`);
+
+      const detail = errors.length ? '\n\nنمونه خطا:\n' + errors.join('\n') : '';
+      alert(`بهینه‌سازی تمام شد.\n\nبهینه شد: ${done}\nخطا: ${failed}\nرد شد: ${skipped}${detail}`);
     } catch (e) {
       console.error(e);
       alert('بهینه‌سازی انجام نشد: ' + (e?.message || e));
