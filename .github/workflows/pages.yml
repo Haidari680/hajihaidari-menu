@@ -28,7 +28,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Verify required files
-        run: test -f admin.html && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js && test -f admin-filter.js && test -f admin-image-optimizer.js && test -f admin-batch-image-optimizer.js && test -f admin-optimizer-visible.js
+        run: test -f admin.html && test -f site-settings.js && test -f admin-settings.js && test -f menu-enhancements.js && test -f admin-visual-settings.js && test -f admin-location-settings.js && test -f location-display.js && test -f admin-filter.js && test -f admin-image-optimizer.js && test -f admin-batch-image-optimizer.js && test -f admin-optimizer-visible.js && test -f admin-food-edit.js
 
       - name: Add menu and admin scripts
         run: |
@@ -68,6 +68,7 @@ jobs:
               ('<script src="./admin-image-optimizer.js"></script>', 'admin-image-optimizer.js'),
               ('<script src="./admin-batch-image-optimizer.js"></script>', 'admin-batch-image-optimizer.js'),
               ('<script src="./admin-optimizer-visible.js"></script>', 'admin-optimizer-visible.js'),
+              ('<script src="./admin-food-edit.js"></script>', 'admin-food-edit.js'),
           ]:
               if tag not in s and Path(file_name).exists():
                   s = s.replace('</body>', tag + '\n</body>', 1)
