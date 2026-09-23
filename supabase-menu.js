@@ -4,6 +4,7 @@
   css.textContent = `
     .logo{border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important}
     .logo img{border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important;border-radius:0!important;padding:0!important}
+    .slide img{object-fit:contain!important;object-position:center!important;background:#06152f!important}
     .card{border-radius:18px!important;overflow:hidden!important;border:1px solid #b77a20!important;background:#06172f!important;box-shadow:0 12px 30px rgba(0,0,0,.38),inset 0 0 0 1px rgba(245,210,122,.06)}
     .photo{aspect-ratio:3/4!important;padding:0!important;display:block!important;overflow:hidden!important;background:#07172f!important;border-radius:0!important}
     .photo img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;background:#07172f!important;border:0!important;border-radius:0!important;box-shadow:none!important;display:block!important;transition:transform .28s ease,filter .28s ease;cursor:zoom-in}
@@ -46,8 +47,6 @@
   optimizeImages();
   window.addEventListener('load', optimizeImages, {once:true});
 
-  // Recover the customer menu when an optional settings/slides query fails.
-  // The original page treats all four queries as fatal; categories + foods are the actual menu core.
   const recoverMenuConnection = async () => {
     const grid = $('grid');
     if (!grid || !grid.textContent.includes('خطا در اتصال به منو')) return;
