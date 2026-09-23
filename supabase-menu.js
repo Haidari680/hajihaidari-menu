@@ -14,7 +14,7 @@
     .delete-item{border:0;background:#6b1d2a;color:#fff;border-radius:8px;width:30px;height:30px;cursor:pointer;font-weight:900;margin-right:4px}
     .food-image-modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.86);display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(3px)}
     .food-image-modal.open{display:flex}
-    .food-image-modal img{width:min(82vw,760px);height:min(82vh,760px);max-width:92vw;max-height:86vh;object-fit:cover;object-position:center;border-radius:18px;box-shadow:0 12px 45px rgba(0,0,0,.65);animation:foodZoomIn .18s ease-out}
+    .food-image-modal img{width:min(82vw,760px);height:min(82vh,760px);max-width:92vw;max-height:86vh;object-fit:contain;object-position:center;border-radius:18px;box-shadow:0 12px 45px rgba(0,0,0,.65);animation:foodZoomIn .18s ease-out}
     .food-image-close{position:absolute;top:16px;right:16px;width:42px;height:42px;border:1px solid #e8b84f;border-radius:50%;background:#06152f;color:#fff;font-size:27px;line-height:1;cursor:pointer}
     .food-image-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);background:#06152fe8;color:#fff;border:1px solid #e8b84f;border-radius:12px;padding:8px 13px;font-size:12px}
     @keyframes foodZoomIn{from{transform:scale(.94);opacity:.6}to{transform:scale(1);opacity:1}}
