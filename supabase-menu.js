@@ -4,8 +4,8 @@
   css.textContent = `
     .logo{border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important}
     .logo img{border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important;border-radius:0!important;padding:0!important}
-    .slide{overflow:hidden!important;background:#06152f!important}
-    .slide img{width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important;background:#06152f!important;display:block!important}
+    .slide{overflow:hidden!important;background:#06152f!important;display:flex!important;align-items:center!important;justify-content:center!important}
+    .slide img{width:auto!important;height:auto!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center center!important;background:#06152f!important;display:block!important;flex:0 0 auto!important}
     .card{border-radius:18px!important;overflow:hidden!important;border:1px solid #b77a20!important;background:#06172f!important;box-shadow:0 12px 30px rgba(0,0,0,.38),inset 0 0 0 1px rgba(245,210,122,.06)}
     .photo{aspect-ratio:3/4!important;padding:0!important;display:block!important;overflow:hidden!important;background:#07172f!important;border-radius:0!important}
     .photo img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;background:#07172f!important;border:0!important;border-radius:0!important;box-shadow:none!important;display:block!important;transition:transform .28s ease,filter .28s ease;cursor:zoom-in}
