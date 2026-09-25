@@ -4,8 +4,7 @@
   css.textContent = `
     .logo{border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important}
     .logo img{border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important;border-radius:0!important;padding:0!important}
-    .slide{overflow:hidden!important;background:#06152f!important;display:flex!important;align-items:center!important;justify-content:center!important}
-    .slide img{width:auto!important;height:auto!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center center!important;background:#06152f!important;display:block!important;flex:0 0 auto!important}
+    .slide img{object-fit:contain!important;object-position:center!important;background:#06152f!important}
     .card{border-radius:18px!important;overflow:hidden!important;border:1px solid #b77a20!important;background:#06172f!important;box-shadow:0 12px 30px rgba(0,0,0,.38),inset 0 0 0 1px rgba(245,210,122,.06)}
     .photo{aspect-ratio:3/4!important;padding:0!important;display:block!important;overflow:hidden!important;background:#07172f!important;border-radius:0!important}
     .photo img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;background:#07172f!important;border:0!important;border-radius:0!important;box-shadow:none!important;display:block!important;transition:transform .28s ease,filter .28s ease;cursor:zoom-in}
@@ -29,11 +28,9 @@
     img.dataset.hhPrepared = '1';
     const original = img.getAttribute('src') || img.currentSrc || '';
     if (original) img.dataset.originalSrc = original;
-    const isSlide = !!img.closest('.slide');
-    img.loading = isSlide ? 'eager' : (i === 0 ? 'eager' : 'lazy');
+    img.loading = i === 0 && img.closest('.slide') ? 'eager' : 'lazy';
     img.decoding = 'async';
-    img.fetchPriority = isSlide ? (i === 0 ? 'high' : 'auto') : (i === 0 ? 'high' : 'low');
-    if (isSlide) img.style.contentVisibility = 'visible';
+    img.fetchPriority = i === 0 ? 'high' : 'low';
     img.addEventListener('error', () => {
       if (img.dataset.hhFallbackTried === '1') return;
       const fallback = img.dataset.originalSrc;
