@@ -1,7 +1,7 @@
 // One-click batch optimizer for existing Supabase food/site images.
 (() => {
   const SUPABASE_URL = 'https://bjpascssizuskiujnzvf.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_VMPeQ2DMNfdwwAEAYQ2Y4A_3idOGTvr';
+  const SUPABASE_KEY = 'sb_publishable_VMPe2QDMNfdwwAEAYQ2Y4A_3idOGTvr';
   const BUCKET = 'food-images';
   const MAX_SIZE = 1400;
   const QUALITY = 0.90;

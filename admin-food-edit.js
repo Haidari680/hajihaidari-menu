@@ -4,7 +4,7 @@
   const client = existingClient || (window.supabase?.createClient
     ? window.supabase.createClient(
         'https://bjpascssizuskiujnzvf.supabase.co',
-        'sb_publishable_VMPeQ2DMNfdwwAEAYQ2Y4A_3idOGTvr'
+        'sb_publishable_VMPe2QDMNfdwwAEAYQ2Y4A_3idOGTvr'
       )
     : null);
 
